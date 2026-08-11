@@ -1,0 +1,73 @@
+{
+  "checkedAt": "2026-08-11T16:02:30Z",
+  "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
+  "sourceEvidence": [
+    {
+      "source": "BAI official fund page & prospectus",
+      "status": "pass",
+      "bytes": 1547301
+    },
+    {
+      "source": "QQQ official fund page",
+      "status": "pass",
+      "bytes": 261994
+    },
+    {
+      "source": "IEMG official fund page",
+      "status": "pass",
+      "bytes": 1646305
+    },
+    {
+      "source": "BINC official fund page & prospectus",
+      "status": "pass",
+      "bytes": 1686726
+    },
+    {
+      "source": "BMNR SEC EDGAR company page",
+      "status": "manual-review",
+      "reason": "The authoritative endpoint restricts automated GitHub Actions access."
+    },
+    {
+      "source": "Federal Reserve economic data (FRED)",
+      "status": "pass",
+      "bytes": 58830
+    },
+    {
+      "source": "U.S. Treasury yield-curve data",
+      "status": "pass",
+      "bytes": 1867775
+    },
+    {
+      "source": "claim ledger",
+      "status": "pass",
+      "claims": 8,
+      "note": "Forecasts and relevance scores are labeled model inputs, not verified facts."
+    }
+  ],
+  "mathChecks": [
+    {
+      "name": "required holdings",
+      "status": "pass"
+    },
+    {
+      "name": "input bounds",
+      "status": "pass"
+    },
+    {
+      "name": "macro bounds",
+      "status": "pass"
+    },
+    {
+      "name": "max-growth drawdown constraint",
+      "status": "pass",
+      "rate": 4.0,
+      "cap": 25,
+      "computed_drawdown": 25.0
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.",
+    "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner."
+  ]
+}

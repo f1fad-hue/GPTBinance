@@ -1,28 +1,171 @@
 {
   "asOf": "2026-08-11",
-  "validation": {"status": "PASS — source endpoints and model checks last completed", "checkedAt": "2026-08-11T00:00:00Z"},
+  "validation": {
+    "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
+    "checkedAt": "2026-08-11T16:02:30Z"
+  },
   "macro": [
-    {"driver":"Inflation trend", "why":"Multiple compression/real income", "m3":4.1,"m6":3.8,"m12":3.6},
-    {"driver":"Policy & real rates", "why":"Growth discount rate", "m3":3.7,"m6":3.9,"m12":4.0},
-    {"driver":"Yield curve", "why":"Growth and credit transmission", "m3":3.8,"m6":3.7,"m12":3.9},
-    {"driver":"Credit spreads", "why":"BINC income risk / equity stress", "m3":3.5,"m6":3.6,"m12":3.8},
-    {"driver":"Labor & activity", "why":"Earnings and EM demand", "m3":3.4,"m6":3.7,"m12":3.9},
-    {"driver":"Market volatility", "why":"High-beta concentration risk", "m3":3.2,"m6":3.5,"m12":3.7}
+    {
+      "driver": "Inflation trend",
+      "why": "Multiple compression/real income",
+      "m3": 3.4,
+      "m6": 3.3,
+      "m12": 3.2
+    },
+    {
+      "driver": "Policy & real rates",
+      "why": "Growth discount rate",
+      "m3": 3.5,
+      "m6": 3.5,
+      "m12": 3.5
+    },
+    {
+      "driver": "Yield curve",
+      "why": "Growth and credit transmission",
+      "m3": 3.6,
+      "m6": 3.5,
+      "m12": 4.4
+    },
+    {
+      "driver": "Credit spreads",
+      "why": "BINC income risk / equity stress",
+      "m3": 3.9,
+      "m6": 4.8,
+      "m12": 4.1
+    },
+    {
+      "driver": "Labor & activity",
+      "why": "Earnings and EM demand",
+      "m3": 3.7,
+      "m6": 3.7,
+      "m12": 3.5
+    },
+    {
+      "driver": "Market volatility",
+      "why": "High-beta concentration risk",
+      "m3": 3.6,
+      "m6": 3.7,
+      "m12": 4.4
+    }
   ],
   "assets": [
-    {"ticker":"BAI","name":"iShares A.I. Innovation and Tech Active ETF","class":"AI / US growth","fee":0.55,"grossCagr":15.4,"vol":31,"historicalDD":35,"forwardDD":29,"relevance":83,"weight":24,"reason":"AI earnings breadth and capital-spending persistence","notRelevant":"AI revenue adoption stalls, manager’s mandate drifts, or fee waiver ends with sustained net-return disadvantage.","cadence":"Daily price/liquidity; quarterly holdings & prospectus","source":"https://www.ishares.com/us/products/339081/fund","history":"Inception 2024; no 10-year live fund history."},
-    {"ticker":"QQQ","name":"Invesco QQQ Trust","class":"Nasdaq-100 growth","fee":0.18,"grossCagr":13.1,"vol":25,"historicalDD":33,"forwardDD":27,"relevance":94,"weight":30,"reason":"Liquid core growth exposure with durable earnings breadth","notRelevant":"Nasdaq-100 rules or concentration materially change, or earnings breadth and liquidity deteriorate persistently.","cadence":"Daily price/liquidity; quarterly index and prospectus","source":"https://www.invesco.com/qqq-etf/en/home.html","history":"Long live history; fee deducted from model gross CAGR."},
-    {"ticker":"IEMG","name":"iShares Core MSCI Emerging Markets ETF","class":"Emerging-market equity","fee":0.09,"grossCagr":9.1,"vol":23,"historicalDD":36,"forwardDD":30,"relevance":71,"weight":14,"reason":"Diversifies US mega-cap growth and participates in global activity","notRelevant":"Persistent USD strength, material index-access impairment, or emerging-market earnings/reform deterioration.","cadence":"Daily USD/liquidity; monthly macro; quarterly holdings","source":"https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf","history":"Long live history; fee deducted from model gross CAGR."},
-    {"ticker":"BINC","name":"iShares Flexible Income Active ETF","class":"Flexible income","fee":0.40,"grossCagr":6.9,"vol":10,"historicalDD":12,"forwardDD":10,"relevance":86,"weight":18,"reason":"Income ballast and flexible duration/credit implementation","notRelevant":"Credit spreads widen without compensated yield, duration positioning is persistently adverse, or fee waiver/strategy changes.","cadence":"Daily NAV/spreads; monthly holdings; prospectus on change","source":"https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf","history":"Inception 2023; no 10-year live fund history."},
-    {"ticker":"BMNR","name":"BitMine Immersion Technologies, Inc.","class":"Digital-asset equity","fee":0,"grossCagr":25,"vol":75,"historicalDD":62,"forwardDD":55,"relevance":42,"weight":14,"reason":"High-upside, explicitly bounded satellite tied to digital-asset conditions","notRelevant":"Digital-asset treasury economics weaken, funding dilution materially rises, liquidity falls, or SEC filings change the risk profile.","cadence":"Daily price/liquidity; every SEC filing; weekly treasury/counterparty review","source":"https://www.sec.gov/edgar/browse/?CIK=0001829311","history":"Public-company history is not a reliable 10-year analogue; scenario input only."}
+    {
+      "ticker": "BAI",
+      "name": "iShares A.I. Innovation and Tech Active ETF",
+      "class": "AI / US growth",
+      "fee": 0.55,
+      "grossCagr": 15.4,
+      "vol": 31,
+      "historicalDD": 35,
+      "forwardDD": 29,
+      "relevance": 83,
+      "weight": 24,
+      "reason": "AI earnings breadth and capital-spending persistence",
+      "notRelevant": "AI revenue adoption stalls, manager\u2019s mandate drifts, or fee waiver ends with sustained net-return disadvantage.",
+      "cadence": "Daily price/liquidity; quarterly holdings & prospectus",
+      "source": "https://www.ishares.com/us/products/339081/fund",
+      "history": "Inception 2024; no 10-year live fund history."
+    },
+    {
+      "ticker": "QQQ",
+      "name": "Invesco QQQ Trust",
+      "class": "Nasdaq-100 growth",
+      "fee": 0.18,
+      "grossCagr": 13.1,
+      "vol": 25,
+      "historicalDD": 33,
+      "forwardDD": 27,
+      "relevance": 94,
+      "weight": 30,
+      "reason": "Liquid core growth exposure with durable earnings breadth",
+      "notRelevant": "Nasdaq-100 rules or concentration materially change, or earnings breadth and liquidity deteriorate persistently.",
+      "cadence": "Daily price/liquidity; quarterly index and prospectus",
+      "source": "https://www.invesco.com/qqq-etf/en/home.html",
+      "history": "Long live history; fee deducted from model gross CAGR."
+    },
+    {
+      "ticker": "IEMG",
+      "name": "iShares Core MSCI Emerging Markets ETF",
+      "class": "Emerging-market equity",
+      "fee": 0.09,
+      "grossCagr": 9.1,
+      "vol": 23,
+      "historicalDD": 36,
+      "forwardDD": 30,
+      "relevance": 71,
+      "weight": 14,
+      "reason": "Diversifies US mega-cap growth and participates in global activity",
+      "notRelevant": "Persistent USD strength, material index-access impairment, or emerging-market earnings/reform deterioration.",
+      "cadence": "Daily USD/liquidity; monthly macro; quarterly holdings",
+      "source": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf",
+      "history": "Long live history; fee deducted from model gross CAGR."
+    },
+    {
+      "ticker": "BINC",
+      "name": "iShares Flexible Income Active ETF",
+      "class": "Flexible income",
+      "fee": 0.4,
+      "grossCagr": 6.9,
+      "vol": 10,
+      "historicalDD": 12,
+      "forwardDD": 10,
+      "relevance": 86,
+      "weight": 18,
+      "reason": "Income ballast and flexible duration/credit implementation",
+      "notRelevant": "Credit spreads widen without compensated yield, duration positioning is persistently adverse, or fee waiver/strategy changes.",
+      "cadence": "Daily NAV/spreads; monthly holdings; prospectus on change",
+      "source": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
+      "history": "Inception 2023; no 10-year live fund history."
+    },
+    {
+      "ticker": "BMNR",
+      "name": "BitMine Immersion Technologies, Inc.",
+      "class": "Digital-asset equity",
+      "fee": 0,
+      "grossCagr": 25,
+      "vol": 75,
+      "historicalDD": 62,
+      "forwardDD": 55,
+      "relevance": 42,
+      "weight": 14,
+      "reason": "High-upside, explicitly bounded satellite tied to digital-asset conditions",
+      "notRelevant": "Digital-asset treasury economics weaken, funding dilution materially rises, liquidity falls, or SEC filings change the risk profile.",
+      "cadence": "Daily price/liquidity; every SEC filing; weekly treasury/counterparty review",
+      "source": "https://www.sec.gov/edgar/browse/?CIK=0001829311",
+      "history": "Public-company history is not a reliable 10-year analogue; scenario input only."
+    }
   ],
   "sources": [
-    {"name":"BAI official fund page & prospectus","url":"https://www.ishares.com/us/products/339081/fund"},
-    {"name":"QQQ official fund page","url":"https://www.invesco.com/qqq-etf/en/home.html"},
-    {"name":"IEMG official fund page","url":"https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf"},
-    {"name":"BINC official fund page & prospectus","url":"https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf"},
-    {"name":"BMNR SEC EDGAR company page","url":"https://www.sec.gov/edgar/browse/?CIK=0001829311","validation_url":"https://data.sec.gov/submissions/CIK0001829311.json","automation":"restricted"},
-    {"name":"Federal Reserve economic data (FRED)","url":"https://fred.stlouisfed.org/"},
-    {"name":"U.S. Treasury yield-curve data","url":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve","validation_url":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve"}
+    {
+      "name": "BAI official fund page & prospectus",
+      "url": "https://www.ishares.com/us/products/339081/fund"
+    },
+    {
+      "name": "QQQ official fund page",
+      "url": "https://www.invesco.com/qqq-etf/en/home.html"
+    },
+    {
+      "name": "IEMG official fund page",
+      "url": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf"
+    },
+    {
+      "name": "BINC official fund page & prospectus",
+      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf"
+    },
+    {
+      "name": "BMNR SEC EDGAR company page",
+      "url": "https://www.sec.gov/edgar/browse/?CIK=0001829311",
+      "validation_url": "https://data.sec.gov/submissions/CIK0001829311.json",
+      "automation": "restricted"
+    },
+    {
+      "name": "Federal Reserve economic data (FRED)",
+      "url": "https://fred.stlouisfed.org/"
+    },
+    {
+      "name": "U.S. Treasury yield-curve data",
+      "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve",
+      "validation_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve"
+    }
   ]
 }
