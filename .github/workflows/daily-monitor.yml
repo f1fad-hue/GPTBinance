@@ -1,0 +1,23 @@
+name: Daily source validation and macro refresh
+on:
+  schedule:
+    - cron: '20 2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate-and-refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - name: Refresh primary macro data and validate source availability
+        run: python scripts/update_data.py
+      - name: Commit daily data refresh
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/market-data.json
+          git diff --cached --quiet || git commit -m 'chore: refresh validated macro data'
+          git push

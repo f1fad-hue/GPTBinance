@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#07111f" />
+  <meta name="description" content="A transparent, research-led portfolio scenario dashboard." />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+  <title>Portfolio Signal Lab</title>
+</head>
+<body>
+  <header class="topbar"><div><p class="eyebrow">10-YEAR SCENARIO LAB</p><h1>Portfolio Signal Lab</h1></div><button id="refresh" class="ghost" aria-label="Refresh dashboard">↻</button></header>
+  <main>
+    <section class="notice"><strong>Educational scenario model — not investment advice.</strong> Forecasts, sentiment and simulations are uncertain. BAI and BINC do not have 10 years of live fund history; their 10-year figures are model assumptions, not backtests.</section>
+    <section class="hero grid">
+      <article class="score-card"><p class="eyebrow">OPTIMIZED PORTFOLIO RATE</p><div class="score"><span id="portfolio-rate">—</span><small>/5</small></div><p id="rate-copy">Loading model…</p><div class="meter"><i id="rate-meter"></i></div><div class="chips"><span id="horizon-chip">10-year horizon</span><span id="asof-chip">—</span></div></article>
+      <article class="stats"><div><span>Projected net CAGR</span><b id="cagr">—</b></div><div><span>Composite drawdown</span><b id="drawdown">—</b></div><div><span>Applied DD cap</span><b id="dd-cap">—</b></div><div><span>Monte Carlo P50</span><b id="mc-p50">—</b></div></article>
+    </section>
+
+    <section><div class="section-heading"><div><p class="eyebrow">MODEL OUTPUT</p><h2>Max-growth allocation</h2></div><span id="validation-status" class="pill">Validating…</span></div><div id="allocation" class="allocation-grid"></div></section>
+
+    <section class="card"><div class="section-heading"><div><p class="eyebrow">MACRO SENTIMENT</p><h2>3 / 6 / 12 month heatmap</h2></div><span class="muted">Relevant drivers only</span></div><div id="heatmap" class="heatmap"></div><p class="caption">Scores combine direction, persistence and portfolio sensitivity. Green supports risk assets; amber is mixed; red is restrictive. A macro score is a model signal, not a prediction.</p></section>
+
+    <section><div class="section-heading"><div><p class="eyebrow">SCENARIO MIX</p><h2>Rate-conditioned allocations</h2></div></div><div id="donuts" class="donut-grid"></div></section>
+
+    <section class="card"><div class="section-heading"><div><p class="eyebrow">MONTE CARLO</p><h2>10-year wealth paths</h2></div><span id="mc-note" class="muted">10,000 deterministic paths</span></div><div id="fan-chart" class="fan-chart" role="img" aria-label="Monte Carlo percentile fan chart"></div><div class="legend"><span><i class="p10"></i>P10</span><span><i class="p50"></i>P50</span><span><i class="p90"></i>P90</span></div><p class="caption">Lognormal paths use the displayed net-return, volatility, and correlation assumptions. The result is a distribution of hypothetical outcomes—not a promise.</p></section>
+
+    <section><div class="section-heading"><div><p class="eyebrow">INSTRUMENT SLIDES</p><h2>Net-growth & relevance review</h2></div></div><div id="slides" class="slide-grid"></div></section>
+
+    <section class="card report"><p class="eyebrow">RATIONALE</p><h2>Allocation conclusion</h2><p id="rationale">Loading…</p><h3>Relevance-monitoring system</h3><div class="table-wrap"><table><thead><tr><th>Instrument</th><th>Current status</th><th>Relevance</th><th>Not relevant if…</th><th>Cadence</th></tr></thead><tbody id="monitoring"></tbody></table></div></section>
+
+    <section class="card sources"><p class="eyebrow">DATA GOVERNANCE</p><h2>Sources, math & limits</h2><div id="sources"></div><details><summary>Methodology</summary><p>Expected net return = scenario gross CAGR − stated annual fund fee (zero for the individual stock). Composite drawdown = 60% historical proxy + 40% forward median simulation drawdown. The displayed cap is then applied according to the portfolio rate: 3.00–3.99 → 20%; 4.00–4.99 → 25%; 5.00 → 30%.</p><p>The optimizer maximizes net CAGR subject to long-only weights, required holdings, 10%–45% single-asset bounds, the score-derived drawdown cap, and the listed macro tilts. It uses transparent model assumptions because a reliable 10-year live return series does not exist for every required instrument.</p></details></section>
+  </main>
+  <footer>Built for transparent scenario analysis. Last daily validation: <span id="validated-at">—</span>.</footer>
+  <script src="app.js"></script>
+</body>
+</html>
