@@ -77,6 +77,22 @@ def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[st
     evidence.append({"source":"claim ledger","status":"pass","claims":len(claims),"note":"Forecasts and relevance scores are labeled model inputs, not verified facts."})
     return evidence,hard_failures
 
+def yahoo_price_evidence(assets: list[dict]) -> list[dict]:
+    """Optional secondary quote check; never a source of portfolio claims or inputs."""
+    evidence=[]
+    for asset in assets:
+        ticker=asset["ticker"]
+        try:
+            payload=json.loads(get(f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=5d&interval=1d"))
+            result=(payload.get("chart",{}).get("result") or [])[0]
+            meta=result.get("meta",{})
+            price=meta.get("regularMarketPrice")
+            if meta.get("symbol")!=ticker or not isinstance(price,(int,float)) or price<=0: raise RuntimeError("missing or invalid quote")
+            evidence.append({"source":f"Yahoo Finance secondary market-price check — {ticker}","status":"pass","price":price,"currency":meta.get("currency")})
+        except Exception as exc:
+            evidence.append({"source":f"Yahoo Finance secondary market-price check — {ticker}","status":"manual-review","reason":f"Supplemental public quote unavailable: {exc}. This does not replace or invalidate primary-source checks."})
+    return evidence
+
 def main() -> int:
     payload=json.loads(DATA.read_text(encoding="utf-8")); claims=json.loads(CLAIMS.read_text(encoding="utf-8"))["claims"]
     failures=[]
@@ -86,7 +102,7 @@ def main() -> int:
         except Exception as exc: failures.append(f"FRED {series}: {exc}")
     try: checks=math_checks(payload)
     except Exception as exc: checks=[{"name":"math and schema","status":"fail","reason":str(exc)}]; failures.append(f"math: {exc}")
-    evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures)
+    evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures); evidence.extend(yahoo_price_evidence(payload["assets"]))
     now=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z'); payload["asOf"]=now[:10]
     manual=any(x["status"]=="manual-review" for x in evidence)
     status="PASS — primary-source, macro and math checks completed" if not failures and not manual else ("PASS WITH MANUAL REVIEW — automated checks completed; restricted source remains queued for human review" if not failures else "REVIEW REQUIRED — "+" | ".join(failures))
