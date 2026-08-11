@@ -21,8 +21,8 @@
     {"name":"QQQ official fund page","url":"https://www.invesco.com/qqq-etf/en/home.html"},
     {"name":"IEMG official fund page","url":"https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf"},
     {"name":"BINC official fund page & prospectus","url":"https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf"},
-    {"name":"BMNR SEC EDGAR company page","url":"https://www.sec.gov/edgar/browse/?CIK=0001829311"},
+    {"name":"BMNR SEC EDGAR company page","url":"https://www.sec.gov/edgar/browse/?CIK=0001829311","validation_url":"https://data.sec.gov/submissions/CIK0001829311.json"},
     {"name":"Federal Reserve economic data (FRED)","url":"https://fred.stlouisfed.org/"},
-    {"name":"U.S. Treasury yield-curve data","url":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates"}
+    {"name":"U.S. Treasury yield-curve data","url":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve","validation_url":"https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve"}
   ]
 }

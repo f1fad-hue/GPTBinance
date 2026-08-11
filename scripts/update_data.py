@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 ROOT = pathlib.Path(__file__).parents[1]
 DATA = ROOT / "data" / "market-data.json"
-HEADERS = {"User-Agent": "PortfolioSignalLab/1.0 research-contact: github.com/f1fad-hue/GPTBinance"}
+HEADERS = {"User-Agent": "f1fad-hue GPTBinance PortfolioSignalLab contact@f1fad-hue.github.io", "Accept": "application/json, text/html;q=0.9, */*;q=0.8"}
 FRED = {"Inflation trend":"CPIAUCSL","Policy & real rates":"EFFR","Yield curve":"T10Y2Y","Credit spreads":"BAMLH0A0HYM2","Labor & activity":"UNRATE","Market volatility":"VIXCLS"}
 
 def get(url: str) -> str:
@@ -52,7 +52,7 @@ def main() -> int:
     payload=json.loads(DATA.read_text(encoding="utf-8")); failed=[]
     # Validate all displayed primary source URLs; FRED fields are refreshed below.
     for source in payload["sources"]:
-        try: get(source["url"])
+        try: get(source.get("validation_url", source["url"]))
         except Exception as exc: failed.append(f"{source['name']}: {exc}")
     for driver,series in FRED.items():
         try:
