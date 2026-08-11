@@ -42,11 +42,11 @@ def composite_dd(asset: dict) -> float: return .6*asset["historicalDD"]+.4*asset
 def cap_from_rate(rate: float) -> float: return 30 if rate>=5 else 25 if rate>=4 else 20
 
 def optimize(assets: list[dict], cap: float) -> list[float]:
-    floor=3; dds=[composite_dd(x) for x in assets]; net=[x["grossCagr"]-x["fee"] for x in assets]
+    floor=5; step=5; dds=[composite_dd(x) for x in assets]; net=[x["grossCagr"]-x["fee"] for x in assets]
     ballast=min(range(len(assets)),key=lambda i:dds[i]); weights=[float(floor)]*len(assets); remaining=100-floor*len(assets)
     candidates=[i for i in range(len(assets)) if i!=ballast]
     best=max(candidates,key=lambda i:(net[i]-net[ballast])/(dds[i]-dds[ballast]))
-    used=sum(w*d for w,d in zip(weights,dds)); growth=max(0,min(remaining,(cap*100-used-remaining*dds[ballast])/(dds[best]-dds[ballast])))
+    used=sum(w*d for w,d in zip(weights,dds)); raw_growth=max(0,min(remaining,(cap*100-used-remaining*dds[ballast])/(dds[best]-dds[ballast]))); growth=math.floor(raw_growth/step)*step
     weights[best]+=growth; weights[ballast]+=remaining-growth
     return weights
 
@@ -58,7 +58,7 @@ def math_checks(payload: dict) -> list[dict]:
     macro_avg=sum((x["m3"]+x["m6"]+x["m12"])/3 for x in macro)/len(macro)
     rate=round(max(1,min(5,2.2+macro_avg*.47)),1); cap=cap_from_rate(rate); weights=optimize(assets,cap)
     weighted_dd=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
-    assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001
+    assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%5==0 for w in weights)
     return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"macro bounds","status":"pass"},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
 def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[str]]:
