@@ -1,11 +1,11 @@
 {
-  "checkedAt": "2026-08-12T15:45:10Z",
+  "checkedAt": "2026-08-12T15:59:45Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
       "source": "BAI official fund page & prospectus",
       "status": "pass",
-      "bytes": 1547355,
+      "bytes": 1547494,
       "identityMarkers": [
         "BAI",
         "iShares A.I. Innovation and Tech Active ETF"
@@ -27,7 +27,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1643944,
+      "bytes": 1644083,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -38,7 +38,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1686442,
+      "bytes": 1686581,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -62,7 +62,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867807,
+      "bytes": 1867810,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
