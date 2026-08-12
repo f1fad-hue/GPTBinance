@@ -2,7 +2,7 @@
   "asOf": "2026-08-12",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-12T16:05:54Z"
+    "checkedAt": "2026-08-12T16:54:13Z"
   },
   "macro": [
     {
@@ -95,7 +95,8 @@
       "historicalDD": 35,
       "forwardMedianDD": 29,
       "relevance": 83,
-      "weight": 24,
+      "monitorStatus": "Relevant",
+      "monitorNote": "Review on trigger",
       "reason": "AI earnings breadth and capital-spending persistence",
       "notRelevant": "AI revenue adoption stalls, manager\u2019s mandate drifts, or fee waiver ends with sustained net-return disadvantage.",
       "cadence": "Daily price/liquidity; quarterly holdings & prospectus",
@@ -112,7 +113,8 @@
       "historicalDD": 33,
       "forwardMedianDD": 27,
       "relevance": 94,
-      "weight": 30,
+      "monitorStatus": "Relevant",
+      "monitorNote": "Review on trigger",
       "reason": "Liquid core growth exposure with durable earnings breadth",
       "notRelevant": "Nasdaq-100 rules or concentration materially change, or earnings breadth and liquidity deteriorate persistently.",
       "cadence": "Daily price/liquidity; quarterly index and prospectus",
@@ -129,7 +131,8 @@
       "historicalDD": 36,
       "forwardMedianDD": 30,
       "relevance": 71,
-      "weight": 14,
+      "monitorStatus": "Relevant",
+      "monitorNote": "Review on trigger",
       "reason": "Diversifies US mega-cap growth and participates in global activity",
       "notRelevant": "Persistent USD strength, material index-access impairment, or emerging-market earnings/reform deterioration.",
       "cadence": "Daily USD/liquidity; monthly macro; quarterly holdings",
@@ -146,7 +149,8 @@
       "historicalDD": 12,
       "forwardMedianDD": 10,
       "relevance": 86,
-      "weight": 18,
+      "monitorStatus": "Relevant",
+      "monitorNote": "Review on trigger",
       "reason": "Income ballast and flexible duration/credit implementation",
       "notRelevant": "Credit spreads widen without compensated yield, duration positioning is persistently adverse, or fee waiver/strategy changes.",
       "cadence": "Daily NAV/spreads; monthly holdings; prospectus on change",
@@ -163,7 +167,8 @@
       "historicalDD": 62,
       "forwardMedianDD": 55,
       "relevance": 42,
-      "weight": 14,
+      "monitorStatus": "Watch",
+      "monitorNote": "Caution gate active",
       "reason": "High-upside, explicitly bounded satellite tied to digital-asset conditions",
       "notRelevant": "Digital-asset treasury economics weaken, funding dilution materially rises, liquidity falls, or SEC filings change the risk profile.",
       "cadence": "Daily price/liquidity; every SEC filing; weekly treasury/counterparty review",

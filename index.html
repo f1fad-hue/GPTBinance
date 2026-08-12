@@ -7,7 +7,7 @@
   <meta name="description" content="A concise, research-led portfolio scenario dashboard." />
   <link rel="manifest" href="manifest.json?v=20260811-2" />
   <link rel="stylesheet" href="styles.css?v=20260811-2" />
-  <style>.donut-labels{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 7px}.donut-labels .slice-label{display:inline-flex;align-items:center;white-space:nowrap}.donut-labels i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;flex:0 0 7px}.heatmap .driver b,.heatmap .driver small{display:block}.heatmap .driver b{color:var(--ink)}.heatmap .driver small{font-size:.58rem;line-height:1.25;margin-top:2px}@media(max-width:600px){.donut-labels{justify-content:flex-start}.heatmap{grid-template-columns:minmax(145px,1.6fr) repeat(3,1fr)}.heatmap div{padding:6px 4px}}</style>
+  <style>.donut-labels{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 7px}.donut-labels .slice-label{display:inline-flex;align-items:center;white-space:nowrap}.donut-labels i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;flex:0 0 7px}.heatmap .driver b,.heatmap .driver small{display:block}.heatmap .driver b{color:var(--ink)}.heatmap .driver small{font-size:.58rem;line-height:1.25;margin-top:2px}.status.watch{color:var(--gold)}.status.not-relevant{color:var(--coral)}@media(max-width:600px){.donut-labels{justify-content:flex-start}.heatmap{grid-template-columns:minmax(145px,1.6fr) repeat(3,1fr)}.heatmap div{padding:6px 4px}}</style>
   <title>Portfolio Signal Lab</title>
 </head>
 <body>
@@ -40,10 +40,10 @@
 
     <section class="page" data-page="monitor">
       <section class="card"><h2>Relevance monitor</h2><p class="caption">Current status, stop-use triggers, and review cadence.</p><div class="table-wrap"><table><thead><tr><th>Fund</th><th>Status</th><th>Score</th><th>Not relevant if...</th><th>Review</th></tr></thead><tbody id="monitoring"></tbody></table></div></section>
-      <section class="card sources"><h2>Sources & method</h2><div id="sources"></div><details><summary>Math and limits</summary><p>Net return = gross CAGR input minus stated fund fee. Composite drawdown = 60% historical proxy + 40% forward median simulation drawdown. The model applies a 20% cap at rate 3.00-3.99, 25% at 4.00-4.99, and 30% at 5.00.</p><p>BAI and BINC do not have 10 years of live history; those projections are model inputs, not backtests.</p></details></section>
+      <section class="card sources"><h2>Sources & method</h2><div id="sources"></div><details><summary>Math and limits</summary><p>Net return = gross CAGR input minus stated fund fee. Composite drawdown = 60% historical proxy + 40% forward median simulation drawdown. An exact 5%-grid search maximizes modeled net CAGR while keeping every holding at 5% or more. The model applies a 20% cap at rate 3.00-3.99, 25% at 4.00-4.99, and 30% at 5.00.</p><p>BAI and BINC do not have 10 years of live history; those projections are model inputs, not backtests.</p></details></section>
     </section>
   </main>
   <footer>Last validation: <span id="validated-at">-</span></footer>
-  <script src="app.js?v=20260812-8"></script>
+  <script src="app.js?v=20260813-1"></script>
 </body>
 </html>

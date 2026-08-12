@@ -39,6 +39,8 @@ def main() -> None:
     assert set(assets)=={"BAI","QQQ","IEMG","BINC","BMNR"}
     assert all("historicalDD" in asset and "forwardMedianDD" in asset for asset in assets.values())
     assert all("forwardDD" not in asset for asset in assets.values())
+    assert all("weight" not in asset for asset in assets.values()), "stale stored allocations must not override the optimizer"
+    assert all(asset.get("monitorStatus") and asset.get("monitorNote") for asset in assets.values())
     assert len(sources)==len(data["sources"])
     assert len({claim["id"] for claim in claims})==len(claims)
     for source in sources.values():
@@ -62,6 +64,12 @@ def main() -> None:
     assert report.exists(), "today's evidence report is missing"
     evidence=json.loads(report.read_text(encoding="utf-8"))
     assert not evidence["failures"] and len(evidence["claimEvidence"])==len(claims)
+    math_evidence={item["name"]:item for item in evidence["mathChecks"]}
+    assert math_evidence["drawdown composite weights"]["historicalWeight"]==0.60
+    assert math_evidence["drawdown composite weights"]["forwardMedianWeight"]==0.40
+    assert math_evidence["10-year Monte Carlo simulation"]["paths"]==10_000
+    assert math_evidence["10-year Monte Carlo simulation"]["years"]==10
+    assert set(math_evidence["exact max-CAGR scenario allocations"]["allocations"])=={"3","4","5"}
     source_evidence={item["source"]:item for item in evidence["sourceEvidence"]}
     for ticker in ("BAI","QQQ","IEMG","BINC"):
         source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
@@ -69,7 +77,12 @@ def main() -> None:
 
     parser=IdParser(); parser.feed((ROOT/"index.html").read_text(encoding="utf-8"))
     assert REQUIRED_DOM_IDS <= parser.ids, f"missing dashboard elements: {REQUIRED_DOM_IDS-parser.ids}"
-    assert "fetch('data/market-data.json'" in (ROOT/"app.js").read_text(encoding="utf-8")
+    app=(ROOT/"app.js").read_text(encoding="utf-8")
+    assert "fetch('data/market-data.json'" in app
+    assert "function optimize" in app and "No feasible allocation" in app
+    assert not (ROOT/"sw.js").exists(), "obsolete service worker should remain removed"
+    manifest=json.loads((ROOT/"manifest.json").read_text(encoding="utf-8"))
+    assert manifest["display"]=="standalone" and manifest["start_url"]=="."
     print("PASS — repository schema, claims, math, report, and dashboard sanity checks completed")
 
 

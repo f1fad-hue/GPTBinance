@@ -5,7 +5,7 @@ The audit distinguishes primary-source facts from transparent model inputs. It
 never upgrades an unavailable source or a forecast into a verified fact.
 """
 from __future__ import annotations
-import csv, html, io, json, math, pathlib, re, statistics, sys, time, urllib.request
+import csv, html, io, itertools, json, math, pathlib, re, statistics, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
 
 ROOT = pathlib.Path(__file__).parents[1]
@@ -27,6 +27,10 @@ FRED = {
 }
 HISTORICAL_DD_WEIGHT = 0.60
 FORWARD_MEDIAN_DD_WEIGHT = 0.40
+MIN_WEIGHT = 5
+WEIGHT_STEP = 5
+MONTE_CARLO_PATHS = 10_000
+MONTE_CARLO_YEARS = 10
 
 def get(url: str) -> str:
     last_error: Exception | None = None
@@ -82,27 +86,60 @@ def composite_dd(asset: dict) -> float:
 def cap_from_rate(rate: float) -> float: return 30 if rate>=5 else 25 if rate>=4 else 20
 
 def optimize(assets: list[dict], cap: float) -> list[float]:
-    floor=5; step=5; dds=[composite_dd(x) for x in assets]; net=[x["grossCagr"]-x["fee"] for x in assets]
-    ballast=min(range(len(assets)),key=lambda i:dds[i]); weights=[float(floor)]*len(assets); remaining=100-floor*len(assets)
-    candidates=[i for i in range(len(assets)) if i!=ballast]
-    best=max(candidates,key=lambda i:(net[i]-net[ballast])/(dds[i]-dds[ballast]))
-    used=sum(w*d for w,d in zip(weights,dds)); raw_growth=max(0,min(remaining,(cap*100-used-remaining*dds[ballast])/(dds[best]-dds[ballast]))); growth=math.floor(raw_growth/step)*step
-    weights[best]+=growth; weights[ballast]+=remaining-growth
-    return weights
+    """Exhaustively maximize net CAGR on the 5% allocation grid."""
+    units=(100-MIN_WEIGHT*len(assets))//WEIGHT_STEP; best=None
+    for prefix in itertools.product(range(units+1),repeat=len(assets)-1):
+        used=sum(prefix)
+        if used>units: continue
+        extras=(*prefix,units-used)
+        weights=[float(MIN_WEIGHT+WEIGHT_STEP*x) for x in extras]
+        drawdown=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
+        if drawdown>cap+1e-9: continue
+        growth=sum(w*(a["grossCagr"]-a["fee"]) for w,a in zip(weights,assets))/100
+        candidate=(growth,-drawdown,weights)
+        if best is None or candidate[:2]>best[:2]: best=candidate
+    if best is None: raise RuntimeError(f"no feasible allocation under {cap}% drawdown cap")
+    return best[2]
+
+def monte_carlo_summary(assets: list[dict], weights: list[float]) -> dict:
+    cagr=sum(w*(a["grossCagr"]-a["fee"]) for w,a in zip(weights,assets))/100
+    volatility=sum(w*a["vol"] for w,a in zip(weights,assets))/100
+    state=107; mask=0xFFFFFFFF
+    def browser_random() -> float:
+        nonlocal state
+        state=(state+0x6D2B79F5)&mask
+        value=((state^(state>>15))*(1|state))&mask
+        value=(value^(value+(((value^(value>>7))*(61|value))&mask)))&mask
+        return ((value^(value>>14))&mask)/4294967296
+    terminals=[]
+    for _ in range(MONTE_CARLO_PATHS):
+        value=1.0
+        for _ in range(MONTE_CARLO_YEARS):
+            z=(sum(browser_random() for _ in range(6))-3)*math.sqrt(2)
+            value*=math.exp(cagr/100-.5*(volatility/100)**2+(volatility/100)*z)
+        terminals.append(value)
+    terminals.sort(); p10=terminals[999]; p50=terminals[4999]; p90=terminals[8999]
+    return {"paths":MONTE_CARLO_PATHS,"years":MONTE_CARLO_YEARS,"p10Terminal":round(p10,3),"p50Terminal":round(p50,3),"p90Terminal":round(p90,3),"p50Annualized":round((p50**(1/MONTE_CARLO_YEARS)-1)*100,3)}
 
 def math_checks(payload: dict) -> list[dict]:
     assets=payload["assets"]; macro=payload["macro"]
+    required={"BAI","QQQ","IEMG","BINC","BMNR"}
     assert math.isclose(HISTORICAL_DD_WEIGHT,0.60) and math.isclose(FORWARD_MEDIAN_DD_WEIGHT,0.40)
     assert math.isclose(HISTORICAL_DD_WEIGHT+FORWARD_MEDIAN_DD_WEIGHT,1.0)
-    assert {x["ticker"] for x in assets}=={"BAI","QQQ","IEMG","BINC","BMNR"}
-    assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 for x in assets)
+    assert {x["ticker"] for x in assets}==required
+    assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 and 1<=x["relevance"]<=100 for x in assets)
+    assert all(x["monitorStatus"] in {"Relevant","Watch","Not relevant"} and x["monitorNote"] and x["notRelevant"] and x["cadence"] for x in assets)
     assert len(macro)==10 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
+    assert all(x["why"] and ("all five holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
     overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
     macro_avg=sum((x["m3"]+x["m6"]+x["m12"])/3 for x in macro)/len(macro)
-    rate=round(max(1,min(5,2.2+macro_avg*.47)),1); cap=cap_from_rate(rate); weights=optimize(assets,cap)
+    scenarios={scenario:optimize(assets,cap_from_rate(scenario)) for scenario in (3,4,5)}
+    rate=round(max(1,min(5,2.2+macro_avg*.47)),1); cap=cap_from_rate(rate); weights=scenarios[5 if rate>=5 else 4 if rate>=4 else 3]
     weighted_dd=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
-    assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%5==0 for w in weights)
-    return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"drawdown composite weights","status":"pass","historicalWeight":HISTORICAL_DD_WEIGHT,"forwardMedianWeight":FORWARD_MEDIAN_DD_WEIGHT},{"name":"ten distinct core macro-driver bounds","status":"pass"},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
+    assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%WEIGHT_STEP==0 and w>=MIN_WEIGHT for w in weights)
+    simulation=monte_carlo_summary(assets,weights); assert 0<simulation["p10Terminal"]<simulation["p50Terminal"]<simulation["p90Terminal"]
+    scenario_check={str(scenario):dict(zip([a["ticker"] for a in assets],[round(w) for w in scenario_weights])) for scenario,scenario_weights in scenarios.items()}
+    return [{"name":"required holdings","status":"pass"},{"name":"input and relevance bounds","status":"pass"},{"name":"drawdown composite weights","status":"pass","historicalWeight":HISTORICAL_DD_WEIGHT,"forwardMedianWeight":FORWARD_MEDIAN_DD_WEIGHT},{"name":"ten distinct portfolio-related macro drivers","status":"pass"},{"name":"exact max-CAGR scenario allocations","status":"pass","allocations":scenario_check},{"name":"10-year Monte Carlo simulation","status":"pass",**simulation},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
 def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[dict],list[str]]:
     evidence=[]; claim_evidence=[]; hard_failures=[]; source_status={}
