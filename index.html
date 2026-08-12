@@ -7,7 +7,7 @@
   <meta name="description" content="A concise, research-led portfolio scenario dashboard." />
   <link rel="manifest" href="manifest.json?v=20260811-2" />
   <link rel="stylesheet" href="styles.css?v=20260811-2" />
-  <style>.donut-labels{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 7px}.donut-labels .slice-label{display:inline-flex;align-items:center;white-space:nowrap}.donut-labels i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;flex:0 0 7px}@media(max-width:600px){.donut-labels{justify-content:flex-start}}</style>
+  <style>.donut-labels{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 7px}.donut-labels .slice-label{display:inline-flex;align-items:center;white-space:nowrap}.donut-labels i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;flex:0 0 7px}.heatmap .driver b,.heatmap .driver small{display:block}.heatmap .driver b{color:var(--ink)}.heatmap .driver small{font-size:.58rem;line-height:1.25;margin-top:2px}@media(max-width:600px){.donut-labels{justify-content:flex-start}.heatmap{grid-template-columns:minmax(145px,1.6fr) repeat(3,1fr)}.heatmap div{padding:6px 4px}}</style>
   <title>Portfolio Signal Lab</title>
 </head>
 <body>
@@ -29,7 +29,7 @@
     </section>
 
     <section class="page" data-page="macro">
-      <section class="card"><div class="section-heading"><h2>Macro sentiment</h2><span class="muted">7 core drivers · 3 / 6 / 12 months</span></div><div id="heatmap" class="heatmap"></div><p class="caption">Relevant drivers only; green supports risk assets, amber is mixed, red is restrictive.</p></section>
+      <section class="card"><div class="section-heading"><h2>Macro sentiment</h2><span class="muted">10 distinct core drivers · 3 / 6 / 12 months</span></div><div id="heatmap" class="heatmap"></div><p class="caption">Maximum non-duplicative set related to these allocations; green supports risk assets, amber is mixed, red is restrictive.</p></section>
       <section id="bmnr-overlay" class="card compact"></section>
     </section>
 
@@ -44,6 +44,6 @@
     </section>
   </main>
   <footer>Last validation: <span id="validated-at">-</span></footer>
-  <script src="app.js?v=20260812-6"></script>
+  <script src="app.js?v=20260812-8"></script>
 </body>
 </html>

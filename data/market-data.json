@@ -2,57 +2,78 @@
   "asOf": "2026-08-12",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-12T10:10:34Z"
+    "checkedAt": "2026-08-12T10:51:45Z"
   },
   "macro": [
     {
       "driver": "Inflation trend",
-      "why": "Multiple compression/real income",
+      "why": "BAI/QQQ valuation multiples, BINC real income and IEMG purchasing power",
       "m3": 3.4,
       "m6": 3.3,
       "m12": 3.2
     },
     {
-      "driver": "Policy & real rates",
-      "why": "Growth discount rate",
+      "driver": "Policy rates",
+      "why": "BAI/QQQ discount rate, BINC duration and economy-wide financing cost",
       "m3": 3.5,
       "m6": 3.5,
-      "m12": 3.5
+      "m12": 3.7
+    },
+    {
+      "driver": "Real yields",
+      "why": "Distinct valuation hurdle for BAI/QQQ and duration signal for BINC",
+      "m3": 3.3,
+      "m6": 3.3,
+      "m12": 3.3
     },
     {
       "driver": "Yield curve",
-      "why": "Growth and credit transmission",
-      "m3": 3.8,
-      "m6": 3.7,
-      "m12": 4.3
+      "why": "Growth-cycle and credit transmission for BAI, QQQ, IEMG and BINC",
+      "m3": 3.5,
+      "m6": 3.3,
+      "m12": 3.5
     },
     {
       "driver": "Credit spreads",
-      "why": "BINC income risk / equity stress",
-      "m3": 3.9,
-      "m6": 4.8,
-      "m12": 4.1
+      "why": "BINC credit compensation and equity-stress signal for BAI/QQQ/IEMG",
+      "m3": 3.6,
+      "m6": 3.7,
+      "m12": 3.7
     },
     {
       "driver": "Labor & activity",
-      "why": "Earnings and EM demand",
+      "why": "Earnings demand for BAI/QQQ and global activity spillover to IEMG",
+      "m3": 3.8,
+      "m6": 3.9,
+      "m12": 3.8
+    },
+    {
+      "driver": "Financial conditions",
+      "why": "Broad leverage and funding conditions affecting all five holdings",
+      "m3": 3.6,
+      "m6": 3.4,
+      "m12": 3.5
+    },
+    {
+      "driver": "System liquidity",
+      "why": "Liquidity support for BAI/QQQ risk appetite, IEMG flows and BMNR funding",
+      "m3": 3.8,
+      "m6": 4.1,
+      "m12": 4.4
+    },
+    {
+      "driver": "Market volatility",
+      "why": "High-beta and correlation shock risk for BAI, QQQ, IEMG and BMNR",
       "m3": 3.7,
       "m6": 3.7,
       "m12": 3.5
     },
     {
-      "driver": "Market volatility",
-      "why": "High-beta concentration risk",
-      "m3": 3.6,
-      "m6": 3.7,
-      "m12": 4.4
-    },
-    {
       "driver": "USD / EM FX trend",
       "why": "USD strength can tighten EM financial conditions and weigh on IEMG",
-      "m3": 3.8,
-      "m6": 3.9,
-      "m12": 4.4
+      "m3": 3.4,
+      "m6": 3.4,
+      "m12": 3.7
     }
   ],
   "bmnrOverlay": {

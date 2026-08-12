@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-12T10:10:34Z",
+  "checkedAt": "2026-08-12T10:51:45Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -30,12 +30,12 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58289
+      "bytes": 58295
     },
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867808
+      "bytes": 1867809
     },
     {
       "source": "claim ledger",
@@ -89,7 +89,7 @@
       "status": "pass"
     },
     {
-      "name": "seven core macro-driver bounds",
+      "name": "ten distinct core macro-driver bounds",
       "status": "pass"
     },
     {
@@ -100,9 +100,9 @@
     {
       "name": "max-growth drawdown constraint",
       "status": "pass",
-      "rate": 4.0,
-      "cap": 25,
-      "computed_drawdown": 24.25
+      "rate": 3.9,
+      "cap": 20,
+      "computed_drawdown": 19.97
     }
   ],
   "failures": [],

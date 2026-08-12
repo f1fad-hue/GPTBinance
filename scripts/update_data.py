@@ -6,14 +6,25 @@ never upgrades an unavailable source or a forecast into a verified fact.
 """
 from __future__ import annotations
 import csv, io, json, math, os, pathlib, statistics, sys, urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 ROOT = pathlib.Path(__file__).parents[1]
 DATA = ROOT / "data" / "market-data.json"
 CLAIMS = ROOT / "data" / "claims.json"
 REPORTS = ROOT / "reports" / "daily"
 HEADERS = {"User-Agent": "f1fad-hue GPTBinance PortfolioSignalLab contact@f1fad-hue.github.io", "Accept": "application/json, text/html;q=0.9, */*;q=0.8"}
-FRED = {"Inflation trend":"CPIAUCSL","Policy & real rates":"EFFR","Yield curve":"T10Y2Y","Credit spreads":"BAMLH0A0HYM2","Labor & activity":"UNRATE","Market volatility":"VIXCLS","USD / EM FX trend":"DTWEXBGS"}
+FRED = {
+    "Inflation trend":"CPIAUCSL",
+    "Policy rates":"EFFR",
+    "Real yields":"DFII10",
+    "Yield curve":"T10Y2Y",
+    "Credit spreads":"BAMLH0A0HYM2",
+    "Labor & activity":"UNRATE",
+    "Financial conditions":"NFCI",
+    "System liquidity":"M2SL",
+    "Market volatility":"VIXCLS",
+    "USD / EM FX trend":"DTWEXBGS",
+}
 
 def get(url: str) -> str:
     request = urllib.request.Request(url, headers=HEADERS)
@@ -21,21 +32,26 @@ def get(url: str) -> str:
         if response.status != 200: raise RuntimeError(f"HTTP {response.status}")
         return response.read().decode("utf-8", errors="replace")
 
-def fred_values(series: str) -> list[float]:
+def fred_values(series: str) -> list[tuple[date,float]]:
     rows = csv.DictReader(io.StringIO(get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}")))
-    values=[]
+    values=[]; date_column=rows.fieldnames[0]
     for row in rows:
-        try: values.append(float(row.get(series, "")))
-        except ValueError: pass
+        try: values.append((date.fromisoformat(row[date_column]),float(row.get(series, ""))))
+        except (TypeError,ValueError): pass
     if len(values)<13: raise RuntimeError(f"too little data for {series}")
     return values
 
-def score(series: str, values: list[float]) -> tuple[float,float,float]:
-    inverse=series in {"CPIAUCSL","EFFR","BAMLH0A0HYM2","UNRATE","VIXCLS","DTWEXBGS"}
+def score(series: str, values: list[tuple[date,float]]) -> tuple[float,float,float]:
+    inverse=series in {"CPIAUCSL","EFFR","DFII10","BAMLH0A0HYM2","UNRATE","NFCI","VIXCLS","DTWEXBGS"}
+    latest_date,latest_value=values[-1]
+    recent=[value for observed,value in values if observed>=latest_date-timedelta(days=5*365)]
+    scale=max(statistics.pstdev(recent),.05)
     def one(months: int) -> float:
-        change=values[-1]-values[-min(months,len(values)-1)-1]
+        target=latest_date-timedelta(days=round(months*365.25/12))
+        prior=max((item for item in values if item[0]<=target),key=lambda item:item[0])
+        change=latest_value-prior[1]
         signed=-change if inverse else change
-        return round(max(1,min(5,3.5+signed/max(statistics.pstdev(values[-min(60,len(values)):]),.05)*.45)),1)
+        return round(max(1,min(5,3.5+signed/scale*.45)),1)
     return one(3),one(6),one(12)
 
 def composite_dd(asset: dict) -> float: return .6*asset["historicalDD"]+.4*asset["forwardDD"]
@@ -54,13 +70,13 @@ def math_checks(payload: dict) -> list[dict]:
     assets=payload["assets"]; macro=payload["macro"]
     assert {x["ticker"] for x in assets}=={"BAI","QQQ","IEMG","BINC","BMNR"}
     assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 for x in assets)
-    assert len(macro)==7 and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
+    assert len(macro)==10 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
     overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
     macro_avg=sum((x["m3"]+x["m6"]+x["m12"])/3 for x in macro)/len(macro)
     rate=round(max(1,min(5,2.2+macro_avg*.47)),1); cap=cap_from_rate(rate); weights=optimize(assets,cap)
     weighted_dd=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
     assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%5==0 for w in weights)
-    return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"seven core macro-driver bounds","status":"pass"},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
+    return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"ten distinct core macro-driver bounds","status":"pass"},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
 def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[str]]:
     evidence=[]; hard_failures=[]
