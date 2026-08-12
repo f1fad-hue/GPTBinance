@@ -85,11 +85,12 @@ def math_checks(payload: dict) -> list[dict]:
     assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%5==0 for w in weights)
     return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"ten distinct core macro-driver bounds","status":"pass"},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
-def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[str]]:
-    evidence=[]; hard_failures=[]
+def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[dict],list[str]]:
+    evidence=[]; claim_evidence=[]; hard_failures=[]; source_status={}
     for source in payload["sources"]:
         if source.get("automation") == "restricted":
-            evidence.append({"source":source["name"],"status":"manual-review","reason":"The authoritative endpoint restricts automated GitHub Actions access."})
+            item={"source":source["name"],"status":"manual-review","reason":"The authoritative endpoint restricts automated GitHub Actions access."}
+            evidence.append(item); source_status[source["name"]]=item["status"]
             continue
         try:
             body=get(source.get("validation_url",source["url"]))
@@ -97,13 +98,27 @@ def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[st
             markers=source.get("required_text",[]); folded=body.casefold()
             missing=[marker for marker in markers if marker.casefold() not in folded]
             if missing: raise RuntimeError(f"missing expected source identity marker(s): {', '.join(missing)}")
-            evidence.append({"source":source["name"],"status":"pass","bytes":len(body),"identityMarkers":markers})
+            expected_fee=source.get("expected_fee")
+            if expected_fee is not None:
+                fee=f"{expected_fee:.2f}"; fee_markers=(f"{fee}%",f"{fee} %",f'"{fee}"')
+                if not any(marker.casefold() in folded for marker in fee_markers): raise RuntimeError(f"expected fee value {fee}% was not found")
+            item={"source":source["name"],"status":"pass","bytes":len(body),"identityMarkers":markers}
+            if expected_fee is not None: item["verifiedFeePercent"]=expected_fee
+            evidence.append(item); source_status[source["name"]]=item["status"]
         except Exception as exc:
             hard_failures.append(f"{source['name']}: {exc}")
-            evidence.append({"source":source["name"],"status":"fail","reason":str(exc)})
+            item={"source":source["name"],"status":"fail","reason":str(exc)}
+            evidence.append(item); source_status[source["name"]]=item["status"]
     known={x["id"] for x in claims}; assert len(known)==len(claims)
-    evidence.append({"source":"claim ledger","status":"pass","claims":len(claims),"note":"Forecasts and relevance scores are labeled model inputs, not verified facts."})
-    return evidence,hard_failures
+    for claim in claims:
+        if claim["kind"].startswith("model"):
+            claim_evidence.append({"claim":claim["id"],"status":"model-assumption","source":claim["source"],"note":"Transparent model input/output; not an externally verified fact."})
+            continue
+        status=source_status.get(claim["source"])
+        if status is None:
+            status="fail"; hard_failures.append(f"claim {claim['id']}: unregistered source {claim['source']}")
+        claim_evidence.append({"claim":claim["id"],"status":status,"source":claim["source"],"statement":claim["statement"]})
+    return evidence,claim_evidence,hard_failures
 
 def alpha_vantage_price_evidence(assets: list[dict]) -> list[dict]:
     """Preferred supplemental quote check. The key stays in GitHub Actions secrets."""
@@ -148,13 +163,13 @@ def main() -> int:
         except Exception as exc: failures.append(f"FRED {series}: {exc}")
     try: checks=math_checks(payload)
     except Exception as exc: checks=[{"name":"math and schema","status":"fail","reason":str(exc)}]; failures.append(f"math: {exc}")
-    evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures); evidence.extend(alpha_vantage_price_evidence(payload["assets"])); evidence.extend(yahoo_price_evidence(payload["assets"]))
+    evidence,claim_evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures); evidence.extend(alpha_vantage_price_evidence(payload["assets"])); evidence.extend(yahoo_price_evidence(payload["assets"]))
     now=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z'); payload["asOf"]=now[:10]
     manual=any(x["status"]=="manual-review" for x in evidence)
     status="PASS — primary-source, macro and math checks completed" if not failures and not manual else ("PASS WITH MANUAL REVIEW — automated checks completed; restricted source remains queued for human review" if not failures else "REVIEW REQUIRED — "+" | ".join(failures))
     payload["validation"]={"status":status,"checkedAt":now}
     REPORTS.mkdir(parents=True,exist_ok=True)
-    report={"checkedAt":now,"status":status,"sourceEvidence":evidence,"mathChecks":checks,"failures":failures,"limitations":["No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.","BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner."]}
+    report={"checkedAt":now,"status":status,"sourceEvidence":evidence,"claimEvidence":claim_evidence,"mathChecks":checks,"failures":failures,"limitations":["No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.","BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.","Deterministic checks can refresh data and reject invalid output, but arbitrary code defects require review rather than unsafe automated rewriting."]}
     (REPORTS/f"{now[:10]}.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     DATA.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
     print(status)

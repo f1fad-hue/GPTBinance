@@ -2,7 +2,7 @@
   "asOf": "2026-08-12",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-12T12:13:30Z"
+    "checkedAt": "2026-08-12T12:32:42Z"
   },
   "macro": [
     {
@@ -178,7 +178,8 @@
       "required_text": [
         "BAI",
         "iShares A.I. Innovation and Tech Active ETF"
-      ]
+      ],
+      "expected_fee": 0.55
     },
     {
       "name": "QQQ official fund page",
@@ -186,7 +187,8 @@
       "required_text": [
         "QQQ",
         "Invesco QQQ"
-      ]
+      ],
+      "expected_fee": 0.18
     },
     {
       "name": "IEMG official fund page",
@@ -194,7 +196,8 @@
       "required_text": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
-      ]
+      ],
+      "expected_fee": 0.09
     },
     {
       "name": "BINC official fund page & prospectus",
@@ -202,7 +205,8 @@
       "required_text": [
         "BINC",
         "iShares Flexible Income Active ETF"
-      ]
+      ],
+      "expected_fee": 0.4
     },
     {
       "name": "BMNR SEC EDGAR company page",

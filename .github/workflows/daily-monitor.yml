@@ -1,4 +1,4 @@
-name: Daily source validation and macro refresh
+name: Daily authoritative-data monitoring, validation and update
 on:
   schedule:
     - cron: '20 2 * * *'
@@ -8,6 +8,7 @@ concurrency:
   cancel-in-progress: false
 permissions:
   contents: write
+  issues: write
 jobs:
   validate-and-refresh:
     runs-on: ubuntu-latest
@@ -16,19 +17,66 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.12'}
-      - name: Scrape and validate authoritative sources, then refresh macro data
+      - name: Scrub authoritative sources, fact-check claims and refresh data
+        id: source_audit
+        continue-on-error: true
         env:
           ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
         run: python scripts/update_data.py
-      - name: Check code and static artifacts
+      - name: Run code syntax and static-artifact checks
+        id: static_audit
+        continue-on-error: true
         run: |
-          python -m py_compile scripts/update_data.py
+          python -m py_compile scripts/update_data.py scripts/verify_repository.py
           node --check app.js
           python -c "from html.parser import HTMLParser; HTMLParser().feed(open('index.html', encoding='utf-8').read())"
+      - name: Recheck schema, claims, math and dashboard wiring
+        id: repository_audit
+        continue-on-error: true
+        run: python scripts/verify_repository.py
+      - name: Preserve daily evidence report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-validation-${{ github.run_id }}
+          path: reports/daily/*.json
+          retention-days: 30
       - name: Commit daily data refresh
+        if: steps.source_audit.outcome == 'success' && steps.static_audit.outcome == 'success' && steps.repository_audit.outcome == 'success'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/market-data.json reports/daily
           git diff --cached --quiet || git commit -m 'chore: refresh validated macro data'
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
+      - name: Create or update validation-review issue
+        if: steps.source_audit.outcome == 'failure' || steps.static_audit.outcome == 'failure' || steps.repository_audit.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Daily validation requires review';
+            const body = [
+              'The daily fail-closed monitor detected a source, claim, data, math, or code-sanity failure.',
+              '',
+              `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              `UTC: ${new Date().toISOString()}`,
+              '',
+              'Invalid generated data was not published. Review the run logs and retained evidence artifact before making a correction.'
+            ].join('\n');
+            const result = await github.rest.issues.listForRepo({...context.repo, state: 'open', per_page: 100});
+            const issue = result.data.find(item => item.title === title && !item.pull_request);
+            if (issue) await github.rest.issues.update({...context.repo, issue_number: issue.number, body});
+            else await github.rest.issues.create({...context.repo, title, body});
+      - name: Close resolved validation-review issue
+        if: steps.source_audit.outcome == 'success' && steps.static_audit.outcome == 'success' && steps.repository_audit.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = 'Daily validation requires review';
+            const result = await github.rest.issues.listForRepo({...context.repo, state: 'open', per_page: 100});
+            const issue = result.data.find(item => item.title === title && !item.pull_request);
+            if (issue) await github.rest.issues.update({...context.repo, issue_number: issue.number, state: 'closed'});
+      - name: Fail closed when any required audit fails
+        if: steps.source_audit.outcome == 'failure' || steps.static_audit.outcome == 'failure' || steps.repository_audit.outcome == 'failure'
+        run: exit 1

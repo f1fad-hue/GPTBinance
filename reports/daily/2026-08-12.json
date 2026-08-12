@@ -1,15 +1,16 @@
 {
-  "checkedAt": "2026-08-12T12:13:30Z",
+  "checkedAt": "2026-08-12T12:32:42Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
       "source": "BAI official fund page & prospectus",
       "status": "pass",
-      "bytes": 1547358,
+      "bytes": 1547355,
       "identityMarkers": [
         "BAI",
         "iShares A.I. Innovation and Tech Active ETF"
-      ]
+      ],
+      "verifiedFeePercent": 0.55
     },
     {
       "source": "QQQ official fund page",
@@ -18,7 +19,8 @@
       "identityMarkers": [
         "QQQ",
         "Invesco QQQ"
-      ]
+      ],
+      "verifiedFeePercent": 0.18
     },
     {
       "source": "IEMG official fund page",
@@ -27,7 +29,8 @@
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
-      ]
+      ],
+      "verifiedFeePercent": 0.09
     },
     {
       "source": "BINC official fund page & prospectus",
@@ -36,7 +39,8 @@
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
-      ]
+      ],
+      "verifiedFeePercent": 0.4
     },
     {
       "source": "BMNR SEC EDGAR company page",
@@ -46,7 +50,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58615,
+      "bytes": 58627,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -58,12 +62,6 @@
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
-    },
-    {
-      "source": "claim ledger",
-      "status": "pass",
-      "claims": 8,
-      "note": "Forecasts and relevance scores are labeled model inputs, not verified facts."
     },
     {
       "source": "Alpha Vantage secondary market-price check",
@@ -101,6 +99,56 @@
       "currency": "USD"
     }
   ],
+  "claimEvidence": [
+    {
+      "claim": "bai-fee",
+      "status": "pass",
+      "source": "BAI official fund page & prospectus",
+      "statement": "BAI fee input is 0.55% and is sourced from the iShares fund page."
+    },
+    {
+      "claim": "qqq-fee",
+      "status": "pass",
+      "source": "QQQ official fund page",
+      "statement": "QQQ fee input is 0.18% and is sourced from the Invesco fund page."
+    },
+    {
+      "claim": "iemg-fee",
+      "status": "pass",
+      "source": "IEMG official fund page",
+      "statement": "IEMG fee input is 0.09% and is sourced from the iShares fund page."
+    },
+    {
+      "claim": "binc-fee",
+      "status": "pass",
+      "source": "BINC official fund page & prospectus",
+      "statement": "BINC fee input is 0.40% and is sourced from the iShares fund page."
+    },
+    {
+      "claim": "bmnr-identity",
+      "status": "manual-review",
+      "source": "BMNR SEC EDGAR company page",
+      "statement": "BMNR identity and filing record are sourced from SEC EDGAR."
+    },
+    {
+      "claim": "macro-series",
+      "status": "pass",
+      "source": "Federal Reserve economic data (FRED)",
+      "statement": "Macro score inputs use listed FRED series and Treasury data."
+    },
+    {
+      "claim": "cagr-forecast",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
+      "claim": "portfolio-output",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    }
+  ],
   "mathChecks": [
     {
       "name": "required holdings",
@@ -130,6 +178,7 @@
   "failures": [],
   "limitations": [
     "No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.",
-    "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner."
+    "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.",
+    "Deterministic checks can refresh data and reject invalid output, but arbitrary code defects require review rather than unsafe automated rewriting."
   ]
 }
