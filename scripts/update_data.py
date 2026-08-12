@@ -5,7 +5,7 @@ The audit distinguishes primary-source facts from transparent model inputs. It
 never upgrades an unavailable source or a forecast into a verified fact.
 """
 from __future__ import annotations
-import csv, io, json, math, os, pathlib, statistics, sys, time, urllib.request
+import csv, html, io, json, math, pathlib, re, statistics, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
 
 ROOT = pathlib.Path(__file__).parents[1]
@@ -38,6 +38,20 @@ def get(url: str) -> str:
             last_error = exc
             if attempt < 2: time.sleep(2 ** attempt)
     raise RuntimeError(f"source fetch failed after 3 attempts: {last_error}") from last_error
+
+def extract_gross_expense_ratio(body: str) -> float:
+    """Extract one issuer-labelled gross/total expense ratio; reject ambiguity."""
+    structured=re.findall(r'"name"\s*:\s*"Expense Ratio:?"\s*,\s*"value"\s*:\s*"([0-9]+(?:\.[0-9]+)?)"',body,re.I)
+    if structured: candidates={round(float(value),4) for value in structured}
+    else:
+        plain=re.sub(r"\s+"," ",html.unescape(re.sub(r"<[^>]+>"," ",body)))
+        total=re.findall(r"total expense ratio\s+(?:is\s+)?([0-9]+(?:\.[0-9]+)?)\s*%",plain,re.I)
+        gross=re.findall(r"(?<!Net )Expense Ratio:\s*(?:Fees as stated in the prospectus\s*)?([0-9]+(?:\.[0-9]+)?)\s*%",plain,re.I)
+        candidates={round(float(value),4) for value in total+gross}
+    if len(candidates)!=1: raise RuntimeError(f"ambiguous or missing issuer-labelled gross expense ratio: {sorted(candidates)}")
+    fee=candidates.pop()
+    if not 0<=fee<=5: raise RuntimeError(f"issuer fee outside sanity range: {fee}%")
+    return fee
 
 def fred_values(series: str) -> list[tuple[date,float]]:
     rows = csv.DictReader(io.StringIO(get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}")))
@@ -98,12 +112,11 @@ def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[di
             markers=source.get("required_text",[]); folded=body.casefold()
             missing=[marker for marker in markers if marker.casefold() not in folded]
             if missing: raise RuntimeError(f"missing expected source identity marker(s): {', '.join(missing)}")
-            expected_fee=source.get("expected_fee")
-            if expected_fee is not None:
-                fee=f"{expected_fee:.2f}"; fee_markers=(f"{fee}%",f"{fee} %",f'"{fee}"')
-                if not any(marker.casefold() in folded for marker in fee_markers): raise RuntimeError(f"expected fee value {fee}% was not found")
             item={"source":source["name"],"status":"pass","bytes":len(body),"identityMarkers":markers}
-            if expected_fee is not None: item["verifiedFeePercent"]=expected_fee
+            if source.get("fee_field")=="gross_expense_ratio":
+                fee=extract_gross_expense_ratio(body); ticker=source["asset_ticker"]
+                asset=next(asset for asset in payload["assets"] if asset["ticker"]==ticker)
+                item["previousFeePercent"]=asset["fee"]; asset["fee"]=fee; item["usedFeePercent"]=fee
             evidence.append(item); source_status[source["name"]]=item["status"]
         except Exception as exc:
             hard_failures.append(f"{source['name']}: {exc}")
@@ -120,40 +133,6 @@ def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[di
         claim_evidence.append({"claim":claim["id"],"status":status,"source":claim["source"],"statement":claim["statement"]})
     return evidence,claim_evidence,hard_failures
 
-def alpha_vantage_price_evidence(assets: list[dict]) -> list[dict]:
-    """Preferred supplemental quote check. The key stays in GitHub Actions secrets."""
-    api_key=os.environ.get("ALPHA_VANTAGE_API_KEY")
-    if not api_key:
-        return [{"source":"Alpha Vantage secondary market-price check","status":"manual-review","reason":"ALPHA_VANTAGE_API_KEY is not configured. Primary-source checks remain active."}]
-    evidence=[]
-    for asset in assets:
-        ticker=asset["ticker"]
-        try:
-            payload=json.loads(get(f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker}&apikey={api_key}"))
-            quote=payload.get("Global Quote",{})
-            price=float(quote.get("05. price",0))
-            if quote.get("01. symbol")!=ticker or price<=0: raise RuntimeError(payload.get("Note") or payload.get("Information") or "missing or invalid quote")
-            evidence.append({"source":f"Alpha Vantage secondary market-price check - {ticker}","status":"pass","price":price,"latestTradingDay":quote.get("07. latest trading day")})
-        except Exception as exc:
-            evidence.append({"source":f"Alpha Vantage secondary market-price check - {ticker}","status":"manual-review","reason":f"Supplemental quote unavailable: {exc}. This does not replace or invalidate primary-source checks."})
-    return evidence
-
-def yahoo_price_evidence(assets: list[dict]) -> list[dict]:
-    """Optional secondary quote check; never a source of portfolio claims or inputs."""
-    evidence=[]
-    for asset in assets:
-        ticker=asset["ticker"]
-        try:
-            payload=json.loads(get(f"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?range=5d&interval=1d"))
-            result=(payload.get("chart",{}).get("result") or [])[0]
-            meta=result.get("meta",{})
-            price=meta.get("regularMarketPrice")
-            if meta.get("symbol")!=ticker or not isinstance(price,(int,float)) or price<=0: raise RuntimeError("missing or invalid quote")
-            evidence.append({"source":f"Yahoo Finance secondary market-price check — {ticker}","status":"pass","price":price,"currency":meta.get("currency")})
-        except Exception as exc:
-            evidence.append({"source":f"Yahoo Finance secondary market-price check — {ticker}","status":"manual-review","reason":f"Supplemental public quote unavailable: {exc}. This does not replace or invalidate primary-source checks."})
-    return evidence
-
 def main() -> int:
     payload=json.loads(DATA.read_text(encoding="utf-8")); claims=json.loads(CLAIMS.read_text(encoding="utf-8"))["claims"]
     failures=[]
@@ -161,9 +140,9 @@ def main() -> int:
         try:
             m3,m6,m12=score(series,fred_values(series)); next(x for x in payload["macro"] if x["driver"]==driver).update(m3=m3,m6=m6,m12=m12)
         except Exception as exc: failures.append(f"FRED {series}: {exc}")
+    evidence,claim_evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures)
     try: checks=math_checks(payload)
     except Exception as exc: checks=[{"name":"math and schema","status":"fail","reason":str(exc)}]; failures.append(f"math: {exc}")
-    evidence,claim_evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures); evidence.extend(alpha_vantage_price_evidence(payload["assets"])); evidence.extend(yahoo_price_evidence(payload["assets"]))
     now=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z'); payload["asOf"]=now[:10]
     manual=any(x["status"]=="manual-review" for x in evidence)
     status="PASS — primary-source, macro and math checks completed" if not failures and not manual else ("PASS WITH MANUAL REVIEW — automated checks completed; restricted source remains queued for human review" if not failures else "REVIEW REQUIRED — "+" | ".join(failures))

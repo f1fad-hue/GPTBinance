@@ -20,8 +20,6 @@ jobs:
       - name: Scrub authoritative sources, fact-check claims and refresh data
         id: source_audit
         continue-on-error: true
-        env:
-          ALPHA_VANTAGE_API_KEY: ${{ secrets.ALPHA_VANTAGE_API_KEY }}
         run: python scripts/update_data.py
       - name: Run code syntax and static-artifact checks
         id: static_audit

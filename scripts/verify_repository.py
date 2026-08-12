@@ -51,8 +51,8 @@ def main() -> None:
         else:
             assert claim["source"] in sources, f"unregistered claim source: {claim['source']}"
     for ticker in ("BAI","QQQ","IEMG","BINC"):
-        source=next(item for item in sources.values() if ticker in item.get("required_text",[]))
-        assert source["expected_fee"]==assets[ticker]["fee"]
+        source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
+        assert source["fee_field"]=="gross_expense_ratio"
         assert source["url"]==assets[ticker]["source"]
 
     update_data.math_checks(data)
@@ -60,6 +60,10 @@ def main() -> None:
     assert report.exists(), "today's evidence report is missing"
     evidence=json.loads(report.read_text(encoding="utf-8"))
     assert not evidence["failures"] and len(evidence["claimEvidence"])==len(claims)
+    source_evidence={item["source"]:item for item in evidence["sourceEvidence"]}
+    for ticker in ("BAI","QQQ","IEMG","BINC"):
+        source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
+        assert source_evidence[source["name"]]["usedFeePercent"]==assets[ticker]["fee"]
 
     parser=IdParser(); parser.feed((ROOT/"index.html").read_text(encoding="utf-8"))
     assert REQUIRED_DOM_IDS <= parser.ids, f"missing dashboard elements: {REQUIRED_DOM_IDS-parser.ids}"

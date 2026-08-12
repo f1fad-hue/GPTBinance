@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-12T12:32:42Z",
+  "checkedAt": "2026-08-12T12:43:22Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -10,7 +10,8 @@
         "BAI",
         "iShares A.I. Innovation and Tech Active ETF"
       ],
-      "verifiedFeePercent": 0.55
+      "previousFeePercent": 0.65,
+      "usedFeePercent": 0.65
     },
     {
       "source": "QQQ official fund page",
@@ -20,7 +21,8 @@
         "QQQ",
         "Invesco QQQ"
       ],
-      "verifiedFeePercent": 0.18
+      "previousFeePercent": 0.18,
+      "usedFeePercent": 0.18
     },
     {
       "source": "IEMG official fund page",
@@ -30,7 +32,8 @@
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
       ],
-      "verifiedFeePercent": 0.09
+      "previousFeePercent": 0.09,
+      "usedFeePercent": 0.09
     },
     {
       "source": "BINC official fund page & prospectus",
@@ -40,7 +43,8 @@
         "BINC",
         "iShares Flexible Income Active ETF"
       ],
-      "verifiedFeePercent": 0.4
+      "previousFeePercent": 0.52,
+      "usedFeePercent": 0.52
     },
     {
       "source": "BMNR SEC EDGAR company page",
@@ -62,41 +66,6 @@
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
-    },
-    {
-      "source": "Alpha Vantage secondary market-price check",
-      "status": "manual-review",
-      "reason": "ALPHA_VANTAGE_API_KEY is not configured. Primary-source checks remain active."
-    },
-    {
-      "source": "Yahoo Finance secondary market-price check \u2014 BAI",
-      "status": "pass",
-      "price": 44.42,
-      "currency": "USD"
-    },
-    {
-      "source": "Yahoo Finance secondary market-price check \u2014 QQQ",
-      "status": "pass",
-      "price": 718.45,
-      "currency": "USD"
-    },
-    {
-      "source": "Yahoo Finance secondary market-price check \u2014 IEMG",
-      "status": "pass",
-      "price": 79.89,
-      "currency": "USD"
-    },
-    {
-      "source": "Yahoo Finance secondary market-price check \u2014 BINC",
-      "status": "pass",
-      "price": 51.98,
-      "currency": "USD"
-    },
-    {
-      "source": "Yahoo Finance secondary market-price check \u2014 BMNR",
-      "status": "pass",
-      "price": 18.09,
-      "currency": "USD"
     }
   ],
   "claimEvidence": [
@@ -104,25 +73,25 @@
       "claim": "bai-fee",
       "status": "pass",
       "source": "BAI official fund page & prospectus",
-      "statement": "BAI fee input is 0.55% and is sourced from the iShares fund page."
+      "statement": "BAI uses the current official gross expense ratio from the iShares fund page."
     },
     {
       "claim": "qqq-fee",
       "status": "pass",
       "source": "QQQ official fund page",
-      "statement": "QQQ fee input is 0.18% and is sourced from the Invesco fund page."
+      "statement": "QQQ uses the current official total expense ratio from the Invesco fund page."
     },
     {
       "claim": "iemg-fee",
       "status": "pass",
       "source": "IEMG official fund page",
-      "statement": "IEMG fee input is 0.09% and is sourced from the iShares fund page."
+      "statement": "IEMG uses the current official gross expense ratio from the iShares fund page."
     },
     {
       "claim": "binc-fee",
       "status": "pass",
       "source": "BINC official fund page & prospectus",
-      "statement": "BINC fee input is 0.40% and is sourced from the iShares fund page."
+      "statement": "BINC uses the current official gross expense ratio from the iShares fund page."
     },
     {
       "claim": "bmnr-identity",
