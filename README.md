@@ -7,7 +7,7 @@ Mobile-first, installable scenario dashboard for the required BAI, QQQ, IEMG, BI
 - Shows an explicit 1–5 macro-aware portfolio rate and the corresponding 20% / 25% / 30% composite drawdown cap.
 - Uses a transparent gross-CAGR-minus-fee input, a 60% historical-proxy / 40% forward Monte-Carlo drawdown blend, and 10,000 deterministic 10-year simulations.
 - Shows 10 distinct portfolio-related macro drivers across true calendar-based 3, 6 and 12 month horizons, rate-conditioned allocation donuts, instrument slides, and a relevance-monitoring register.
-- Runs a daily GitHub Actions job that refreshes FRED macro data, checks the listed primary-source endpoints, performs Alpha Vantage and Yahoo Finance supplemental public-price checks, validates the required holdings and weights, and commits the refreshed JSON if successful.
+- Runs a daily GitHub Actions job at 02:20 UTC (10:20 AM Asia/Manila) that refreshes FRED macro data, scrubs each listed primary-source page for expected identity markers, retries transient failures, performs supplemental public-price checks, validates the required holdings and weights, and commits the refreshed JSON only if every required automated check passes.
 
 ## Data controls
 

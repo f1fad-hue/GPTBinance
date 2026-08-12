@@ -5,7 +5,7 @@ The audit distinguishes primary-source facts from transparent model inputs. It
 never upgrades an unavailable source or a forecast into a verified fact.
 """
 from __future__ import annotations
-import csv, io, json, math, os, pathlib, statistics, sys, urllib.request
+import csv, io, json, math, os, pathlib, statistics, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
 
 ROOT = pathlib.Path(__file__).parents[1]
@@ -27,10 +27,17 @@ FRED = {
 }
 
 def get(url: str) -> str:
-    request = urllib.request.Request(url, headers=HEADERS)
-    with urllib.request.urlopen(request, timeout=30) as response:
-        if response.status != 200: raise RuntimeError(f"HTTP {response.status}")
-        return response.read().decode("utf-8", errors="replace")
+    last_error: Exception | None = None
+    for attempt in range(3):
+        try:
+            request = urllib.request.Request(url, headers=HEADERS)
+            with urllib.request.urlopen(request, timeout=30) as response:
+                if response.status != 200: raise RuntimeError(f"HTTP {response.status}")
+                return response.read().decode("utf-8", errors="replace")
+        except Exception as exc:
+            last_error = exc
+            if attempt < 2: time.sleep(2 ** attempt)
+    raise RuntimeError(f"source fetch failed after 3 attempts: {last_error}") from last_error
 
 def fred_values(series: str) -> list[tuple[date,float]]:
     rows = csv.DictReader(io.StringIO(get(f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}")))
@@ -86,7 +93,11 @@ def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[st
             continue
         try:
             body=get(source.get("validation_url",source["url"]))
-            evidence.append({"source":source["name"],"status":"pass","bytes":len(body)})
+            if len(body) < 1000: raise RuntimeError(f"unexpectedly small response ({len(body)} bytes)")
+            markers=source.get("required_text",[]); folded=body.casefold()
+            missing=[marker for marker in markers if marker.casefold() not in folded]
+            if missing: raise RuntimeError(f"missing expected source identity marker(s): {', '.join(missing)}")
+            evidence.append({"source":source["name"],"status":"pass","bytes":len(body),"identityMarkers":markers})
         except Exception as exc:
             hard_failures.append(f"{source['name']}: {exc}")
             evidence.append({"source":source["name"],"status":"fail","reason":str(exc)})

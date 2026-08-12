@@ -2,7 +2,7 @@
   "asOf": "2026-08-12",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-12T10:51:45Z"
+    "checkedAt": "2026-08-12T12:13:30Z"
   },
   "macro": [
     {
@@ -174,19 +174,35 @@
   "sources": [
     {
       "name": "BAI official fund page & prospectus",
-      "url": "https://www.ishares.com/us/products/339081/fund"
+      "url": "https://www.ishares.com/us/products/339081/fund",
+      "required_text": [
+        "BAI",
+        "iShares A.I. Innovation and Tech Active ETF"
+      ]
     },
     {
       "name": "QQQ official fund page",
-      "url": "https://www.invesco.com/qqq-etf/en/home.html"
+      "url": "https://www.invesco.com/qqq-etf/en/home.html",
+      "required_text": [
+        "QQQ",
+        "Invesco QQQ"
+      ]
     },
     {
       "name": "IEMG official fund page",
-      "url": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf"
+      "url": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf",
+      "required_text": [
+        "IEMG",
+        "iShares Core MSCI Emerging Markets ETF"
+      ]
     },
     {
       "name": "BINC official fund page & prospectus",
-      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf"
+      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
+      "required_text": [
+        "BINC",
+        "iShares Flexible Income Active ETF"
+      ]
     },
     {
       "name": "BMNR SEC EDGAR company page",
@@ -196,12 +212,18 @@
     },
     {
       "name": "Federal Reserve economic data (FRED)",
-      "url": "https://fred.stlouisfed.org/"
+      "url": "https://fred.stlouisfed.org/",
+      "required_text": [
+        "Federal Reserve Economic Data"
+      ]
     },
     {
       "name": "U.S. Treasury yield-curve data",
       "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve",
-      "validation_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve"
+      "validation_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?page=1&type=daily_treasury_yield_curve",
+      "required_text": [
+        "Daily Treasury Par Yield Curve Rates"
+      ]
     }
   ]
 }

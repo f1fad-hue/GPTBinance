@@ -1,26 +1,42 @@
 {
-  "checkedAt": "2026-08-12T10:51:45Z",
+  "checkedAt": "2026-08-12T12:13:30Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
       "source": "BAI official fund page & prospectus",
       "status": "pass",
-      "bytes": 1547358
+      "bytes": 1547358,
+      "identityMarkers": [
+        "BAI",
+        "iShares A.I. Innovation and Tech Active ETF"
+      ]
     },
     {
       "source": "QQQ official fund page",
       "status": "pass",
-      "bytes": 261994
+      "bytes": 261994,
+      "identityMarkers": [
+        "QQQ",
+        "Invesco QQQ"
+      ]
     },
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1646384
+      "bytes": 1643971,
+      "identityMarkers": [
+        "IEMG",
+        "iShares Core MSCI Emerging Markets ETF"
+      ]
     },
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1686424
+      "bytes": 1686424,
+      "identityMarkers": [
+        "BINC",
+        "iShares Flexible Income Active ETF"
+      ]
     },
     {
       "source": "BMNR SEC EDGAR company page",
@@ -30,12 +46,18 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58295
+      "bytes": 58615,
+      "identityMarkers": [
+        "Federal Reserve Economic Data"
+      ]
     },
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867809
+      "bytes": 1867808,
+      "identityMarkers": [
+        "Daily Treasury Par Yield Curve Rates"
+      ]
     },
     {
       "source": "claim ledger",
