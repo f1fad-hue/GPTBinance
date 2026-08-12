@@ -25,6 +25,8 @@ FRED = {
     "Market volatility":"VIXCLS",
     "USD / EM FX trend":"DTWEXBGS",
 }
+HISTORICAL_DD_WEIGHT = 0.60
+FORWARD_MEDIAN_DD_WEIGHT = 0.40
 
 def get(url: str) -> str:
     last_error: Exception | None = None
@@ -75,7 +77,8 @@ def score(series: str, values: list[tuple[date,float]]) -> tuple[float,float,flo
         return round(max(1,min(5,3.5+signed/scale*.45)),1)
     return one(3),one(6),one(12)
 
-def composite_dd(asset: dict) -> float: return .6*asset["historicalDD"]+.4*asset["forwardDD"]
+def composite_dd(asset: dict) -> float:
+    return HISTORICAL_DD_WEIGHT*asset["historicalDD"]+FORWARD_MEDIAN_DD_WEIGHT*asset["forwardMedianDD"]
 def cap_from_rate(rate: float) -> float: return 30 if rate>=5 else 25 if rate>=4 else 20
 
 def optimize(assets: list[dict], cap: float) -> list[float]:
@@ -89,6 +92,8 @@ def optimize(assets: list[dict], cap: float) -> list[float]:
 
 def math_checks(payload: dict) -> list[dict]:
     assets=payload["assets"]; macro=payload["macro"]
+    assert math.isclose(HISTORICAL_DD_WEIGHT,0.60) and math.isclose(FORWARD_MEDIAN_DD_WEIGHT,0.40)
+    assert math.isclose(HISTORICAL_DD_WEIGHT+FORWARD_MEDIAN_DD_WEIGHT,1.0)
     assert {x["ticker"] for x in assets}=={"BAI","QQQ","IEMG","BINC","BMNR"}
     assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 for x in assets)
     assert len(macro)==10 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
@@ -97,7 +102,7 @@ def math_checks(payload: dict) -> list[dict]:
     rate=round(max(1,min(5,2.2+macro_avg*.47)),1); cap=cap_from_rate(rate); weights=optimize(assets,cap)
     weighted_dd=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
     assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%5==0 for w in weights)
-    return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"ten distinct core macro-driver bounds","status":"pass"},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
+    return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"drawdown composite weights","status":"pass","historicalWeight":HISTORICAL_DD_WEIGHT,"forwardMedianWeight":FORWARD_MEDIAN_DD_WEIGHT},{"name":"ten distinct core macro-driver bounds","status":"pass"},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
 def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[dict],list[str]]:
     evidence=[]; claim_evidence=[]; hard_failures=[]; source_status={}

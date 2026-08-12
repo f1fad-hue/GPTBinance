@@ -2,13 +2,13 @@
   "asOf": "2026-08-12",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-12T12:43:22Z"
+    "checkedAt": "2026-08-12T15:45:10Z"
   },
   "macro": [
     {
       "driver": "Inflation trend",
       "why": "BAI/QQQ valuation multiples, BINC real income and IEMG purchasing power",
-      "m3": 3.4,
+      "m3": 3.5,
       "m6": 3.3,
       "m12": 3.2
     },
@@ -37,7 +37,7 @@
       "driver": "Credit spreads",
       "why": "BINC credit compensation and equity-stress signal for BAI/QQQ/IEMG",
       "m3": 3.6,
-      "m6": 3.7,
+      "m6": 3.6,
       "m12": 3.7
     },
     {
@@ -52,7 +52,7 @@
       "why": "Broad leverage and funding conditions affecting all five holdings",
       "m3": 3.6,
       "m6": 3.4,
-      "m12": 3.5
+      "m12": 3.6
     },
     {
       "driver": "System liquidity",
@@ -66,7 +66,7 @@
       "why": "High-beta and correlation shock risk for BAI, QQQ, IEMG and BMNR",
       "m3": 3.7,
       "m6": 3.7,
-      "m12": 3.5
+      "m12": 3.6
     },
     {
       "driver": "USD / EM FX trend",
@@ -93,7 +93,7 @@
       "grossCagr": 15.4,
       "vol": 31,
       "historicalDD": 35,
-      "forwardDD": 29,
+      "forwardMedianDD": 29,
       "relevance": 83,
       "weight": 24,
       "reason": "AI earnings breadth and capital-spending persistence",
@@ -110,7 +110,7 @@
       "grossCagr": 13.1,
       "vol": 25,
       "historicalDD": 33,
-      "forwardDD": 27,
+      "forwardMedianDD": 27,
       "relevance": 94,
       "weight": 30,
       "reason": "Liquid core growth exposure with durable earnings breadth",
@@ -127,7 +127,7 @@
       "grossCagr": 9.1,
       "vol": 23,
       "historicalDD": 36,
-      "forwardDD": 30,
+      "forwardMedianDD": 30,
       "relevance": 71,
       "weight": 14,
       "reason": "Diversifies US mega-cap growth and participates in global activity",
@@ -144,7 +144,7 @@
       "grossCagr": 6.9,
       "vol": 10,
       "historicalDD": 12,
-      "forwardDD": 10,
+      "forwardMedianDD": 10,
       "relevance": 86,
       "weight": 18,
       "reason": "Income ballast and flexible duration/credit implementation",
@@ -161,7 +161,7 @@
       "grossCagr": 25,
       "vol": 75,
       "historicalDD": 62,
-      "forwardDD": 55,
+      "forwardMedianDD": 55,
       "relevance": 42,
       "weight": 14,
       "reason": "High-upside, explicitly bounded satellite tied to digital-asset conditions",

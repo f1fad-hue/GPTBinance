@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-12T12:43:22Z",
+  "checkedAt": "2026-08-12T15:45:10Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -27,7 +27,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1643971,
+      "bytes": 1643944,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -38,7 +38,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1686424,
+      "bytes": 1686442,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -54,7 +54,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58627,
+      "bytes": 58633,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -62,7 +62,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867808,
+      "bytes": 1867807,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
@@ -126,6 +126,12 @@
     {
       "name": "input bounds",
       "status": "pass"
+    },
+    {
+      "name": "drawdown composite weights",
+      "status": "pass",
+      "historicalWeight": 0.6,
+      "forwardMedianWeight": 0.4
     },
     {
       "name": "ten distinct core macro-driver bounds",

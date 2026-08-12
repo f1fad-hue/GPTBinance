@@ -37,6 +37,8 @@ def main() -> None:
     sources={source["name"]:source for source in data["sources"]}
 
     assert set(assets)=={"BAI","QQQ","IEMG","BINC","BMNR"}
+    assert all("historicalDD" in asset and "forwardMedianDD" in asset for asset in assets.values())
+    assert all("forwardDD" not in asset for asset in assets.values())
     assert len(sources)==len(data["sources"])
     assert len({claim["id"] for claim in claims})==len(claims)
     for source in sources.values():
