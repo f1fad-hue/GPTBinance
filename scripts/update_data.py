@@ -5,7 +5,7 @@ The audit distinguishes primary-source facts from transparent model inputs. It
 never upgrades an unavailable source or a forecast into a verified fact.
 """
 from __future__ import annotations
-import csv, io, json, math, pathlib, statistics, sys, urllib.request
+import csv, io, json, math, os, pathlib, statistics, sys, urllib.request
 from datetime import datetime, timezone
 
 ROOT = pathlib.Path(__file__).parents[1]
@@ -77,6 +77,24 @@ def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[st
     evidence.append({"source":"claim ledger","status":"pass","claims":len(claims),"note":"Forecasts and relevance scores are labeled model inputs, not verified facts."})
     return evidence,hard_failures
 
+def alpha_vantage_price_evidence(assets: list[dict]) -> list[dict]:
+    """Preferred supplemental quote check. The key stays in GitHub Actions secrets."""
+    api_key=os.environ.get("ALPHA_VANTAGE_API_KEY")
+    if not api_key:
+        return [{"source":"Alpha Vantage secondary market-price check","status":"manual-review","reason":"ALPHA_VANTAGE_API_KEY is not configured. Primary-source checks remain active."}]
+    evidence=[]
+    for asset in assets:
+        ticker=asset["ticker"]
+        try:
+            payload=json.loads(get(f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={ticker}&apikey={api_key}"))
+            quote=payload.get("Global Quote",{})
+            price=float(quote.get("05. price",0))
+            if quote.get("01. symbol")!=ticker or price<=0: raise RuntimeError(payload.get("Note") or payload.get("Information") or "missing or invalid quote")
+            evidence.append({"source":f"Alpha Vantage secondary market-price check - {ticker}","status":"pass","price":price,"latestTradingDay":quote.get("07. latest trading day")})
+        except Exception as exc:
+            evidence.append({"source":f"Alpha Vantage secondary market-price check - {ticker}","status":"manual-review","reason":f"Supplemental quote unavailable: {exc}. This does not replace or invalidate primary-source checks."})
+    return evidence
+
 def yahoo_price_evidence(assets: list[dict]) -> list[dict]:
     """Optional secondary quote check; never a source of portfolio claims or inputs."""
     evidence=[]
@@ -102,7 +120,7 @@ def main() -> int:
         except Exception as exc: failures.append(f"FRED {series}: {exc}")
     try: checks=math_checks(payload)
     except Exception as exc: checks=[{"name":"math and schema","status":"fail","reason":str(exc)}]; failures.append(f"math: {exc}")
-    evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures); evidence.extend(yahoo_price_evidence(payload["assets"]))
+    evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures); evidence.extend(alpha_vantage_price_evidence(payload["assets"])); evidence.extend(yahoo_price_evidence(payload["assets"]))
     now=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z'); payload["asOf"]=now[:10]
     manual=any(x["status"]=="manual-review" for x in evidence)
     status="PASS — primary-source, macro and math checks completed" if not failures and not manual else ("PASS WITH MANUAL REVIEW — automated checks completed; restricted source remains queued for human review" if not failures else "REVIEW REQUIRED — "+" | ".join(failures))
