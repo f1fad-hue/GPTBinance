@@ -1,11 +1,11 @@
 {
-  "checkedAt": "2026-08-12T06:58:13Z",
+  "checkedAt": "2026-08-12T10:10:34Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
       "source": "BAI official fund page & prospectus",
       "status": "pass",
-      "bytes": 1547497
+      "bytes": 1547358
     },
     {
       "source": "QQQ official fund page",
@@ -15,12 +15,12 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1646523
+      "bytes": 1646384
     },
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1686563
+      "bytes": 1686424
     },
     {
       "source": "BMNR SEC EDGAR company page",
@@ -30,7 +30,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 59145
+      "bytes": 58289
     },
     {
       "source": "U.S. Treasury yield-curve data",
@@ -89,8 +89,13 @@
       "status": "pass"
     },
     {
-      "name": "macro bounds",
+      "name": "seven core macro-driver bounds",
       "status": "pass"
+    },
+    {
+      "name": "BMNR digital-asset overlay bounds",
+      "status": "pass",
+      "score": 2.5
     },
     {
       "name": "max-growth drawdown constraint",

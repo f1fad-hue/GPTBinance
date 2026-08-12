@@ -13,7 +13,7 @@ DATA = ROOT / "data" / "market-data.json"
 CLAIMS = ROOT / "data" / "claims.json"
 REPORTS = ROOT / "reports" / "daily"
 HEADERS = {"User-Agent": "f1fad-hue GPTBinance PortfolioSignalLab contact@f1fad-hue.github.io", "Accept": "application/json, text/html;q=0.9, */*;q=0.8"}
-FRED = {"Inflation trend":"CPIAUCSL","Policy & real rates":"EFFR","Yield curve":"T10Y2Y","Credit spreads":"BAMLH0A0HYM2","Labor & activity":"UNRATE","Market volatility":"VIXCLS"}
+FRED = {"Inflation trend":"CPIAUCSL","Policy & real rates":"EFFR","Yield curve":"T10Y2Y","Credit spreads":"BAMLH0A0HYM2","Labor & activity":"UNRATE","Market volatility":"VIXCLS","USD / EM FX trend":"DTWEXBGS"}
 
 def get(url: str) -> str:
     request = urllib.request.Request(url, headers=HEADERS)
@@ -31,7 +31,7 @@ def fred_values(series: str) -> list[float]:
     return values
 
 def score(series: str, values: list[float]) -> tuple[float,float,float]:
-    inverse=series in {"CPIAUCSL","EFFR","BAMLH0A0HYM2","UNRATE","VIXCLS"}
+    inverse=series in {"CPIAUCSL","EFFR","BAMLH0A0HYM2","UNRATE","VIXCLS","DTWEXBGS"}
     def one(months: int) -> float:
         change=values[-1]-values[-min(months,len(values)-1)-1]
         signed=-change if inverse else change
@@ -54,12 +54,13 @@ def math_checks(payload: dict) -> list[dict]:
     assets=payload["assets"]; macro=payload["macro"]
     assert {x["ticker"] for x in assets}=={"BAI","QQQ","IEMG","BINC","BMNR"}
     assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 for x in assets)
-    assert len(macro)==6 and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
+    assert len(macro)==7 and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
+    overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
     macro_avg=sum((x["m3"]+x["m6"]+x["m12"])/3 for x in macro)/len(macro)
     rate=round(max(1,min(5,2.2+macro_avg*.47)),1); cap=cap_from_rate(rate); weights=optimize(assets,cap)
     weighted_dd=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
     assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%5==0 for w in weights)
-    return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"macro bounds","status":"pass"},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
+    return [{"name":"required holdings","status":"pass"},{"name":"input bounds","status":"pass"},{"name":"seven core macro-driver bounds","status":"pass"},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
 def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[str]]:
     evidence=[]; hard_failures=[]

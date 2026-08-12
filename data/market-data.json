@@ -2,7 +2,7 @@
   "asOf": "2026-08-12",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-12T06:58:13Z"
+    "checkedAt": "2026-08-12T10:10:34Z"
   },
   "macro": [
     {
@@ -46,8 +46,23 @@
       "m3": 3.6,
       "m6": 3.7,
       "m12": 4.4
+    },
+    {
+      "driver": "USD / EM FX trend",
+      "why": "USD strength can tighten EM financial conditions and weigh on IEMG",
+      "m3": 3.8,
+      "m6": 3.9,
+      "m12": 4.4
     }
   ],
+  "bmnrOverlay": {
+    "score": 2.5,
+    "status": "Caution gate",
+    "current": "BMNR remains at its 5% minimum allocation; its overlay does not enter the portfolio-wide macro rate.",
+    "triggers": "Material treasury-economics deterioration, funding dilution, liquidity stress, or a material SEC filing change.",
+    "cadence": "Daily price/liquidity; every SEC filing; weekly treasury/counterparty review.",
+    "source": "https://www.sec.gov/edgar/browse/?CIK=0001829311"
+  },
   "assets": [
     {
       "ticker": "BAI",
