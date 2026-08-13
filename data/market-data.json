@@ -2,7 +2,7 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T09:34:05Z"
+    "checkedAt": "2026-08-13T10:28:58Z"
   },
   "macro": [
     {
@@ -92,7 +92,7 @@
       "fee": 0.18,
       "grossCagr": 13.1,
       "vol": 25,
-      "historicalDD": 33,
+      "historicalDD": 35.12,
       "forwardMedianDD": 27,
       "relevance": 94,
       "monitorStatus": "Relevant",
@@ -101,7 +101,13 @@
       "notRelevant": "Nasdaq-100 rules or concentration materially change, or earnings breadth and liquidity deteriorate persistently.",
       "cadence": "Daily price/liquidity; quarterly index and prospectus",
       "source": "https://www.invesco.com/qqq-etf/en/home.html",
-      "history": "Long live history; fee deducted from model gross CAGR."
+      "history": "Long live history; fee deducted from model gross CAGR.",
+      "historicalDDMethod": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
+      "historicalDDStart": "2016-08-15",
+      "historicalDDEnd": "2026-08-12",
+      "historicalDDPeak": "2021-12-27",
+      "historicalDDTrough": "2022-11-03",
+      "historicalDDSource": "https://api.nasdaq.com/api/quote/QQQ/historical?assetclass=etf&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
     },
     {
       "ticker": "IEMG",
@@ -110,7 +116,7 @@
       "fee": 0.09,
       "grossCagr": 9.1,
       "vol": 23,
-      "historicalDD": 36,
+      "historicalDD": 38.39,
       "forwardMedianDD": 30,
       "relevance": 71,
       "monitorStatus": "Relevant",
@@ -119,7 +125,13 @@
       "notRelevant": "Persistent USD strength, material index-access impairment, or emerging-market earnings/reform deterioration.",
       "cadence": "Daily USD/liquidity; monthly macro; quarterly holdings",
       "source": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf",
-      "history": "Long live history; fee deducted from model gross CAGR."
+      "history": "Long live history; fee deducted from model gross CAGR.",
+      "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
+      "historicalDDStart": "2016-08-15",
+      "historicalDDEnd": "2026-08-12",
+      "historicalDDPeak": "2018-01-26",
+      "historicalDDTrough": "2020-03-23",
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
       "ticker": "BINC",
@@ -128,7 +140,7 @@
       "fee": 0.52,
       "grossCagr": 6.9,
       "vol": 10,
-      "historicalDD": 12,
+      "historicalDD": 2.4,
       "forwardMedianDD": 10,
       "relevance": 86,
       "monitorStatus": "Relevant",
@@ -137,7 +149,13 @@
       "notRelevant": "Credit spreads widen without compensated yield, duration positioning is persistently adverse, or fee waiver/strategy changes.",
       "cadence": "Daily NAV/spreads; monthly holdings; prospectus on change",
       "source": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
-      "history": "Inception 2023; no 10-year live fund history."
+      "history": "Inception 2023; no 10-year live fund history.",
+      "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
+      "historicalDDStart": "2023-05-19",
+      "historicalDDEnd": "2026-08-12",
+      "historicalDDPeak": "2026-02-27",
+      "historicalDDTrough": "2026-03-27",
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
     },
     {
       "ticker": "BMNR",
@@ -146,7 +164,7 @@
       "fee": 0,
       "grossCagr": 25,
       "vol": 75,
-      "historicalDD": 62,
+      "historicalDD": 90.14,
       "forwardMedianDD": 55,
       "relevance": 42,
       "monitorStatus": "Watch",
@@ -155,7 +173,13 @@
       "notRelevant": "Digital-asset treasury economics weaken, funding dilution materially rises, liquidity falls, or SEC filings change the risk profile.",
       "cadence": "Daily price/liquidity; every SEC filing; weekly treasury/counterparty review",
       "source": "https://www.sec.gov/edgar/browse/?CIK=0001829311",
-      "history": "Public-company history is not a reliable 10-year analogue; scenario input only."
+      "history": "Observed current-ticker history begins May 2025; it is shorter than the 10-year horizon.",
+      "historicalDDMethod": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
+      "historicalDDStart": "2025-05-16",
+      "historicalDDEnd": "2026-08-12",
+      "historicalDDPeak": "2025-07-03",
+      "historicalDDTrough": "2026-06-30",
+      "historicalDDSource": "https://api.nasdaq.com/api/quote/BMNR/historical?assetclass=stocks&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
     }
   ],
   "sources": [
@@ -188,6 +212,30 @@
       ],
       "asset_ticker": "BINC",
       "fee_field": "gross_expense_ratio"
+    },
+    {
+      "name": "QQQ Nasdaq historical quotes",
+      "url": "https://www.nasdaq.com/market-activity/etf/qqq/historical",
+      "asset_ticker": "QQQ",
+      "automation": "historical-drawdown"
+    },
+    {
+      "name": "IEMG official historical NAV",
+      "url": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf",
+      "asset_ticker": "IEMG",
+      "automation": "historical-drawdown"
+    },
+    {
+      "name": "BINC official historical NAV",
+      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
+      "asset_ticker": "BINC",
+      "automation": "historical-drawdown"
+    },
+    {
+      "name": "BMNR Nasdaq historical quotes",
+      "url": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical",
+      "asset_ticker": "BMNR",
+      "automation": "historical-drawdown"
     },
     {
       "name": "BMNR SEC EDGAR company page",

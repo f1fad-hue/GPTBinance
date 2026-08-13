@@ -14,7 +14,7 @@ DATA = ROOT / "data" / "market-data.json"
 CLAIMS = ROOT / "data" / "claims.json"
 ALLOWED_PRIMARY_DOMAINS = {
     "www.ishares.com", "www.invesco.com", "www.sec.gov", "data.sec.gov",
-    "fred.stlouisfed.org", "home.treasury.gov",
+    "fred.stlouisfed.org", "home.treasury.gov", "www.nasdaq.com", "api.nasdaq.com",
 }
 REQUIRED_DOM_IDS = {
     "portfolio-rate", "allocation", "heatmap", "donuts", "slides",
@@ -38,6 +38,7 @@ def main() -> None:
 
     assert set(assets)=={"QQQ","IEMG","BINC","BMNR"}
     assert all("historicalDD" in asset and "forwardMedianDD" in asset for asset in assets.values())
+    assert all(asset.get("historicalDDSource","").startswith("https://") for asset in assets.values())
     assert all("forwardDD" not in asset for asset in assets.values())
     assert all("weight" not in asset for asset in assets.values()), "stale stored allocations must not override the optimizer"
     assert all(asset.get("monitorStatus") and asset.get("monitorNote") for asset in assets.values())
@@ -48,7 +49,7 @@ def main() -> None:
             if key not in source: continue
             parsed=urlparse(source[key]); assert parsed.scheme=="https"
             assert parsed.hostname in ALLOWED_PRIMARY_DOMAINS, f"unapproved primary domain: {parsed.hostname}"
-        if source.get("automation") != "restricted": assert source.get("required_text")
+        if source.get("automation") not in {"restricted","historical-drawdown"}: assert source.get("required_text")
     for claim in claims:
         if claim["kind"].startswith("model"):
             assert claim["source"]=="Model methodology"
@@ -64,6 +65,12 @@ def main() -> None:
     assert report.exists(), "today's evidence report is missing"
     evidence=json.loads(report.read_text(encoding="utf-8"))
     assert not evidence["failures"] and len(evidence["claimEvidence"])==len(claims)
+    drawdown_evidence={item["ticker"]:item for item in evidence["historicalDrawdownEvidence"]}
+    assert set(drawdown_evidence)==set(assets)
+    for ticker,asset in assets.items():
+        item=drawdown_evidence[ticker]
+        assert item["status"]=="pass" and item["usedPercent"]==asset["historicalDD"]
+        assert item["observations"]>=250 and item["start"]==asset["historicalDDStart"] and item["end"]==asset["historicalDDEnd"]
     math_evidence={item["name"]:item for item in evidence["mathChecks"]}
     assert math_evidence["drawdown composite weights"]["historicalWeight"]==0.60
     assert math_evidence["drawdown composite weights"]["forwardMedianWeight"]==0.40

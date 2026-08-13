@@ -5,14 +5,17 @@ The audit distinguishes primary-source facts from transparent model inputs. It
 never upgrades an unavailable source or a forecast into a verified fact.
 """
 from __future__ import annotations
-import csv, html, io, itertools, json, math, pathlib, re, statistics, sys, time, urllib.request
+import csv, html, io, itertools, json, math, os, pathlib, re, shutil, statistics, subprocess, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
+
+from drawdown_data import refresh_historical_drawdowns
 
 ROOT = pathlib.Path(__file__).parents[1]
 DATA = ROOT / "data" / "market-data.json"
 CLAIMS = ROOT / "data" / "claims.json"
 REPORTS = ROOT / "reports" / "daily"
 HEADERS = {"User-Agent": "f1fad-hue GPTBinance PortfolioSignalLab contact@f1fad-hue.github.io", "Accept": "application/json, text/html;q=0.9, */*;q=0.8"}
+NASDAQ_HEADERS = {"User-Agent": "Mozilla/5.0 GPTBinance-PortfolioSignalLab/1.0 contact@f1fad-hue.github.io", "Accept": "application/json, text/plain, */*", "Accept-Encoding": "identity", "Connection": "close", "Origin": "https://www.nasdaq.com", "Referer": "https://www.nasdaq.com/"}
 FRED = {
     "Inflation trend":"CPIAUCSL",
     "Policy rates":"EFFR",
@@ -36,8 +39,28 @@ def get(url: str) -> str:
     last_error: Exception | None = None
     for attempt in range(3):
         try:
-            request = urllib.request.Request(url, headers=HEADERS)
-            with urllib.request.urlopen(request, timeout=30) as response:
+            if "api.nasdaq.com" in url:
+                if os.name == "nt":
+                    powershell = shutil.which("powershell") or shutil.which("powershell.exe")
+                    if not powershell: raise RuntimeError("PowerShell is required for Nasdaq's streaming API on Windows")
+                    command = "$ProgressPreference='SilentlyContinue';(Invoke-WebRequest -UseBasicParsing -Uri $env:GPTBINANCE_NASDAQ_URL -Headers @{'User-Agent'='Mozilla/5.0';'Accept'='application/json';'Origin'='https://www.nasdaq.com';'Referer'='https://www.nasdaq.com/'} -TimeoutSec 90).Content"
+                    environment = os.environ.copy(); environment["GPTBINANCE_NASDAQ_URL"] = url
+                    response = subprocess.run([powershell,"-NoProfile","-Command",command],capture_output=True,check=False,timeout=100,env=environment)
+                else:
+                    curl = shutil.which("curl")
+                    if not curl: raise RuntimeError("curl is required for Nasdaq's streaming API")
+                    response = subprocess.run(
+                        [curl, "--fail", "--silent", "--show-error", "--max-time", "90",
+                         "--user-agent", NASDAQ_HEADERS["User-Agent"], "--header", "Accept: application/json",
+                         "--header", "Origin: https://www.nasdaq.com", "--header", "Referer: https://www.nasdaq.com/", url],
+                        capture_output=True, check=False, timeout=100,
+                    )
+                if response.returncode: raise RuntimeError(response.stderr.decode("utf-8",errors="replace").strip())
+                return response.stdout.decode("utf-8",errors="replace")
+            headers = NASDAQ_HEADERS if "api.nasdaq.com" in url else HEADERS
+            timeout = 180 if "get-fund-document" in url else (120 if "api.nasdaq.com" in url else 30)
+            request = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(request, timeout=timeout) as response:
                 if response.status != 200: raise RuntimeError(f"HTTP {response.status}")
                 return response.read().decode("utf-8", errors="replace")
         except Exception as exc:
@@ -128,6 +151,7 @@ def math_checks(payload: dict) -> list[dict]:
     assert math.isclose(HISTORICAL_DD_WEIGHT+FORWARD_MEDIAN_DD_WEIGHT,1.0)
     assert {x["ticker"] for x in assets}==required
     assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 and 1<=x["relevance"]<=100 for x in assets)
+    assert all(x["historicalDD"]>0 and x["historicalDDMethod"].startswith("Observed daily") and x["historicalDDStart"]<=x["historicalDDPeak"]<=x["historicalDDTrough"]<=x["historicalDDEnd"] for x in assets)
     assert all(x["monitorStatus"] in {"Relevant","Watch","Not relevant"} and x["monitorNote"] and x["notRelevant"] and x["cadence"] for x in assets)
     assert len(macro)==10 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
     assert all(x["why"] and ("all four holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
@@ -141,9 +165,17 @@ def math_checks(payload: dict) -> list[dict]:
     scenario_check={str(scenario):dict(zip([a["ticker"] for a in assets],[round(w) for w in scenario_weights])) for scenario,scenario_weights in scenarios.items()}
     return [{"name":"required holdings","status":"pass"},{"name":"input and relevance bounds","status":"pass"},{"name":"drawdown composite weights","status":"pass","historicalWeight":HISTORICAL_DD_WEIGHT,"forwardMedianWeight":FORWARD_MEDIAN_DD_WEIGHT},{"name":"ten distinct portfolio-related macro drivers","status":"pass"},{"name":"exact max-CAGR scenario allocations","status":"pass","allocations":scenario_check},{"name":"10-year Monte Carlo simulation","status":"pass",**simulation},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
-def audit_sources(payload: dict, claims: list[dict]) -> tuple[list[dict],list[dict],list[str]]:
+def audit_sources(payload: dict, claims: list[dict], drawdown_evidence: list[dict]) -> tuple[list[dict],list[dict],list[str]]:
     evidence=[]; claim_evidence=[]; hard_failures=[]; source_status={}
     for source in payload["sources"]:
+        if source.get("automation") == "historical-drawdown":
+            result=next((item for item in drawdown_evidence if item.get("ticker")==source.get("asset_ticker")),None)
+            status="pass" if result and result.get("status")=="pass" else "fail"
+            item={"source":source["name"],"status":status,"ticker":source.get("asset_ticker")}
+            if result: item.update(usedHistoricalDrawdownPercent=result.get("usedPercent"),observations=result.get("observations"),period=f"{result.get('start')} to {result.get('end')}",dataUrl=result.get("source"))
+            if status=="fail": hard_failures.append(f"{source['name']}: historical series validation missing")
+            evidence.append(item); source_status[source["name"]]=status
+            continue
         if source.get("automation") == "restricted":
             item={"source":source["name"],"status":"manual-review","reason":"The authoritative endpoint restricts automated GitHub Actions access."}
             evidence.append(item); source_status[source["name"]]=item["status"]
@@ -182,7 +214,9 @@ def main() -> int:
         try:
             m3,m6,m12=score(series,fred_values(series)); next(x for x in payload["macro"] if x["driver"]==driver).update(m3=m3,m6=m6,m12=m12)
         except Exception as exc: failures.append(f"FRED {series}: {exc}")
-    evidence,claim_evidence,source_failures=audit_sources(payload,claims); failures.extend(source_failures)
+    try: drawdown_evidence=refresh_historical_drawdowns(payload,get)
+    except Exception as exc: drawdown_evidence=[{"status":"fail","reason":str(exc)}]; failures.append(f"historical drawdown: {exc}")
+    evidence,claim_evidence,source_failures=audit_sources(payload,claims,drawdown_evidence); failures.extend(source_failures)
     try: checks=math_checks(payload)
     except Exception as exc: checks=[{"name":"math and schema","status":"fail","reason":str(exc)}]; failures.append(f"math: {exc}")
     now=datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace('+00:00','Z'); payload["asOf"]=now[:10]
@@ -190,7 +224,7 @@ def main() -> int:
     status="PASS — primary-source, macro and math checks completed" if not failures and not manual else ("PASS WITH MANUAL REVIEW — automated checks completed; restricted source remains queued for human review" if not failures else "REVIEW REQUIRED — "+" | ".join(failures))
     payload["validation"]={"status":status,"checkedAt":now}
     REPORTS.mkdir(parents=True,exist_ok=True)
-    report={"checkedAt":now,"status":status,"sourceEvidence":evidence,"claimEvidence":claim_evidence,"mathChecks":checks,"failures":failures,"limitations":["No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.","BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.","Deterministic checks can refresh data and reject invalid output, but arbitrary code defects require review rather than unsafe automated rewriting."]}
+    report={"checkedAt":now,"status":status,"sourceEvidence":evidence,"historicalDrawdownEvidence":drawdown_evidence,"claimEvidence":claim_evidence,"mathChecks":checks,"failures":failures,"limitations":["No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.","BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.","Historical drawdown uses trailing 10 years where available and otherwise the complete authoritative history available for the current ticker/fund.","Deterministic checks can refresh data and reject invalid output, but arbitrary code defects require review rather than unsafe automated rewriting."]}
     (REPORTS/f"{now[:10]}.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     DATA.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
     print(status)

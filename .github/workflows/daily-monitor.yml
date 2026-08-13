@@ -25,7 +25,7 @@ jobs:
         id: static_audit
         continue-on-error: true
         run: |
-          python -m py_compile scripts/update_data.py scripts/verify_repository.py
+          python -m py_compile scripts/drawdown_data.py scripts/update_data.py scripts/verify_repository.py
           node --check app.js
           python -c "from html.parser import HTMLParser; HTMLParser().feed(open('index.html', encoding='utf-8').read())"
       - name: Recheck schema, claims, math and dashboard wiring
