@@ -14,9 +14,7 @@ Mobile-first, installable scenario dashboard for QQQ, IEMG, BINC and BMNR.
 
 ## Data controls
 
-Portfolio facts and refreshed model inputs use only primary issuer, SEC, Federal Reserve/FRED, and U.S. Treasury sources. The scheduled process does not ingest Yahoo Finance, Google Finance, Alpha Vantage, social media, or unsourced web data.
-
-This project links to only primary issuer, SEC, Federal Reserve/FRED, and U.S. Treasury sources. The scheduled job validates source identity, registered factual claims, issuer-fee evidence, refreshed government data, and deterministic model math. It cannot independently prove a forecast or safely rewrite arbitrary code, so forecast values remain labeled model inputs and code failures are blocked and queued for review instead of being silently “fixed.” BMNR SEC checks remain explicit manual review when SEC blocks the GitHub runner. This is not financial advice.
+Portfolio facts and refreshed model inputs use only primary issuer, SEC, Nasdaq, Federal Reserve/FRED, and U.S. Treasury sources. The scheduled process does not ingest Yahoo Finance, Google Finance, Alpha Vantage, social media, or unsourced web data. It validates source identity, registered factual claims, issuer-fee evidence, historical-series calculations, refreshed government data, and deterministic model math. Forecasts remain clearly labeled assumptions; a failed source or code check blocks publication and opens a review issue. This is not financial advice.
 
 ## Live site
 

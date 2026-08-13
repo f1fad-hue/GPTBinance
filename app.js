@@ -1,22 +1,136 @@
-const pct=n=>`${n.toFixed(1)}%`, $=s=>document.querySelector(s), clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-async function main(){
- const data=await fetch('data/market-data.json',{cache:'no-store'}).then(r=>r.json()); const assets=data.assets;
- const macroAvg=data.macro.reduce((a,x)=>a+(x.m3+x.m6+x.m12)/3,0)/data.macro.length;
- const rate=+clamp(2.2+(macroAvg*.47),1,5).toFixed(1); const cap=capFromRate(rate); const weights=optimize(assets,cap); const allocation=assets.map((x,i)=>({...x,weight:weights[i]}));
- const cagr=allocation.reduce((a,x)=>a+x.weight*(x.grossCagr-x.fee)/100,0); const rawDD=allocation.reduce((a,x)=>a+x.weight*compositeDD(x)/100,0); const dd=Math.min(rawDD,cap);
- $('#portfolio-rate').textContent=rate; $('#rate-copy').textContent=rate>=4?'Constructive macro signal; growth tilt remains bounded by the drawdown rule.':'Mixed macro signal; the model requires a stricter drawdown cap.'; $('#rate-meter').style.width=`${rate*20}%`; $('#cagr').textContent=pct(cagr); $('#drawdown').textContent=pct(dd); $('#dd-cap').textContent=pct(cap); $('#asof-chip').textContent=`As of ${data.asOf}`; $('#validated-at').textContent=new Date(data.validation.checkedAt).toLocaleString(); $('#validation-status').textContent=data.validation.status;
- $('#allocation').innerHTML=allocation.map(x=>`<article class="allocation"><b>${x.weight.toFixed(0)}%</b><span>${x.ticker} · ${x.class}</span><i style="width:${Math.min(100,x.weight/65*100)}%"></i></article>`).join('');
- $('#heatmap').innerHTML='<div class="label">Driver / horizon</div><div class="label">3M</div><div class="label">6M</div><div class="label">12M</div>'+data.macro.map(x=>`<div class="label driver"><b>${x.driver}</b><small>${x.why}</small></div>${[x.m3,x.m6,x.m12].map(v=>`<div class="${v>=3.7?'good':v>=3.3?'mixed':'bad'}">${v.toFixed(1)} / 5</div>`).join('')}`).join(''); const overlay=data.bmnrOverlay; $('#bmnr-overlay').innerHTML=`<h2>BMNR digital-asset overlay</h2><p><b>${overlay.score.toFixed(1)} / 5 — ${overlay.status}</b><br>${overlay.current}</p><p class="caption"><strong>Triggers:</strong> ${overlay.triggers}<br><strong>Review:</strong> ${overlay.cadence} <a href="${overlay.source}" target="_blank" rel="noreferrer">SEC filings</a></p>`;
- const donutColors=['#3de0b5','#54a9ff','#8e8bff','#ffc75a','#ff7777'],scenarios=Object.fromEntries([3,4,5].map(s=>[s,optimize(assets,capFromRate(s))])); $('#donuts').innerHTML=[3,4,5].map(s=>{let p=0,st=scenarios[s].map((w,i)=>{const start=p;p+=w;return `${donutColors[i]} ${start}% ${p}%`}).join(',');const summary=assets.map((a,i)=>`${a.ticker} ${scenarios[s][i].toFixed(0)}%`).join(' · '),labels=assets.map((a,i)=>`<span class="slice-label"><i style="background:${donutColors[i]}"></i>${a.ticker} ${scenarios[s][i].toFixed(0)}%</span>`).join('');return `<article class="donut-card"><div class="donut" role="img" aria-label="Rate ${s}.0 allocation: ${summary}" style="background:conic-gradient(${st})"></div><h3>Rate ${s}.0</h3><p class="donut-labels">${labels}</p></article>`}).join('');
- const sims=monteCarlo(cagr,allocation.reduce((a,x)=>a+x.weight*x.vol/100,0),10); $('#mc-p50').textContent=pct((Math.pow(sims.p50,1/10)-1)*100); $('#mc-note').textContent=`10,000 paths · $1 grows to P50 $${sims.p50.toFixed(2)}`; $('#fan-chart').innerHTML=sims.points.map(x=>`<i class="fan" style="height:${x.p90/sims.max*100}%;--p50:${x.p50/x.p90*100}%" title="Year ${x.y}: P10 $${x.p10.toFixed(2)}, P50 $${x.p50.toFixed(2)}, P90 $${x.p90.toFixed(2)}"></i>`).join('');
- $('#slides').innerHTML=allocation.map(x=>`<article class="slide"><span class="ticker">${x.ticker}</span><h3>${x.name}</h3><div class="metrics"><div><span>Observed max DD (60%)</span><b>${pct(x.historicalDD)}</b></div><div><span>Forward median DD (40%)</span><b>${pct(x.forwardMedianDD)}</b></div><div><span>Composite DD</span><b>${pct(compositeDD(x))}</b></div><div><span>Net CAGR input</span><b>${pct(x.grossCagr-x.fee)}</b></div><div><span>Fee</span><b>${pct(x.fee)}</b></div><div><span>Portfolio weight</span><b>${x.weight.toFixed(0)}%</b></div></div><p class="risk"><strong>Observed period:</strong> ${x.historicalDDStart} to ${x.historicalDDEnd}<br><strong>Peak → trough:</strong> ${x.historicalDDPeak} → ${x.historicalDDTrough}</p><p class="risk">${x.history}</p><p class="risk"><strong>Role:</strong> ${x.reason}</p></article>`).join('');
- const a=t=>allocation.find(x=>x.ticker===t).weight.toFixed(0); $('#rationale').textContent=`The constrained max-growth model places ${a('QQQ')}% in Nasdaq-100 growth, ${a('IEMG')}% in emerging markets, ${a('BINC')}% in flexible income, and ${a('BMNR')}% in the digital-asset equity satellite. It maximizes stated net-CAGR assumptions subject to the ${rate.toFixed(1)}/5 macro signal and its ${cap}% composite-drawdown cap. It is a transparent hypothetical allocation, not a recommendation or assurance of growth.`;
- $('#monitoring').innerHTML=assets.map(x=>`<tr><td><b>${x.ticker}</b></td><td><span class="status ${x.monitorStatus.toLowerCase().replace(' ','-')}">${x.monitorStatus}</span><br><span class="muted">${x.monitorNote}</span></td><td>${x.relevance}/100</td><td>${x.notRelevant}</td><td>${x.cadence}</td></tr>`).join('');
- $('#sources').innerHTML='<ul>'+data.sources.map(s=>`<li><a href="${s.url}" target="_blank" rel="noreferrer">${s.name}</a></li>`).join('')+'</ul>'; $('#refresh').onclick=()=>location.reload(); document.querySelectorAll('.tab').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===button));document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.dataset.page===button.dataset.tab));window.scrollTo({top:0,behavior:'smooth'})})); if('serviceWorker'in navigator)navigator.serviceWorker.getRegistrations().then(registrations=>registrations.forEach(registration=>registration.unregister()));
+const pct = n => `${n.toFixed(1)}%`;
+const $ = s => document.querySelector(s);
+const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
+
+async function main() {
+  const response = await fetch('data/market-data.json', { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Market data request failed (${response.status})`);
+  const data = await response.json();
+  const assets = data.assets;
+  const macroAvg = data.macro.reduce((a, x) => a + (x.m3 + x.m6 + x.m12) / 3, 0) / data.macro.length;
+  const rate = +clamp(2.2 + macroAvg * .47, 1, 5).toFixed(1);
+  const cap = capFromRate(rate);
+  const weights = optimize(assets, cap);
+  const allocation = assets.map((x, i) => ({ ...x, weight: weights[i] }));
+  const cagr = allocation.reduce((a, x) => a + x.weight * (x.grossCagr - x.fee) / 100, 0);
+  const dd = allocation.reduce((a, x) => a + x.weight * compositeDD(x) / 100, 0);
+  if (dd > cap + 1e-9) throw new Error(`Optimized drawdown ${dd.toFixed(2)}% exceeds its ${cap}% cap`);
+
+  $('#portfolio-rate').textContent = rate;
+  $('#rate-copy').textContent = rate >= 4
+    ? 'Constructive macro signal; growth tilt remains bounded by the drawdown rule.'
+    : 'Mixed macro signal; the model requires a stricter drawdown cap.';
+  $('#rate-meter').style.width = `${rate * 20}%`;
+  $('#cagr').textContent = pct(cagr);
+  $('#drawdown').textContent = pct(dd);
+  $('#dd-cap').textContent = pct(cap);
+  $('#asof-chip').textContent = `As of ${data.asOf}`;
+  $('#validated-at').textContent = new Date(data.validation.checkedAt).toLocaleString();
+  $('#validation-status').textContent = data.validation.status;
+
+  $('#allocation').innerHTML = allocation.map(x => `<article class="allocation"><b>${x.weight.toFixed(0)}%</b><span>${x.ticker} · ${x.class}</span><i style="width:${Math.min(100, x.weight / 65 * 100)}%"></i></article>`).join('');
+  $('#heatmap').innerHTML = '<div class="label">Driver / horizon</div><div class="label">3M</div><div class="label">6M</div><div class="label">12M</div>' + data.macro.map(x => `<div class="label driver"><b>${x.driver}</b><small>${x.why}</small></div>${[x.m3, x.m6, x.m12].map(v => `<div class="${v >= 3.7 ? 'good' : v >= 3.3 ? 'mixed' : 'bad'}">${v.toFixed(1)} / 5</div>`).join('')}`).join('');
+
+  const overlay = data.bmnrOverlay;
+  $('#bmnr-overlay').innerHTML = `<h2>BMNR digital-asset overlay</h2><p><b>${overlay.score.toFixed(1)} / 5 — ${overlay.status}</b><br>${overlay.current}</p><p class="caption"><strong>Triggers:</strong> ${overlay.triggers}<br><strong>Review:</strong> ${overlay.cadence} <a href="${overlay.source}" target="_blank" rel="noreferrer">SEC filings</a></p>`;
+
+  const donutColors = ['#3de0b5', '#54a9ff', '#8e8bff', '#ffc75a'];
+  const scenarios = Object.fromEntries([3, 4, 5].map(s => [s, optimize(assets, capFromRate(s))]));
+  $('#donuts').innerHTML = [3, 4, 5].map(s => {
+    let p = 0;
+    const stops = scenarios[s].map((w, i) => {
+      const start = p;
+      p += w;
+      return `${donutColors[i]} ${start}% ${p}%`;
+    }).join(',');
+    const summary = assets.map((a, i) => `${a.ticker} ${scenarios[s][i].toFixed(0)}%`).join(' · ');
+    const labels = assets.map((a, i) => `<span class="slice-label"><i style="background:${donutColors[i]}"></i>${a.ticker} ${scenarios[s][i].toFixed(0)}%</span>`).join('');
+    return `<article class="donut-card"><div class="donut" role="img" aria-label="Rate ${s}.0 allocation: ${summary}" style="background:conic-gradient(${stops})"></div><h3>Rate ${s}.0</h3><p class="donut-labels">${labels}</p></article>`;
+  }).join('');
+
+  const sims = monteCarlo(cagr, allocation.reduce((a, x) => a + x.weight * x.vol / 100, 0), 10);
+  $('#mc-p50').textContent = pct((Math.pow(sims.p50, 1 / 10) - 1) * 100);
+  $('#mc-note').textContent = `10,000 paths · $1 grows to P50 $${sims.p50.toFixed(2)}`;
+  $('#fan-chart').innerHTML = sims.points.map(x => `<i class="fan" style="height:${x.p90 / sims.max * 100}%;--p50:${x.p50 / x.p90 * 100}%" title="Year ${x.y}: P10 $${x.p10.toFixed(2)}, P50 $${x.p50.toFixed(2)}, P90 $${x.p90.toFixed(2)}"></i>`).join('');
+
+  $('#slides').innerHTML = allocation.map(x => `<article class="slide"><span class="ticker">${x.ticker}</span><h3>${x.name}</h3><div class="metrics"><div><span>Observed max DD (60%)</span><b>${pct(x.historicalDD)}</b></div><div><span>Forward median DD (40%)</span><b>${pct(x.forwardMedianDD)}</b></div><div><span>Composite DD</span><b>${pct(compositeDD(x))}</b></div><div><span>Net CAGR input</span><b>${pct(x.grossCagr - x.fee)}</b></div><div><span>Fee</span><b>${pct(x.fee)}</b></div><div><span>Portfolio weight</span><b>${x.weight.toFixed(0)}%</b></div></div><p class="risk"><strong>Observed period:</strong> ${x.historicalDDStart} to ${x.historicalDDEnd}<br><strong>Peak → trough:</strong> ${x.historicalDDPeak} → ${x.historicalDDTrough}</p><p class="risk">${x.history}</p><p class="risk"><strong>Role:</strong> ${x.reason}</p></article>`).join('');
+
+  const weightOf = ticker => allocation.find(x => x.ticker === ticker).weight.toFixed(0);
+  $('#rationale').textContent = `The constrained max-growth model places ${weightOf('QQQ')}% in Nasdaq-100 growth, ${weightOf('IEMG')}% in emerging markets, ${weightOf('BINC')}% in flexible income, and ${weightOf('BMNR')}% in the digital-asset equity satellite. It maximizes stated net-CAGR assumptions subject to the ${rate.toFixed(1)}/5 macro signal and its ${cap}% composite-drawdown cap. It is a transparent hypothetical allocation, not a recommendation or assurance of growth.`;
+
+  $('#monitoring').innerHTML = assets.map(x => `<tr><td><b>${x.ticker}</b></td><td><span class="status ${x.monitorStatus.toLowerCase().replace(' ', '-')}">${x.monitorStatus}</span><br><span class="muted">${x.monitorNote}</span></td><td>${x.relevance}/100</td><td>${x.notRelevant}</td><td>${x.cadence}</td></tr>`).join('');
+  const uniqueSources = [...new Map(data.sources.map(source => [source.url, source])).values()];
+  $('#sources').innerHTML = '<ul>' + uniqueSources.map(s => `<li><a href="${s.url}" target="_blank" rel="noreferrer">${s.name}</a></li>`).join('') + '</ul>';
+  $('#refresh').onclick = () => location.reload();
+  document.querySelectorAll('.tab').forEach(button => button.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.toggle('active', x === button));
+    document.querySelectorAll('.page').forEach(x => x.classList.toggle('active', x.dataset.page === button.dataset.tab));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }));
 }
-function capFromRate(rate){return rate>=5?30:rate>=4?25:20}
-function compositeDD(asset){return .60*asset.historicalDD+.40*asset.forwardMedianDD}
-function optimize(assets,cap){const floor=5,step=5,units=(100-floor*assets.length)/step,dd=compositeDD;let best=null;function search(i,left,weights){if(i===assets.length-1){const candidate=[...weights,floor+left*step],drawdown=candidate.reduce((s,w,j)=>s+w*dd(assets[j])/100,0);if(drawdown>cap+1e-9)return;const growth=candidate.reduce((s,w,j)=>s+w*(assets[j].grossCagr-assets[j].fee)/100,0);if(!best||growth>best.growth+1e-9||(Math.abs(growth-best.growth)<1e-9&&drawdown<best.drawdown))best={weights:candidate,growth,drawdown};return}for(let n=0;n<=left;n++)search(i+1,left-n,[...weights,floor+n*step])}search(0,units,[]);if(!best)throw new Error(`No feasible allocation under ${cap}% drawdown cap`);return best.weights}
-function rng(seed){let t=seed>>>0;return()=>{t+=0x6D2B79F5;let r=Math.imul(t^t>>>15,1|t);r^=r+Math.imul(r^r>>>7,61|r);return((r^r>>>14)>>>0)/4294967296}}
-function monteCarlo(cagr,vol,years){const r=rng(107);let paths=[];for(let i=0;i<10000;i++){let v=1,p=[];for(let y=1;y<=years;y++){let z=(r()+r()+r()+r()+r()+r()-3)*Math.sqrt(2);v*=Math.exp((cagr/100-.5*(vol/100)**2)+(vol/100)*z);p.push(v)}paths.push(p)}let points=[];for(let y=0;y<years;y++){let s=paths.map(p=>p[y]).sort((a,b)=>a-b);points.push({y:y+1,p10:s[999],p50:s[4999],p90:s[8999]})}return{points,p50:points.at(-1).p50,max:points.at(-1).p90}}
-main().catch(e=>{document.body.innerHTML=`<main><h1>Data load error</h1><p>${e.message}</p></main>`});
+
+function capFromRate(rate) {
+  return rate >= 5 ? 30 : rate >= 4 ? 25 : 20;
+}
+
+function compositeDD(asset) {
+  return .60 * asset.historicalDD + .40 * asset.forwardMedianDD;
+}
+
+function optimize(assets, cap) {
+  const floor = 5;
+  const step = 5;
+  const units = (100 - floor * assets.length) / step;
+  let best = null;
+  function search(i, left, weights) {
+    if (i === assets.length - 1) {
+      const candidate = [...weights, floor + left * step];
+      const drawdown = candidate.reduce((sum, weight, j) => sum + weight * compositeDD(assets[j]) / 100, 0);
+      if (drawdown > cap + 1e-9) return;
+      const growth = candidate.reduce((sum, weight, j) => sum + weight * (assets[j].grossCagr - assets[j].fee) / 100, 0);
+      if (!best || growth > best.growth + 1e-9 || (Math.abs(growth - best.growth) < 1e-9 && drawdown < best.drawdown)) {
+        best = { weights: candidate, growth, drawdown };
+      }
+      return;
+    }
+    for (let n = 0; n <= left; n++) search(i + 1, left - n, [...weights, floor + n * step]);
+  }
+  search(0, units, []);
+  if (!best) throw new Error(`No feasible allocation under ${cap}% drawdown cap`);
+  return best.weights;
+}
+
+function rng(seed) {
+  let t = seed >>> 0;
+  return () => {
+    t += 0x6D2B79F5;
+    let r = Math.imul(t ^ t >>> 15, 1 | t);
+    r ^= r + Math.imul(r ^ r >>> 7, 61 | r);
+    return ((r ^ r >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function monteCarlo(cagr, vol, years) {
+  const random = rng(107);
+  const paths = [];
+  for (let i = 0; i < 10000; i++) {
+    let value = 1;
+    const path = [];
+    for (let year = 1; year <= years; year++) {
+      const z = (random() + random() + random() + random() + random() + random() - 3) * Math.sqrt(2);
+      value *= Math.exp(cagr / 100 - .5 * (vol / 100) ** 2 + vol / 100 * z);
+      path.push(value);
+    }
+    paths.push(path);
+  }
+  const points = [];
+  for (let year = 0; year < years; year++) {
+    const sorted = paths.map(path => path[year]).sort((a, b) => a - b);
+    points.push({ y: year + 1, p10: sorted[999], p50: sorted[4999], p90: sorted[8999] });
+  }
+  return { points, p50: points.at(-1).p50, max: points.at(-1).p90 };
+}
+
+main().catch(error => {
+  document.body.innerHTML = `<main><h1>Data load error</h1><p>${error.message}</p></main>`;
+});
