@@ -2,7 +2,7 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T14:30:13Z"
+    "checkedAt": "2026-08-13T14:50:45Z"
   },
   "macro": [
     {

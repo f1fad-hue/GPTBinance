@@ -74,8 +74,8 @@ function capFromRate(rate) {
 }
 
 function optimize(assets, cap) {
-  const floor = 1;
-  const step = 1;
+  const floor = 5;
+  const step = 5;
   const units = (100 - floor * assets.length) / step;
   let best = null;
   function search(i, left, weights) {

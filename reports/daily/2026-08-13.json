@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T14:30:13Z",
+  "checkedAt": "2026-08-13T14:50:45Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58870,
+      "bytes": 58874,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -249,36 +249,36 @@
       "status": "pass",
       "allocations": {
         "3": {
-          "QQQ": 7,
-          "IEMG": 1,
-          "BINC": 75,
-          "BMNR": 17
+          "QQQ": 20,
+          "IEMG": 5,
+          "BINC": 65,
+          "BMNR": 10
         },
         "4": {
-          "QQQ": 6,
-          "IEMG": 1,
-          "BINC": 70,
-          "BMNR": 23
+          "QQQ": 50,
+          "IEMG": 5,
+          "BINC": 40,
+          "BMNR": 5
         },
         "5": {
-          "QQQ": 8,
-          "IEMG": 1,
-          "BINC": 63,
-          "BMNR": 28
+          "QQQ": 25,
+          "IEMG": 5,
+          "BINC": 50,
+          "BMNR": 20
         }
       },
       "drawdownChecks": {
         "3": {
           "cap": 20,
-          "computedHistoricalDrawdown": 19.966
+          "computedHistoricalDrawdown": 19.517
         },
         "4": {
           "cap": 25,
-          "computedHistoricalDrawdown": 24.903
+          "computedHistoricalDrawdown": 24.946
         },
         "5": {
           "cap": 30,
-          "computedHistoricalDrawdown": 29.945
+          "computedHistoricalDrawdown": 29.927
         }
       }
     },
@@ -287,10 +287,10 @@
       "status": "pass",
       "paths": 10000,
       "years": 10,
-      "p10Terminal": 0.863,
-      "p50Terminal": 2.133,
-      "p90Terminal": 5.131,
-      "p50Annualized": 7.87
+      "p10Terminal": 0.948,
+      "p50Terminal": 2.153,
+      "p90Terminal": 4.77,
+      "p50Annualized": 7.968
     },
     {
       "name": "BMNR digital-asset overlay bounds",
@@ -302,7 +302,7 @@
       "status": "pass",
       "rate": 3.9,
       "cap": 20,
-      "computed_drawdown": 19.966
+      "computed_drawdown": 19.517
     }
   ],
   "failures": [],

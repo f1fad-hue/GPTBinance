@@ -30,8 +30,8 @@ FRED = {
     "Industrial production":"INDPRO",
     "Bank lending standards":"DRTSCILM",
 }
-MIN_WEIGHT = 1
-WEIGHT_STEP = 1
+MIN_WEIGHT = 5
+WEIGHT_STEP = 5
 MONTE_CARLO_PATHS = 10_000
 MONTE_CARLO_YEARS = 10
 
@@ -108,7 +108,7 @@ def score(series: str, values: list[tuple[date,float]]) -> tuple[float,float,flo
 def cap_from_rate(rate: float) -> float: return 30 if rate>=5 else 25 if rate>=4 else 20
 
 def optimize(assets: list[dict], cap: float) -> list[float]:
-    """Exhaustively maximize net CAGR on the 1% allocation grid."""
+    """Exhaustively maximize net CAGR on the 5% allocation grid."""
     units=(100-MIN_WEIGHT*len(assets))//WEIGHT_STEP; best=None
     for prefix in itertools.product(range(units+1),repeat=len(assets)-1):
         used=sum(prefix)
