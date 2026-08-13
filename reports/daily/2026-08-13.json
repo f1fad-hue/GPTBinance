@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T12:08:19Z",
+  "checkedAt": "2026-08-13T12:12:41Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -16,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1651029,
+      "bytes": 1651168,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -27,7 +27,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1703485,
+      "bytes": 1703624,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58042,
+      "bytes": 58542,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -155,25 +155,25 @@
     {
       "ticker": "QQQ",
       "status": "pass",
-      "previousMedianPercent": 27,
+      "previousMedianPercent": null,
       "usedP90Percent": 61.44
     },
     {
       "ticker": "IEMG",
       "status": "pass",
-      "previousMedianPercent": 30,
+      "previousMedianPercent": null,
       "usedP90Percent": 62.07
     },
     {
       "ticker": "BINC",
       "status": "pass",
-      "previousMedianPercent": 10,
+      "previousMedianPercent": null,
       "usedP90Percent": 26.77
     },
     {
       "ticker": "BMNR",
       "status": "pass",
-      "previousMedianPercent": 55,
+      "previousMedianPercent": null,
       "usedP90Percent": 99.02
     }
   ],
