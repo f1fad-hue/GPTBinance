@@ -11,7 +11,7 @@ permissions:
   issues: write
 jobs:
   validate-and-refresh:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
