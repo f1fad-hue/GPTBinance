@@ -123,14 +123,14 @@ def monte_carlo_summary(assets: list[dict], weights: list[float]) -> dict:
 
 def math_checks(payload: dict) -> list[dict]:
     assets=payload["assets"]; macro=payload["macro"]
-    required={"BAI","QQQ","IEMG","BINC","BMNR"}
+    required={"QQQ","IEMG","BINC","BMNR"}
     assert math.isclose(HISTORICAL_DD_WEIGHT,0.60) and math.isclose(FORWARD_MEDIAN_DD_WEIGHT,0.40)
     assert math.isclose(HISTORICAL_DD_WEIGHT+FORWARD_MEDIAN_DD_WEIGHT,1.0)
     assert {x["ticker"] for x in assets}==required
     assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 and 1<=x["relevance"]<=100 for x in assets)
     assert all(x["monitorStatus"] in {"Relevant","Watch","Not relevant"} and x["monitorNote"] and x["notRelevant"] and x["cadence"] for x in assets)
     assert len(macro)==10 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
-    assert all(x["why"] and ("all five holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
+    assert all(x["why"] and ("all four holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
     overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
     macro_avg=sum((x["m3"]+x["m6"]+x["m12"])/3 for x in macro)/len(macro)
     scenarios={scenario:optimize(assets,cap_from_rate(scenario)) for scenario in (3,4,5)}

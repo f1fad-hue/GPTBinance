@@ -2,68 +2,68 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T07:03:52Z"
+    "checkedAt": "2026-08-13T09:34:05Z"
   },
   "macro": [
     {
       "driver": "Inflation trend",
-      "why": "BAI/QQQ valuation multiples, BINC real income and IEMG purchasing power",
+      "why": "QQQ valuation multiples, BINC real income and IEMG purchasing power",
       "m3": 3.5,
       "m6": 3.3,
       "m12": 3.2
     },
     {
       "driver": "Policy rates",
-      "why": "BAI/QQQ discount rate, BINC duration and economy-wide financing cost",
+      "why": "QQQ discount rate, BINC duration and economy-wide financing cost",
       "m3": 3.5,
       "m6": 3.5,
       "m12": 3.7
     },
     {
       "driver": "Real yields",
-      "why": "Distinct valuation hurdle for BAI/QQQ and duration signal for BINC",
+      "why": "Distinct valuation hurdle for QQQ and duration signal for BINC",
       "m3": 3.3,
       "m6": 3.2,
       "m12": 3.2
     },
     {
       "driver": "Yield curve",
-      "why": "Growth-cycle and credit transmission for BAI, QQQ, IEMG and BINC",
+      "why": "Growth-cycle and credit transmission for QQQ, IEMG and BINC",
       "m3": 3.5,
       "m6": 3.3,
       "m12": 3.4
     },
     {
       "driver": "Credit spreads",
-      "why": "BINC credit compensation and equity-stress signal for BAI/QQQ/IEMG",
+      "why": "BINC credit compensation and equity-stress signal for QQQ/IEMG",
       "m3": 3.6,
       "m6": 3.6,
       "m12": 3.7
     },
     {
       "driver": "Labor & activity",
-      "why": "Earnings demand for BAI/QQQ and global activity spillover to IEMG",
+      "why": "Earnings demand for QQQ and global activity spillover to IEMG",
       "m3": 3.8,
       "m6": 3.9,
       "m12": 3.8
     },
     {
       "driver": "Financial conditions",
-      "why": "Broad leverage and funding conditions affecting all five holdings",
+      "why": "Broad leverage and funding conditions affecting all four holdings",
       "m3": 3.6,
       "m6": 3.4,
       "m12": 3.6
     },
     {
       "driver": "System liquidity",
-      "why": "Liquidity support for BAI/QQQ risk appetite, IEMG flows and BMNR funding",
+      "why": "Liquidity support for QQQ risk appetite, IEMG flows and BMNR funding",
       "m3": 3.8,
       "m6": 4.1,
       "m12": 4.4
     },
     {
       "driver": "Market volatility",
-      "why": "High-beta and correlation shock risk for BAI, QQQ, IEMG and BMNR",
+      "why": "High-beta and correlation shock risk for QQQ, IEMG and BMNR",
       "m3": 3.7,
       "m6": 3.7,
       "m12": 3.6
@@ -85,24 +85,6 @@
     "source": "https://www.sec.gov/edgar/browse/?CIK=0001829311"
   },
   "assets": [
-    {
-      "ticker": "BAI",
-      "name": "iShares A.I. Innovation and Tech Active ETF",
-      "class": "AI / US growth",
-      "fee": 0.65,
-      "grossCagr": 15.4,
-      "vol": 31,
-      "historicalDD": 35,
-      "forwardMedianDD": 29,
-      "relevance": 83,
-      "monitorStatus": "Relevant",
-      "monitorNote": "Review on trigger",
-      "reason": "AI earnings breadth and capital-spending persistence",
-      "notRelevant": "AI revenue adoption stalls, manager\u2019s mandate drifts, or fee waiver ends with sustained net-return disadvantage.",
-      "cadence": "Daily price/liquidity; quarterly holdings & prospectus",
-      "source": "https://www.ishares.com/us/products/339081/fund",
-      "history": "Inception 2024; no 10-year live fund history."
-    },
     {
       "ticker": "QQQ",
       "name": "Invesco QQQ Trust",
@@ -177,16 +159,6 @@
     }
   ],
   "sources": [
-    {
-      "name": "BAI official fund page & prospectus",
-      "url": "https://www.ishares.com/us/products/339081/fund",
-      "required_text": [
-        "BAI",
-        "iShares A.I. Innovation and Tech Active ETF"
-      ],
-      "asset_ticker": "BAI",
-      "fee_field": "gross_expense_ratio"
-    },
     {
       "name": "QQQ official fund page",
       "url": "https://www.invesco.com/qqq-etf/en/home.html",

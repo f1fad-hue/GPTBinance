@@ -1,6 +1,6 @@
 # Portfolio Signal Lab
 
-Mobile-first, installable scenario dashboard for the required BAI, QQQ, IEMG, BINC and BMNR instruments.
+Mobile-first, installable scenario dashboard for QQQ, IEMG, BINC and BMNR.
 
 ## What it does
 

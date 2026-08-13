@@ -36,7 +36,7 @@ def main() -> None:
     assets={asset["ticker"]:asset for asset in data["assets"]}
     sources={source["name"]:source for source in data["sources"]}
 
-    assert set(assets)=={"BAI","QQQ","IEMG","BINC","BMNR"}
+    assert set(assets)=={"QQQ","IEMG","BINC","BMNR"}
     assert all("historicalDD" in asset and "forwardMedianDD" in asset for asset in assets.values())
     assert all("forwardDD" not in asset for asset in assets.values())
     assert all("weight" not in asset for asset in assets.values()), "stale stored allocations must not override the optimizer"
@@ -54,7 +54,7 @@ def main() -> None:
             assert claim["source"]=="Model methodology"
         else:
             assert claim["source"] in sources, f"unregistered claim source: {claim['source']}"
-    for ticker in ("BAI","QQQ","IEMG","BINC"):
+    for ticker in ("QQQ","IEMG","BINC"):
         source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
         assert source["fee_field"]=="gross_expense_ratio"
         assert source["url"]==assets[ticker]["source"]
@@ -71,7 +71,7 @@ def main() -> None:
     assert math_evidence["10-year Monte Carlo simulation"]["years"]==10
     assert set(math_evidence["exact max-CAGR scenario allocations"]["allocations"])=={"3","4","5"}
     source_evidence={item["source"]:item for item in evidence["sourceEvidence"]}
-    for ticker in ("BAI","QQQ","IEMG","BINC"):
+    for ticker in ("QQQ","IEMG","BINC"):
         source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
         assert source_evidence[source["name"]]["usedFeePercent"]==assets[ticker]["fee"]
 

@@ -1,18 +1,7 @@
 {
-  "checkedAt": "2026-08-13T07:03:52Z",
+  "checkedAt": "2026-08-13T09:34:05Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
-    {
-      "source": "BAI official fund page & prospectus",
-      "status": "pass",
-      "bytes": 1547583,
-      "identityMarkers": [
-        "BAI",
-        "iShares A.I. Innovation and Tech Active ETF"
-      ],
-      "previousFeePercent": 0.65,
-      "usedFeePercent": 0.65
-    },
     {
       "source": "QQQ official fund page",
       "status": "pass",
@@ -27,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1644145,
+      "bytes": 1645526,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -38,7 +27,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1687027,
+      "bytes": 1688756,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -54,7 +43,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58138,
+      "bytes": 57942,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -62,19 +51,13 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867829,
+      "bytes": 1867828,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
     }
   ],
   "claimEvidence": [
-    {
-      "claim": "bai-fee",
-      "status": "pass",
-      "source": "BAI official fund page & prospectus",
-      "statement": "BAI uses the current official gross expense ratio from the iShares fund page."
-    },
     {
       "claim": "qqq-fee",
       "status": "pass",
@@ -142,25 +125,22 @@
       "status": "pass",
       "allocations": {
         "3": {
-          "BAI": 20,
-          "QQQ": 5,
+          "QQQ": 25,
           "IEMG": 5,
           "BINC": 65,
           "BMNR": 5
         },
         "4": {
-          "BAI": 5,
-          "QQQ": 10,
+          "QQQ": 15,
           "IEMG": 5,
           "BINC": 60,
           "BMNR": 20
         },
         "5": {
-          "BAI": 55,
-          "QQQ": 5,
+          "QQQ": 15,
           "IEMG": 5,
-          "BINC": 25,
-          "BMNR": 10
+          "BINC": 50,
+          "BMNR": 30
         }
       }
     },
@@ -169,10 +149,10 @@
       "status": "pass",
       "paths": 10000,
       "years": 10,
-      "p10Terminal": 1.001,
-      "p50Terminal": 2.156,
-      "p90Terminal": 4.538,
-      "p50Annualized": 7.984
+      "p10Terminal": 1.036,
+      "p50Terminal": 2.124,
+      "p90Terminal": 4.264,
+      "p50Annualized": 7.825
     },
     {
       "name": "BMNR digital-asset overlay bounds",
@@ -184,7 +164,7 @@
       "status": "pass",
       "rate": 3.9,
       "cap": 20,
-      "computed_drawdown": 19.97
+      "computed_drawdown": 19.57
     }
   ],
   "failures": [],
