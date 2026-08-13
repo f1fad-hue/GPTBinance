@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T10:28:58Z",
+  "checkedAt": "2026-08-13T10:45:58Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -42,7 +42,7 @@
       "usedHistoricalDrawdownPercent": 35.12,
       "observations": 2512,
       "period": "2016-08-15 to 2026-08-12",
-      "dataUrl": "https://api.nasdaq.com/api/quote/QQQ/historical?assetclass=etf&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
+      "dataUrl": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
     },
     {
       "source": "IEMG official historical NAV",
@@ -69,7 +69,7 @@
       "usedHistoricalDrawdownPercent": 90.14,
       "observations": 311,
       "period": "2025-05-16 to 2026-08-12",
-      "dataUrl": "https://api.nasdaq.com/api/quote/BMNR/historical?assetclass=stocks&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
+      "dataUrl": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
     },
     {
       "source": "BMNR SEC EDGAR company page",
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58044,
+      "bytes": 58046,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -97,7 +97,7 @@
     {
       "ticker": "QQQ",
       "status": "pass",
-      "previousPercent": 35.12,
+      "previousPercent": 22.77,
       "usedPercent": 35.12,
       "value": 35.1225,
       "start": "2016-08-15",
@@ -106,7 +106,7 @@
       "trough": "2022-11-03",
       "observations": 2512,
       "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
-      "source": "https://api.nasdaq.com/api/quote/QQQ/historical?assetclass=etf&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
+      "source": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
     },
     {
       "ticker": "IEMG",
@@ -148,7 +148,7 @@
       "trough": "2026-06-30",
       "observations": 311,
       "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
-      "source": "https://api.nasdaq.com/api/quote/BMNR/historical?assetclass=stocks&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
+      "source": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
     }
   ],
   "claimEvidence": [

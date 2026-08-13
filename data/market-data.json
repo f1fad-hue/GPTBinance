@@ -2,7 +2,7 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T10:28:58Z"
+    "checkedAt": "2026-08-13T10:45:58Z"
   },
   "macro": [
     {
@@ -107,7 +107,7 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2021-12-27",
       "historicalDDTrough": "2022-11-03",
-      "historicalDDSource": "https://api.nasdaq.com/api/quote/QQQ/historical?assetclass=etf&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
+      "historicalDDSource": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
     },
     {
       "ticker": "IEMG",
@@ -179,7 +179,7 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2025-07-03",
       "historicalDDTrough": "2026-06-30",
-      "historicalDDSource": "https://api.nasdaq.com/api/quote/BMNR/historical?assetclass=stocks&fromdate=2016-08-13&todate=2026-08-12&limit=5000"
+      "historicalDDSource": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
     }
   ],
   "sources": [

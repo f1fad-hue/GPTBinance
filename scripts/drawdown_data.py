@@ -89,15 +89,33 @@ def _ishares_history(ticker: str, get, today: date) -> tuple[dict, str]:
 def _nasdaq_history(ticker: str, get, today: date) -> tuple[dict, str]:
     cutoff = _cutoff(today)
     end_date = today - timedelta(days=1)
-    params = urlencode({
-        "assetclass": NASDAQ_ASSET_CLASSES[ticker],
-        "fromdate": cutoff.isoformat(),
-        "todate": end_date.isoformat(),
-        "limit": 5000,
-    })
-    api_url = f"https://api.nasdaq.com/api/quote/{ticker}/historical?{params}"
-    payload = json.loads(get(api_url))
-    rows_payload = (payload.get("data") or {}).get("tradesTable", {}).get("rows") or []
+    # Nasdaq's full 10-year response can stall on hosted CI networks. Paginate
+    # the same official date range in bounded responses and deduplicate dates.
+    rows_by_date: dict[date, float] = {}
+    offset = 0
+    total_records = None
+    while total_records is None or offset < total_records:
+        params = urlencode({
+            "assetclass": NASDAQ_ASSET_CLASSES[ticker],
+            "fromdate": cutoff.isoformat(),
+            "todate": end_date.isoformat(),
+            "limit": 500,
+            "offset": offset,
+        })
+        api_url = f"https://api.nasdaq.com/api/quote/{ticker}/historical?{params}"
+        payload = json.loads(get(api_url))
+        data = payload.get("data") or {}
+        rows_payload = (data.get("tradesTable") or {}).get("rows") or []
+        total_records = int(data.get("totalRecords") or 0)
+        if not rows_payload:
+            break
+        for item in rows_payload:
+            try:
+                observed = datetime.strptime(item["date"], "%m/%d/%Y").date()
+                rows_by_date[observed] = _number(item["close"])
+            except (KeyError, ValueError):
+                continue
+        offset += len(rows_payload)
     distributions = {}
     dividend_url = f"https://api.nasdaq.com/api/quote/{ticker}/dividends?assetclass={NASDAQ_ASSET_CLASSES[ticker]}"
     dividend_payload = json.loads(get(dividend_url))
@@ -107,14 +125,10 @@ def _nasdaq_history(ticker: str, get, today: date) -> tuple[dict, str]:
             distributions[observed] = distributions.get(observed, 0.0) + _number(item["amount"])
         except (KeyError, ValueError):
             continue
-    rows = []
-    for item in rows_payload:
-        try:
-            observed = datetime.strptime(item["date"], "%m/%d/%Y").date()
-            rows.append((observed, _number(item["close"]), distributions.get(observed, 0.0)))
-        except (KeyError, ValueError):
-            continue
-    return _max_drawdown(rows, "Nasdaq closing-price"), api_url
+    rows = [(observed, close, distributions.get(observed, 0.0))
+            for observed, close in rows_by_date.items()]
+    public_url = f"https://www.nasdaq.com/market-activity/{NASDAQ_ASSET_CLASSES[ticker]}/{ticker.lower()}/historical"
+    return _max_drawdown(rows, "Nasdaq closing-price"), public_url
 
 
 def refresh_historical_drawdowns(payload: dict, get, today: date | None = None) -> list[dict]:
