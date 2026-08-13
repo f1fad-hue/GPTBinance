@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T12:33:19Z",
+  "checkedAt": "2026-08-13T12:39:49Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -16,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1651029,
+      "bytes": 1651168,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -27,7 +27,7 @@
     {
       "source": "SGOV official fund page & prospectus",
       "status": "pass",
-      "bytes": 1651820,
+      "bytes": 1651959,
       "identityMarkers": [
         "SGOV",
         "iShares 0-3 Month Treasury Bond ETF"
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58554,
+      "bytes": 58742,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -87,7 +87,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867828,
+      "bytes": 1867827,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
