@@ -7,7 +7,7 @@ import re
 from datetime import date, datetime, timedelta
 from urllib.parse import urlencode
 
-ISHARES_PORTFOLIOS = {"IEMG": "244050", "SGOV": "314116"}
+ISHARES_PORTFOLIOS = {"IEMG": "244050", "BINC": "331752"}
 NASDAQ_ASSET_CLASSES = {"QQQ": "etf", "BMNR": "stocks"}
 ISHARES_DOWNLOAD = (
     "https://www.blackrock.com/varnish-api/blk-one01-product-data/"

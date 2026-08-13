@@ -27,15 +27,15 @@ FRED = {
     "System liquidity":"M2SL",
     "Market volatility":"VIXCLS",
     "USD / EM FX trend":"DTWEXBGS",
+    "Industrial production":"INDPRO",
+    "Bank lending standards":"DRTSCILM",
 }
-HISTORICAL_DD_WEIGHT = 0.60
-FORWARD_P90_DD_WEIGHT = 0.40
-MIN_WEIGHT = 5
-WEIGHT_STEP = 5
+MIN_WEIGHT = 1
+WEIGHT_STEP = 1
 MONTE_CARLO_PATHS = 10_000
 MONTE_CARLO_YEARS = 10
 FORWARD_DD_STEPS_PER_YEAR = 12
-FORWARD_DD_SEEDS = {"QQQ":107,"IEMG":211,"SGOV":307,"BMNR":401}
+FORWARD_DD_SEEDS = {"QQQ":107,"IEMG":211,"BINC":307,"BMNR":401}
 
 def get(url: str) -> str:
     last_error: Exception | None = None
@@ -95,7 +95,7 @@ def fred_values(series: str) -> list[tuple[date,float]]:
     return values
 
 def score(series: str, values: list[tuple[date,float]]) -> tuple[float,float,float]:
-    inverse=series in {"CPIAUCSL","EFFR","DFII10","BAMLH0A0HYM2","UNRATE","NFCI","VIXCLS","DTWEXBGS"}
+    inverse=series in {"CPIAUCSL","EFFR","DFII10","BAMLH0A0HYM2","UNRATE","NFCI","VIXCLS","DTWEXBGS","DRTSCILM"}
     latest_date,latest_value=values[-1]
     recent=[value for observed,value in values if observed>=latest_date-timedelta(days=5*365)]
     scale=max(statistics.pstdev(recent),.05)
@@ -107,8 +107,8 @@ def score(series: str, values: list[tuple[date,float]]) -> tuple[float,float,flo
         return round(max(1,min(5,3.5+signed/scale*.45)),1)
     return one(3),one(6),one(12)
 
-def forward_p90_drawdown(asset: dict) -> float:
-    """10-year P90 of simulated monthly-path maximum drawdown."""
+def forward_p50_drawdown(asset: dict) -> float:
+    """Median of 10-year simulated monthly-path maximum drawdowns."""
     state=FORWARD_DD_SEEDS[asset["ticker"]]; mask=0xFFFFFFFF
     def browser_random() -> float:
         nonlocal state
@@ -127,27 +127,27 @@ def forward_p90_drawdown(asset: dict) -> float:
             value*=math.exp((annual_return-.5*annual_volatility**2)*step+annual_volatility*math.sqrt(step)*z)
             peak=max(peak,value); worst=max(worst,1-value/peak)
         drawdowns.append(worst)
-    drawdowns.sort()
-    return round(drawdowns[math.ceil(.90*len(drawdowns))-1]*100,2)
+    return round(statistics.median(drawdowns)*100,2)
 
-def refresh_forward_p90_drawdowns(payload: dict) -> list[dict]:
+def refresh_forward_p50_drawdowns(payload: dict) -> list[dict]:
     evidence=[]
     for asset in payload["assets"]:
-        previous=asset.pop("forwardMedianDD",None)
-        asset["forwardP90DD"]=forward_p90_drawdown(asset)
-        evidence.append({"ticker":asset["ticker"],"status":"pass","previousMedianPercent":previous,"usedP90Percent":asset["forwardP90DD"]})
+        previous=asset.pop("forwardP90DD",None)
+        asset.pop("forwardMedianDD",None)
+        asset["forwardP50DD"]=forward_p50_drawdown(asset)
+        evidence.append({"ticker":asset["ticker"],"status":"pass","previousP90Percent":previous,"usedP50Percent":asset["forwardP50DD"]})
     payload["forwardDDModel"]={
-        "metric":"10-year Monte Carlo P90 maximum drawdown",
+        "metric":"P50 10-year forward maximum drawdown",
         "paths":MONTE_CARLO_PATHS,
         "stepsPerYear":FORWARD_DD_STEPS_PER_YEAR,
         "process":"Geometric Brownian motion using fee-adjusted CAGR and annual volatility",
-        "percentile":90,
+        "percentile":50,
         "seedPolicy":"Fixed per holding for reproducibility",
     }
     return evidence
 
-def composite_dd(asset: dict) -> float:
-    return HISTORICAL_DD_WEIGHT*asset["historicalDD"]+FORWARD_P90_DD_WEIGHT*asset["forwardP90DD"]
+def forward_dd(asset: dict) -> float:
+    return asset["forwardP50DD"]
 def cap_from_rate(rate: float) -> float: return 30 if rate>=5 else 25 if rate>=4 else 20
 
 def optimize(assets: list[dict], cap: float) -> list[float]:
@@ -158,7 +158,7 @@ def optimize(assets: list[dict], cap: float) -> list[float]:
         if used>units: continue
         extras=(*prefix,units-used)
         weights=[float(MIN_WEIGHT+WEIGHT_STEP*x) for x in extras]
-        drawdown=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
+        drawdown=sum(w*forward_dd(a) for w,a in zip(weights,assets))/100
         if drawdown>cap+1e-9: continue
         growth=sum(w*(a["grossCagr"]-a["fee"]) for w,a in zip(weights,assets))/100
         candidate=(growth,-drawdown,weights)
@@ -188,25 +188,25 @@ def monte_carlo_summary(assets: list[dict], weights: list[float]) -> dict:
 
 def math_checks(payload: dict) -> list[dict]:
     assets=payload["assets"]; macro=payload["macro"]
-    required={"QQQ","IEMG","SGOV","BMNR"}
-    assert math.isclose(HISTORICAL_DD_WEIGHT,0.60) and math.isclose(FORWARD_P90_DD_WEIGHT,0.40)
-    assert math.isclose(HISTORICAL_DD_WEIGHT+FORWARD_P90_DD_WEIGHT,1.0)
+    required={"QQQ","IEMG","BINC","BMNR"}
     assert {x["ticker"] for x in assets}==required
-    assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 and 0<x["forwardP90DD"]<100 and 1<=x["relevance"]<=100 for x in assets)
-    model=payload["forwardDDModel"]; assert model["paths"]==MONTE_CARLO_PATHS and model["stepsPerYear"]==FORWARD_DD_STEPS_PER_YEAR and model["percentile"]==90
+    assert all(x["fee"]>=0 and x["grossCagr"]>x["fee"] and x["vol"]>0 and 0<x["forwardP50DD"]<100 and 1<=x["relevance"]<=100 for x in assets)
+    model=payload["forwardDDModel"]; assert model["paths"]==MONTE_CARLO_PATHS and model["stepsPerYear"]==FORWARD_DD_STEPS_PER_YEAR and model["percentile"]==50
     assert all(x["historicalDD"]>0 and x["historicalDDMethod"].startswith("Observed daily") and x["historicalDDStart"]<=x["historicalDDPeak"]<=x["historicalDDTrough"]<=x["historicalDDEnd"] for x in assets)
     assert all(x["monitorStatus"] in {"Relevant","Watch","Not relevant"} and x["monitorNote"] and x["notRelevant"] and x["cadence"] for x in assets)
-    assert len(macro)==10 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
+    assert len(macro)==len(FRED)==12 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
     assert all(x["why"] and ("all four holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
     overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
     macro_avg=sum((x["m3"]+x["m6"]+x["m12"])/3 for x in macro)/len(macro)
     scenarios={scenario:optimize(assets,cap_from_rate(scenario)) for scenario in (3,4,5)}
     rate=round(max(1,min(5,2.2+macro_avg*.47)),1); cap=cap_from_rate(rate); weights=scenarios[5 if rate>=5 else 4 if rate>=4 else 3]
-    weighted_dd=sum(w*composite_dd(a) for w,a in zip(weights,assets))/100
+    weighted_dd=sum(w*forward_dd(a) for w,a in zip(weights,assets))/100
     assert math.isclose(sum(weights),100,abs_tol=.0001) and weighted_dd<=cap+.001 and all(w%WEIGHT_STEP==0 and w>=MIN_WEIGHT for w in weights)
     simulation=monte_carlo_summary(assets,weights); assert 0<simulation["p10Terminal"]<simulation["p50Terminal"]<simulation["p90Terminal"]
     scenario_check={str(scenario):dict(zip([a["ticker"] for a in assets],[round(w) for w in scenario_weights])) for scenario,scenario_weights in scenarios.items()}
-    return [{"name":"required holdings","status":"pass"},{"name":"input and relevance bounds","status":"pass"},{"name":"drawdown composite weights","status":"pass","historicalWeight":HISTORICAL_DD_WEIGHT,"forwardP90Weight":FORWARD_P90_DD_WEIGHT},{"name":"forward P90 maximum-drawdown simulation","status":"pass","paths":MONTE_CARLO_PATHS,"years":MONTE_CARLO_YEARS,"stepsPerYear":FORWARD_DD_STEPS_PER_YEAR},{"name":"ten distinct portfolio-related macro drivers","status":"pass"},{"name":"exact max-CAGR scenario allocations","status":"pass","allocations":scenario_check},{"name":"10-year Monte Carlo simulation","status":"pass",**simulation},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
+    scenario_dd={str(scenario):{"cap":cap_from_rate(scenario),"computedP50Drawdown":round(sum(w*forward_dd(a) for w,a in zip(scenario_weights,assets))/100,3)} for scenario,scenario_weights in scenarios.items()}
+    assert all(item["computedP50Drawdown"]<=item["cap"] for item in scenario_dd.values())
+    return [{"name":"required holdings","status":"pass"},{"name":"input and relevance bounds","status":"pass"},{"name":"forward P50-only drawdown rule","status":"pass","historicalWeight":0,"forwardP50Weight":1},{"name":"P50 10-year forward maximum-drawdown simulation","status":"pass","paths":MONTE_CARLO_PATHS,"years":MONTE_CARLO_YEARS,"stepsPerYear":FORWARD_DD_STEPS_PER_YEAR},{"name":"twelve distinct portfolio-related macro drivers","status":"pass"},{"name":"exact max-CAGR scenario allocations","status":"pass","allocations":scenario_check,"drawdownChecks":scenario_dd},{"name":"10-year Monte Carlo simulation","status":"pass",**simulation},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
 def audit_sources(payload: dict, claims: list[dict], drawdown_evidence: list[dict]) -> tuple[list[dict],list[dict],list[str]]:
     evidence=[]; claim_evidence=[]; hard_failures=[]; source_status={}
@@ -259,8 +259,8 @@ def main() -> int:
         except Exception as exc: failures.append(f"FRED {series}: {exc}")
     try: drawdown_evidence=refresh_historical_drawdowns(payload,get)
     except Exception as exc: drawdown_evidence=[{"status":"fail","reason":str(exc)}]; failures.append(f"historical drawdown: {exc}")
-    try: forward_dd_evidence=refresh_forward_p90_drawdowns(payload)
-    except Exception as exc: forward_dd_evidence=[{"status":"fail","reason":str(exc)}]; failures.append(f"forward P90 drawdown: {exc}")
+    try: forward_dd_evidence=refresh_forward_p50_drawdowns(payload)
+    except Exception as exc: forward_dd_evidence=[{"status":"fail","reason":str(exc)}]; failures.append(f"forward P50 drawdown: {exc}")
     evidence,claim_evidence,source_failures=audit_sources(payload,claims,drawdown_evidence); failures.extend(source_failures)
     try: checks=math_checks(payload)
     except Exception as exc: checks=[{"name":"math and schema","status":"fail","reason":str(exc)}]; failures.append(f"math: {exc}")
@@ -269,7 +269,7 @@ def main() -> int:
     status="PASS — primary-source, macro and math checks completed" if not failures and not manual else ("PASS WITH MANUAL REVIEW — automated checks completed; restricted source remains queued for human review" if not failures else "REVIEW REQUIRED — "+" | ".join(failures))
     payload["validation"]={"status":status,"checkedAt":now}
     REPORTS.mkdir(parents=True,exist_ok=True)
-    report={"checkedAt":now,"status":status,"sourceEvidence":evidence,"historicalDrawdownEvidence":drawdown_evidence,"forwardP90DrawdownEvidence":forward_dd_evidence,"claimEvidence":claim_evidence,"mathChecks":checks,"failures":failures,"limitations":["Monte Carlo P90 drawdown is a hypothetical model output based on stated return and volatility assumptions, not an authoritative fact or guarantee.","No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.","BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.","Historical drawdown uses trailing 10 years where available and otherwise the complete authoritative history available for the current ticker/fund.","Deterministic checks can refresh data and reject invalid output, but arbitrary code defects require review rather than unsafe automated rewriting."]}
+    report={"checkedAt":now,"status":status,"sourceEvidence":evidence,"historicalDrawdownEvidence":drawdown_evidence,"forwardP50DrawdownEvidence":forward_dd_evidence,"claimEvidence":claim_evidence,"mathChecks":checks,"failures":failures,"limitations":["Monte Carlo P50 median drawdown is a hypothetical model output based on stated return and volatility assumptions, not an authoritative fact or guarantee.","Historical drawdown is retained as reference evidence but has zero weight in the optimizer and drawdown cap.","No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.","BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.","Historical drawdown uses trailing 10 years where available and otherwise the complete authoritative history available for the current ticker/fund.","Deterministic checks can refresh data and reject invalid output, but arbitrary code defects require review rather than unsafe automated rewriting."]}
     (REPORTS/f"{now[:10]}.json").write_text(json.dumps(report,indent=2)+"\n",encoding="utf-8")
     DATA.write_text(json.dumps(payload,indent=2)+"\n",encoding="utf-8")
     print(status)

@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T12:39:49Z",
+  "checkedAt": "2026-08-13T14:04:09Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -16,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1651168,
+      "bytes": 1651057,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -25,15 +25,15 @@
       "usedFeePercent": 0.09
     },
     {
-      "source": "SGOV official fund page & prospectus",
+      "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1651959,
+      "bytes": 1703485,
       "identityMarkers": [
-        "SGOV",
-        "iShares 0-3 Month Treasury Bond ETF"
+        "BINC",
+        "iShares Flexible Income Active ETF"
       ],
-      "previousFeePercent": 0.09,
-      "usedFeePercent": 0.09
+      "previousFeePercent": 0.52,
+      "usedFeePercent": 0.52
     },
     {
       "source": "QQQ Nasdaq historical quotes",
@@ -54,13 +54,13 @@
       "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
-      "source": "SGOV official historical NAV",
+      "source": "BINC official historical NAV",
       "status": "pass",
-      "ticker": "SGOV",
-      "usedHistoricalDrawdownPercent": 0.02,
-      "observations": 1564,
-      "period": "2020-05-26 to 2026-08-12",
-      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual"
+      "ticker": "BINC",
+      "usedHistoricalDrawdownPercent": 2.4,
+      "observations": 812,
+      "period": "2023-05-19 to 2026-08-12",
+      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
     },
     {
       "source": "BMNR Nasdaq historical quotes",
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58742,
+      "bytes": 58704,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -87,7 +87,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867827,
+      "bytes": 1867830,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
@@ -123,18 +123,18 @@
       "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
-      "ticker": "SGOV",
+      "ticker": "BINC",
       "status": "pass",
-      "previousPercent": 0.02,
-      "usedPercent": 0.02,
-      "value": 0.0184,
-      "start": "2020-05-26",
+      "previousPercent": 2.4,
+      "usedPercent": 2.4,
+      "value": 2.4026,
+      "start": "2023-05-19",
       "end": "2026-08-12",
-      "peak": "2020-07-01",
-      "trough": "2020-07-02",
-      "observations": 1564,
+      "peak": "2026-02-27",
+      "trough": "2026-03-27",
+      "observations": 812,
       "method": "Observed daily issuer NAV total return; cash distributions reinvested",
-      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual"
+      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
     },
     {
       "ticker": "BMNR",
@@ -151,30 +151,30 @@
       "source": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
     }
   ],
-  "forwardP90DrawdownEvidence": [
+  "forwardP50DrawdownEvidence": [
     {
       "ticker": "QQQ",
       "status": "pass",
-      "previousMedianPercent": null,
-      "usedP90Percent": 61.44
+      "previousP90Percent": null,
+      "usedP50Percent": 42.05
     },
     {
       "ticker": "IEMG",
       "status": "pass",
-      "previousMedianPercent": null,
-      "usedP90Percent": 62.07
+      "previousP90Percent": null,
+      "usedP50Percent": 42.79
     },
     {
-      "ticker": "SGOV",
+      "ticker": "BINC",
       "status": "pass",
-      "previousMedianPercent": null,
-      "usedP90Percent": 0.13
+      "previousP90Percent": null,
+      "usedP50Percent": 16.99
     },
     {
       "ticker": "BMNR",
       "status": "pass",
-      "previousMedianPercent": null,
-      "usedP90Percent": 99.02
+      "previousP90Percent": null,
+      "usedP50Percent": 92.69
     }
   ],
   "claimEvidence": [
@@ -191,10 +191,10 @@
       "statement": "IEMG uses the current official gross expense ratio from the iShares fund page."
     },
     {
-      "claim": "sgov-fee",
+      "claim": "binc-fee",
       "status": "pass",
-      "source": "SGOV official fund page & prospectus",
-      "statement": "SGOV uses the current official gross expense ratio from the iShares fund page."
+      "source": "BINC official fund page & prospectus",
+      "statement": "BINC uses the current official gross expense ratio from the iShares fund page."
     },
     {
       "claim": "qqq-historical-dd",
@@ -209,10 +209,10 @@
       "statement": "IEMG historical drawdown is calculated from 10 years of official iShares daily NAV and ex-dividend data."
     },
     {
-      "claim": "sgov-historical-dd",
+      "claim": "binc-historical-dd",
       "status": "pass",
-      "source": "SGOV official historical NAV",
-      "statement": "SGOV historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception."
+      "source": "BINC official historical NAV",
+      "statement": "BINC historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception."
     },
     {
       "claim": "bmnr-historical-dd",
@@ -239,7 +239,7 @@
       "note": "Transparent model input/output; not an externally verified fact."
     },
     {
-      "claim": "forward-p90-dd",
+      "claim": "forward-p50-dd",
       "status": "model-assumption",
       "source": "Model methodology",
       "note": "Transparent model input/output; not an externally verified fact."
@@ -261,20 +261,20 @@
       "status": "pass"
     },
     {
-      "name": "drawdown composite weights",
+      "name": "forward P50-only drawdown rule",
       "status": "pass",
-      "historicalWeight": 0.6,
-      "forwardP90Weight": 0.4
+      "historicalWeight": 0,
+      "forwardP50Weight": 1
     },
     {
-      "name": "forward P90 maximum-drawdown simulation",
+      "name": "P50 10-year forward maximum-drawdown simulation",
       "status": "pass",
       "paths": 10000,
       "years": 10,
       "stepsPerYear": 12
     },
     {
-      "name": "ten distinct portfolio-related macro drivers",
+      "name": "twelve distinct portfolio-related macro drivers",
       "status": "pass"
     },
     {
@@ -282,22 +282,36 @@
       "status": "pass",
       "allocations": {
         "3": {
-          "QQQ": 5,
-          "IEMG": 5,
-          "SGOV": 75,
-          "BMNR": 15
+          "QQQ": 7,
+          "IEMG": 1,
+          "BINC": 91,
+          "BMNR": 1
         },
         "4": {
-          "QQQ": 5,
-          "IEMG": 5,
-          "SGOV": 70,
-          "BMNR": 20
+          "QQQ": 27,
+          "IEMG": 1,
+          "BINC": 71,
+          "BMNR": 1
         },
         "5": {
-          "QQQ": 5,
-          "IEMG": 5,
-          "SGOV": 65,
-          "BMNR": 25
+          "QQQ": 47,
+          "IEMG": 1,
+          "BINC": 51,
+          "BMNR": 1
+        }
+      },
+      "drawdownChecks": {
+        "3": {
+          "cap": 20,
+          "computedP50Drawdown": 19.759
+        },
+        "4": {
+          "cap": 25,
+          "computedP50Drawdown": 24.771
+        },
+        "5": {
+          "cap": 30,
+          "computedP50Drawdown": 29.783
         }
       }
     },
@@ -306,10 +320,10 @@
       "status": "pass",
       "paths": 10000,
       "years": 10,
-      "p10Terminal": 1.088,
-      "p50Terminal": 1.925,
-      "p90Terminal": 3.35,
-      "p50Annualized": 6.771
+      "p10Terminal": 1.167,
+      "p50Terminal": 1.889,
+      "p90Terminal": 3.013,
+      "p50Annualized": 6.566
     },
     {
       "name": "BMNR digital-asset overlay bounds",
@@ -321,12 +335,13 @@
       "status": "pass",
       "rate": 3.9,
       "cap": 20,
-      "computed_drawdown": 18.777
+      "computed_drawdown": 19.759
     }
   ],
   "failures": [],
   "limitations": [
-    "Monte Carlo P90 drawdown is a hypothetical model output based on stated return and volatility assumptions, not an authoritative fact or guarantee.",
+    "Monte Carlo P50 median drawdown is a hypothetical model output based on stated return and volatility assumptions, not an authoritative fact or guarantee.",
+    "Historical drawdown is retained as reference evidence but has zero weight in the optimizer and drawdown cap.",
     "No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.",
     "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.",
     "Historical drawdown uses trailing 10 years where available and otherwise the complete authoritative history available for the current ticker/fund.",

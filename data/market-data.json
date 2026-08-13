@@ -2,42 +2,42 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T12:39:49Z"
+    "checkedAt": "2026-08-13T14:04:09Z"
   },
   "macro": [
     {
       "driver": "Inflation trend",
-      "why": "QQQ valuation multiples, SGOV real cash return and IEMG purchasing power",
+      "why": "QQQ valuation multiples, BINC real income and IEMG purchasing power",
       "m3": 3.5,
       "m6": 3.3,
       "m12": 3.2
     },
     {
       "driver": "Policy rates",
-      "why": "QQQ discount rate, SGOV Treasury-bill yield and economy-wide financing cost",
+      "why": "QQQ discount rate, BINC duration and economy-wide financing cost",
       "m3": 3.5,
       "m6": 3.5,
       "m12": 3.7
     },
     {
       "driver": "Real yields",
-      "why": "Distinct valuation hurdle for QQQ and real-income signal for SGOV",
+      "why": "Distinct valuation hurdle for QQQ and duration signal for BINC",
       "m3": 3.3,
       "m6": 3.2,
       "m12": 3.2
     },
     {
       "driver": "Yield curve",
-      "why": "Growth-cycle signal for QQQ/IEMG and rollover-yield context for SGOV",
+      "why": "Growth-cycle and credit transmission for QQQ, IEMG and BINC",
       "m3": 3.5,
       "m6": 3.3,
       "m12": 3.4
     },
     {
       "driver": "Credit spreads",
-      "why": "Risk-off demand for SGOV and equity-stress signal for QQQ/IEMG",
+      "why": "BINC credit compensation and equity-stress signal for QQQ/IEMG",
       "m3": 3.6,
-      "m6": 3.6,
+      "m6": 3.7,
       "m12": 3.7
     },
     {
@@ -64,15 +64,29 @@
     {
       "driver": "Market volatility",
       "why": "High-beta and correlation shock risk for QQQ, IEMG and BMNR",
-      "m3": 3.7,
-      "m6": 3.7,
-      "m12": 3.6
+      "m3": 3.8,
+      "m6": 3.8,
+      "m12": 3.5
     },
     {
       "driver": "USD / EM FX trend",
       "why": "USD strength can tighten EM financial conditions and weigh on IEMG",
       "m3": 3.4,
       "m6": 3.4,
+      "m12": 3.7
+    },
+    {
+      "driver": "Industrial production",
+      "why": "Demand and earnings-cycle signal for QQQ, IEMG and BINC credit quality",
+      "m3": 4.1,
+      "m6": 4.5,
+      "m12": 4.2
+    },
+    {
+      "driver": "Bank lending standards",
+      "why": "Credit availability and refinancing conditions for BINC and all three risk holdings",
+      "m3": 3.7,
+      "m6": 3.7,
       "m12": 3.7
     }
   ],
@@ -107,7 +121,7 @@
       "historicalDDPeak": "2021-12-27",
       "historicalDDTrough": "2022-11-03",
       "historicalDDSource": "https://www.nasdaq.com/market-activity/etf/qqq/historical",
-      "forwardP90DD": 61.44
+      "forwardP50DD": 42.05
     },
     {
       "ticker": "IEMG",
@@ -131,31 +145,31 @@
       "historicalDDPeak": "2018-01-26",
       "historicalDDTrough": "2020-03-23",
       "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual",
-      "forwardP90DD": 62.07
+      "forwardP50DD": 42.79
     },
     {
-      "ticker": "SGOV",
-      "name": "iShares 0-3 Month Treasury Bond ETF",
-      "class": "Treasury-bill reserve",
-      "fee": 0.09,
-      "grossCagr": 3.66,
-      "vol": 0.5,
-      "historicalDD": 0.02,
-      "relevance": 92,
+      "ticker": "BINC",
+      "name": "iShares Flexible Income Active ETF",
+      "class": "Flexible income",
+      "fee": 0.52,
+      "grossCagr": 6.9,
+      "vol": 10,
+      "historicalDD": 2.4,
+      "relevance": 86,
       "monitorStatus": "Relevant",
       "monitorNote": "Review on trigger",
-      "reason": "Capital-preservation and liquidity reserve with minimal interest-rate risk",
-      "notRelevant": "The fund no longer tracks 0-3 month U.S. Treasury bills, liquidity or tracking materially deteriorates, or its net yield becomes persistently unattractive versus equivalent government cash vehicles.",
-      "cadence": "Daily NAV/yield/liquidity; monthly holdings; prospectus on change",
-      "source": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
-      "history": "Inception May 2020; no 10-year live fund history. Gross CAGR and volatility remain disclosed model assumptions.",
+      "reason": "Income ballast and flexible duration/credit implementation",
+      "notRelevant": "Credit spreads widen without compensated yield, duration positioning is persistently adverse, or fee waiver/strategy changes.",
+      "cadence": "Daily NAV/spreads; monthly holdings; prospectus on change",
+      "source": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
+      "history": "Inception 2023; no 10-year live fund history.",
       "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
-      "historicalDDStart": "2020-05-26",
+      "historicalDDStart": "2023-05-19",
       "historicalDDEnd": "2026-08-12",
-      "historicalDDPeak": "2020-07-01",
-      "historicalDDTrough": "2020-07-02",
-      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual",
-      "forwardP90DD": 0.13
+      "historicalDDPeak": "2026-02-27",
+      "historicalDDTrough": "2026-03-27",
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual",
+      "forwardP50DD": 16.99
     },
     {
       "ticker": "BMNR",
@@ -179,7 +193,7 @@
       "historicalDDPeak": "2025-07-03",
       "historicalDDTrough": "2026-06-30",
       "historicalDDSource": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical",
-      "forwardP90DD": 99.02
+      "forwardP50DD": 92.69
     }
   ],
   "sources": [
@@ -204,13 +218,13 @@
       "fee_field": "gross_expense_ratio"
     },
     {
-      "name": "SGOV official fund page & prospectus",
-      "url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+      "name": "BINC official fund page & prospectus",
+      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
       "required_text": [
-        "SGOV",
-        "iShares 0-3 Month Treasury Bond ETF"
+        "BINC",
+        "iShares Flexible Income Active ETF"
       ],
-      "asset_ticker": "SGOV",
+      "asset_ticker": "BINC",
       "fee_field": "gross_expense_ratio"
     },
     {
@@ -226,9 +240,9 @@
       "automation": "historical-drawdown"
     },
     {
-      "name": "SGOV official historical NAV",
-      "url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
-      "asset_ticker": "SGOV",
+      "name": "BINC official historical NAV",
+      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
+      "asset_ticker": "BINC",
       "automation": "historical-drawdown"
     },
     {
@@ -260,11 +274,11 @@
     }
   ],
   "forwardDDModel": {
-    "metric": "10-year Monte Carlo P90 maximum drawdown",
+    "metric": "P50 10-year forward maximum drawdown",
     "paths": 10000,
     "stepsPerYear": 12,
     "process": "Geometric Brownian motion using fee-adjusted CAGR and annual volatility",
-    "percentile": 90,
+    "percentile": 50,
     "seedPolicy": "Fixed per holding for reproducibility"
   }
 }
