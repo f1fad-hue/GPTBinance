@@ -4,8 +4,8 @@ Mobile-first, installable scenario dashboard for QQQ, IEMG, BINC and BMNR.
 
 ## What it does
 
-- Shows an explicit 1–5 macro-aware portfolio rate and the corresponding 20% / 25% / 30% P50 10-year forward maximum-drawdown cap.
-- Uses a transparent gross-CAGR-minus-fee input and only the P50 10-year forward maximum drawdown. Each P50 input is the statistical median of peak-to-trough losses across 10,000 deterministic monthly 10-year paths. Historical drawdown is retained as reference evidence with zero optimizer weight.
+- Shows an explicit 1–5 macro-aware portfolio rate and the corresponding 20% / 25% / 30% historical maximum-drawdown cap.
+- Uses a transparent gross-CAGR-minus-fee input and only verified historical maximum drawdown. Portfolio DD is the allocation-weighted sum of each holding's historical maximum drawdown; no forward drawdown estimate enters the optimizer.
 - Refreshes historical drawdown from official daily issuer NAV or Nasdaq closing-price histories, with cash distributions reinvested, using trailing 10 years where available and all available current-fund/ticker history otherwise. BINC uses its official iShares NAV and distribution workbook from inception in 2023.
 - Exhaustively searches every feasible 1%-increment allocation, keeps every required holding at 1% or more, and selects the highest modeled net CAGR that stays inside the rate-specific drawdown cap.
 - Shows 12 distinct, non-duplicative portfolio-related macro drivers across true calendar-based 3, 6 and 12 month horizons, rate-conditioned allocation donuts, instrument slides, and a relevance-monitoring register.

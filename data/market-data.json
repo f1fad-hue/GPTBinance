@@ -2,7 +2,7 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T14:17:08Z"
+    "checkedAt": "2026-08-13T14:30:13Z"
   },
   "macro": [
     {
@@ -120,8 +120,7 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2021-12-27",
       "historicalDDTrough": "2022-11-03",
-      "historicalDDSource": "https://www.nasdaq.com/market-activity/etf/qqq/historical",
-      "forwardP50DD": 42.05
+      "historicalDDSource": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
     },
     {
       "ticker": "IEMG",
@@ -144,8 +143,7 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2018-01-26",
       "historicalDDTrough": "2020-03-23",
-      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual",
-      "forwardP50DD": 42.79
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
       "ticker": "BINC",
@@ -168,8 +166,7 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2026-02-27",
       "historicalDDTrough": "2026-03-27",
-      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual",
-      "forwardP50DD": 16.99
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
     },
     {
       "ticker": "BMNR",
@@ -192,8 +189,7 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2025-07-03",
       "historicalDDTrough": "2026-06-30",
-      "historicalDDSource": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical",
-      "forwardP50DD": 92.69
+      "historicalDDSource": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
     }
   ],
   "sources": [
@@ -272,13 +268,5 @@
         "Daily Treasury Par Yield Curve Rates"
       ]
     }
-  ],
-  "forwardDDModel": {
-    "metric": "P50 10-year forward maximum drawdown",
-    "paths": 10000,
-    "stepsPerYear": 12,
-    "process": "Geometric Brownian motion using fee-adjusted CAGR and annual volatility",
-    "percentile": 50,
-    "seedPolicy": "Fixed per holding for reproducibility"
-  }
+  ]
 }

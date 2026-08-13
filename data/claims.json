@@ -10,7 +10,7 @@
     {"id":"bmnr-identity","kind":"issuer fact","statement":"BMNR identity and filing record are sourced from SEC EDGAR.","source":"BMNR SEC EDGAR company page"},
     {"id":"macro-series","kind":"government data","statement":"Macro score inputs use listed FRED series and Treasury data.","source":"Federal Reserve economic data (FRED)"},
     {"id":"cagr-forecast","kind":"model input","statement":"Gross CAGR, volatility and relevance values are forecast assumptions, not externally verifiable facts.","source":"Model methodology"},
-    {"id":"forward-p50-dd","kind":"model output","statement":"P50 10-year forward maximum drawdown is the median maximum drawdown from 10,000 deterministic monthly 10-year simulation paths and is the only drawdown input used by the optimizer.","source":"Model methodology"},
+    {"id":"historical-dd-rule","kind":"model output","statement":"Verified historical maximum drawdown is the sole drawdown input used by the optimizer and rate-specific caps.","source":"Model methodology"},
     {"id":"portfolio-output","kind":"model output","statement":"Allocation, rate and Monte Carlo result are recomputed daily from the transparent model.","source":"Model methodology"}
   ]
 }

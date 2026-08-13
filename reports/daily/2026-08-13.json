@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T14:17:08Z",
+  "checkedAt": "2026-08-13T14:30:13Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -16,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1651196,
+      "bytes": 1651057,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -27,7 +27,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1703627,
+      "bytes": 1703488,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58936,
+      "bytes": 58870,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -87,7 +87,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867829,
+      "bytes": 1867828,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
@@ -149,32 +149,6 @@
       "observations": 311,
       "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
       "source": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
-    }
-  ],
-  "forwardP50DrawdownEvidence": [
-    {
-      "ticker": "QQQ",
-      "status": "pass",
-      "previousP90Percent": null,
-      "usedP50Percent": 42.05
-    },
-    {
-      "ticker": "IEMG",
-      "status": "pass",
-      "previousP90Percent": null,
-      "usedP50Percent": 42.79
-    },
-    {
-      "ticker": "BINC",
-      "status": "pass",
-      "previousP90Percent": null,
-      "usedP50Percent": 16.99
-    },
-    {
-      "ticker": "BMNR",
-      "status": "pass",
-      "previousP90Percent": null,
-      "usedP50Percent": 92.69
     }
   ],
   "claimEvidence": [
@@ -239,7 +213,7 @@
       "note": "Transparent model input/output; not an externally verified fact."
     },
     {
-      "claim": "forward-p50-dd",
+      "claim": "historical-dd-rule",
       "status": "model-assumption",
       "source": "Model methodology",
       "note": "Transparent model input/output; not an externally verified fact."
@@ -261,17 +235,10 @@
       "status": "pass"
     },
     {
-      "name": "forward P50-only drawdown rule",
+      "name": "historical maximum-drawdown-only rule",
       "status": "pass",
-      "historicalWeight": 0,
-      "forwardP50Weight": 1
-    },
-    {
-      "name": "P50 10-year forward maximum-drawdown simulation",
-      "status": "pass",
-      "paths": 10000,
-      "years": 10,
-      "stepsPerYear": 12
+      "historicalWeight": 1,
+      "forwardWeight": 0
     },
     {
       "name": "twelve distinct portfolio-related macro drivers",
@@ -284,46 +251,46 @@
         "3": {
           "QQQ": 7,
           "IEMG": 1,
-          "BINC": 91,
-          "BMNR": 1
+          "BINC": 75,
+          "BMNR": 17
         },
         "4": {
-          "QQQ": 27,
+          "QQQ": 6,
           "IEMG": 1,
-          "BINC": 71,
-          "BMNR": 1
+          "BINC": 70,
+          "BMNR": 23
         },
         "5": {
-          "QQQ": 47,
+          "QQQ": 8,
           "IEMG": 1,
-          "BINC": 51,
-          "BMNR": 1
+          "BINC": 63,
+          "BMNR": 28
         }
       },
       "drawdownChecks": {
         "3": {
           "cap": 20,
-          "computedP50Drawdown": 19.759
+          "computedHistoricalDrawdown": 19.966
         },
         "4": {
           "cap": 25,
-          "computedP50Drawdown": 24.771
+          "computedHistoricalDrawdown": 24.903
         },
         "5": {
           "cap": 30,
-          "computedP50Drawdown": 29.783
+          "computedHistoricalDrawdown": 29.945
         }
       }
     },
     {
-      "name": "10-year Monte Carlo simulation",
+      "name": "10-year Monte Carlo return simulation",
       "status": "pass",
       "paths": 10000,
       "years": 10,
-      "p10Terminal": 1.167,
-      "p50Terminal": 1.889,
-      "p90Terminal": 3.013,
-      "p50Annualized": 6.566
+      "p10Terminal": 0.863,
+      "p50Terminal": 2.133,
+      "p90Terminal": 5.131,
+      "p50Annualized": 7.87
     },
     {
       "name": "BMNR digital-asset overlay bounds",
@@ -331,17 +298,16 @@
       "score": 2.5
     },
     {
-      "name": "max-growth drawdown constraint",
+      "name": "max-growth historical drawdown constraint",
       "status": "pass",
       "rate": 3.9,
       "cap": 20,
-      "computed_drawdown": 19.759
+      "computed_drawdown": 19.966
     }
   ],
   "failures": [],
   "limitations": [
-    "Monte Carlo P50 median drawdown is a hypothetical model output based on stated return and volatility assumptions, not an authoritative fact or guarantee.",
-    "Historical drawdown is retained as reference evidence but has zero weight in the optimizer and drawdown cap.",
+    "Historical maximum drawdown is the sole optimizer and cap input; it is not a forecast and may understate future losses.",
     "No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.",
     "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.",
     "Historical drawdown uses trailing 10 years where available and otherwise the complete authoritative history available for the current ticker/fund.",

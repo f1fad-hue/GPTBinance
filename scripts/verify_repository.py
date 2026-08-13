@@ -37,9 +37,10 @@ def main() -> None:
     sources={source["name"]:source for source in data["sources"]}
 
     assert set(assets)=={"QQQ","IEMG","BINC","BMNR"}
-    assert all("historicalDD" in asset and "forwardP50DD" in asset for asset in assets.values())
+    assert all("historicalDD" in asset for asset in assets.values())
     assert all(asset.get("historicalDDSource","").startswith("https://") for asset in assets.values())
-    assert all("forwardP90DD" not in asset and "forwardMedianDD" not in asset and "forwardDD" not in asset for asset in assets.values())
+    assert "forwardDDModel" not in data
+    assert all(not any(key.startswith("forward") and key.endswith("DD") for key in asset) for asset in assets.values())
     assert all("weight" not in asset for asset in assets.values()), "stale stored allocations must not override the optimizer"
     assert all(asset.get("monitorStatus") and asset.get("monitorNote") for asset in assets.values())
     assert len(sources)==len(data["sources"])
@@ -71,25 +72,16 @@ def main() -> None:
         item=drawdown_evidence[ticker]
         assert item["status"]=="pass" and item["usedPercent"]==asset["historicalDD"]
         assert item["observations"]>=250 and item["start"]==asset["historicalDDStart"] and item["end"]==asset["historicalDDEnd"]
-    forward_evidence={item["ticker"]:item for item in evidence["forwardP50DrawdownEvidence"]}
-    assert set(forward_evidence)==set(assets)
-    for ticker,asset in assets.items():
-        assert forward_evidence[ticker]["status"]=="pass"
-        assert forward_evidence[ticker]["usedP50Percent"]==asset["forwardP50DD"]
-        assert update_data.forward_p50_drawdown(asset)==asset["forwardP50DD"]
     math_evidence={item["name"]:item for item in evidence["mathChecks"]}
-    assert math_evidence["forward P50-only drawdown rule"]["historicalWeight"]==0
-    assert math_evidence["forward P50-only drawdown rule"]["forwardP50Weight"]==1
-    assert math_evidence["P50 10-year forward maximum-drawdown simulation"]["paths"]==10_000
-    assert math_evidence["P50 10-year forward maximum-drawdown simulation"]["years"]==10
-    assert math_evidence["P50 10-year forward maximum-drawdown simulation"]["stepsPerYear"]==12
+    assert math_evidence["historical maximum-drawdown-only rule"]["historicalWeight"]==1
+    assert math_evidence["historical maximum-drawdown-only rule"]["forwardWeight"]==0
     assert math_evidence["twelve distinct portfolio-related macro drivers"]["status"]=="pass"
-    assert math_evidence["10-year Monte Carlo simulation"]["paths"]==10_000
-    assert math_evidence["10-year Monte Carlo simulation"]["years"]==10
+    assert math_evidence["10-year Monte Carlo return simulation"]["paths"]==10_000
+    assert math_evidence["10-year Monte Carlo return simulation"]["years"]==10
     scenario_evidence=math_evidence["exact max-CAGR scenario allocations"]
     assert set(scenario_evidence["allocations"])==set(scenario_evidence["drawdownChecks"])=={"3","4","5"}
     for scenario,item in scenario_evidence["drawdownChecks"].items():
-        assert item["cap"]==update_data.cap_from_rate(float(scenario)) and item["computedP50Drawdown"]<=item["cap"]
+        assert item["cap"]==update_data.cap_from_rate(float(scenario)) and item["computedHistoricalDrawdown"]<=item["cap"]
     source_evidence={item["source"]:item for item in evidence["sourceEvidence"]}
     for ticker in ("QQQ","IEMG","BINC"):
         source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
