@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T14:07:51Z",
+  "checkedAt": "2026-08-13T14:17:08Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -27,7 +27,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1703624,
+      "bytes": 1703627,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58704,
+      "bytes": 58936,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
