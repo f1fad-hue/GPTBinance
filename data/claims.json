@@ -2,10 +2,10 @@
   "claims": [
     {"id":"qqq-fee","kind":"issuer fact","statement":"QQQ uses the current official total expense ratio from the Invesco fund page.","source":"QQQ official fund page"},
     {"id":"iemg-fee","kind":"issuer fact","statement":"IEMG uses the current official gross expense ratio from the iShares fund page.","source":"IEMG official fund page"},
-    {"id":"binc-fee","kind":"issuer fact","statement":"BINC uses the current official gross expense ratio from the iShares fund page.","source":"BINC official fund page & prospectus"},
+    {"id":"sgov-fee","kind":"issuer fact","statement":"SGOV uses the current official gross expense ratio from the iShares fund page.","source":"SGOV official fund page & prospectus"},
     {"id":"qqq-historical-dd","kind":"authoritative data calculation","statement":"QQQ historical drawdown is calculated from 10 years of Nasdaq daily closes with cash distributions reinvested.","source":"QQQ Nasdaq historical quotes"},
     {"id":"iemg-historical-dd","kind":"authoritative data calculation","statement":"IEMG historical drawdown is calculated from 10 years of official iShares daily NAV and ex-dividend data.","source":"IEMG official historical NAV"},
-    {"id":"binc-historical-dd","kind":"authoritative data calculation","statement":"BINC historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception.","source":"BINC official historical NAV"},
+    {"id":"sgov-historical-dd","kind":"authoritative data calculation","statement":"SGOV historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception.","source":"SGOV official historical NAV"},
     {"id":"bmnr-historical-dd","kind":"authoritative data calculation","statement":"BMNR historical drawdown is calculated from all Nasdaq daily closing-price data available for the current ticker.","source":"BMNR Nasdaq historical quotes"},
     {"id":"bmnr-identity","kind":"issuer fact","statement":"BMNR identity and filing record are sourced from SEC EDGAR.","source":"BMNR SEC EDGAR company page"},
     {"id":"macro-series","kind":"government data","statement":"Macro score inputs use listed FRED series and Treasury data.","source":"Federal Reserve economic data (FRED)"},

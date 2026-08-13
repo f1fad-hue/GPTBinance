@@ -2,40 +2,40 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T12:12:41Z"
+    "checkedAt": "2026-08-13T12:33:19Z"
   },
   "macro": [
     {
       "driver": "Inflation trend",
-      "why": "QQQ valuation multiples, BINC real income and IEMG purchasing power",
+      "why": "QQQ valuation multiples, SGOV real cash return and IEMG purchasing power",
       "m3": 3.5,
       "m6": 3.3,
       "m12": 3.2
     },
     {
       "driver": "Policy rates",
-      "why": "QQQ discount rate, BINC duration and economy-wide financing cost",
+      "why": "QQQ discount rate, SGOV Treasury-bill yield and economy-wide financing cost",
       "m3": 3.5,
       "m6": 3.5,
       "m12": 3.7
     },
     {
       "driver": "Real yields",
-      "why": "Distinct valuation hurdle for QQQ and duration signal for BINC",
+      "why": "Distinct valuation hurdle for QQQ and real-income signal for SGOV",
       "m3": 3.3,
       "m6": 3.2,
       "m12": 3.2
     },
     {
       "driver": "Yield curve",
-      "why": "Growth-cycle and credit transmission for QQQ, IEMG and BINC",
+      "why": "Growth-cycle signal for QQQ/IEMG and rollover-yield context for SGOV",
       "m3": 3.5,
       "m6": 3.3,
       "m12": 3.4
     },
     {
       "driver": "Credit spreads",
-      "why": "BINC credit compensation and equity-stress signal for QQQ/IEMG",
+      "why": "Risk-off demand for SGOV and equity-stress signal for QQQ/IEMG",
       "m3": 3.6,
       "m6": 3.6,
       "m12": 3.7
@@ -79,7 +79,7 @@
   "bmnrOverlay": {
     "score": 2.5,
     "status": "Caution gate",
-    "current": "BMNR remains at its 5% minimum allocation; its overlay does not enter the portfolio-wide macro rate.",
+    "current": "BMNR is governed by a separate caution gate; its overlay does not enter the portfolio-wide macro rate.",
     "triggers": "Material treasury-economics deterioration, funding dilution, liquidity stress, or a material SEC filing change.",
     "cadence": "Daily price/liquidity; every SEC filing; weekly treasury/counterparty review.",
     "source": "https://www.sec.gov/edgar/browse/?CIK=0001829311"
@@ -134,28 +134,28 @@
       "forwardP90DD": 62.07
     },
     {
-      "ticker": "BINC",
-      "name": "iShares Flexible Income Active ETF",
-      "class": "Flexible income",
-      "fee": 0.52,
-      "grossCagr": 6.9,
-      "vol": 10,
-      "historicalDD": 2.4,
-      "relevance": 86,
+      "ticker": "SGOV",
+      "name": "iShares 0-3 Month Treasury Bond ETF",
+      "class": "Treasury-bill reserve",
+      "fee": 0.09,
+      "grossCagr": 3.66,
+      "vol": 0.5,
+      "historicalDD": 0.02,
+      "relevance": 92,
       "monitorStatus": "Relevant",
       "monitorNote": "Review on trigger",
-      "reason": "Income ballast and flexible duration/credit implementation",
-      "notRelevant": "Credit spreads widen without compensated yield, duration positioning is persistently adverse, or fee waiver/strategy changes.",
-      "cadence": "Daily NAV/spreads; monthly holdings; prospectus on change",
-      "source": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
-      "history": "Inception 2023; no 10-year live fund history.",
+      "reason": "Capital-preservation and liquidity reserve with minimal interest-rate risk",
+      "notRelevant": "The fund no longer tracks 0-3 month U.S. Treasury bills, liquidity or tracking materially deteriorates, or its net yield becomes persistently unattractive versus equivalent government cash vehicles.",
+      "cadence": "Daily NAV/yield/liquidity; monthly holdings; prospectus on change",
+      "source": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+      "history": "Inception May 2020; no 10-year live fund history. Gross CAGR and volatility remain disclosed model assumptions.",
       "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
-      "historicalDDStart": "2023-05-19",
+      "historicalDDStart": "2020-05-26",
       "historicalDDEnd": "2026-08-12",
-      "historicalDDPeak": "2026-02-27",
-      "historicalDDTrough": "2026-03-27",
-      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual",
-      "forwardP90DD": 26.77
+      "historicalDDPeak": "2020-07-01",
+      "historicalDDTrough": "2020-07-02",
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual",
+      "forwardP90DD": 0.13
     },
     {
       "ticker": "BMNR",
@@ -204,13 +204,13 @@
       "fee_field": "gross_expense_ratio"
     },
     {
-      "name": "BINC official fund page & prospectus",
-      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
+      "name": "SGOV official fund page & prospectus",
+      "url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
       "required_text": [
-        "BINC",
-        "iShares Flexible Income Active ETF"
+        "SGOV",
+        "iShares 0-3 Month Treasury Bond ETF"
       ],
-      "asset_ticker": "BINC",
+      "asset_ticker": "SGOV",
       "fee_field": "gross_expense_ratio"
     },
     {
@@ -226,9 +226,9 @@
       "automation": "historical-drawdown"
     },
     {
-      "name": "BINC official historical NAV",
-      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
-      "asset_ticker": "BINC",
+      "name": "SGOV official historical NAV",
+      "url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+      "asset_ticker": "SGOV",
       "automation": "historical-drawdown"
     },
     {

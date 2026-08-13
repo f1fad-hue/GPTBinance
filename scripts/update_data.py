@@ -35,7 +35,7 @@ WEIGHT_STEP = 5
 MONTE_CARLO_PATHS = 10_000
 MONTE_CARLO_YEARS = 10
 FORWARD_DD_STEPS_PER_YEAR = 12
-FORWARD_DD_SEEDS = {"QQQ":107,"IEMG":211,"BINC":307,"BMNR":401}
+FORWARD_DD_SEEDS = {"QQQ":107,"IEMG":211,"SGOV":307,"BMNR":401}
 
 def get(url: str) -> str:
     last_error: Exception | None = None
@@ -188,7 +188,7 @@ def monte_carlo_summary(assets: list[dict], weights: list[float]) -> dict:
 
 def math_checks(payload: dict) -> list[dict]:
     assets=payload["assets"]; macro=payload["macro"]
-    required={"QQQ","IEMG","BINC","BMNR"}
+    required={"QQQ","IEMG","SGOV","BMNR"}
     assert math.isclose(HISTORICAL_DD_WEIGHT,0.60) and math.isclose(FORWARD_P90_DD_WEIGHT,0.40)
     assert math.isclose(HISTORICAL_DD_WEIGHT+FORWARD_P90_DD_WEIGHT,1.0)
     assert {x["ticker"] for x in assets}==required

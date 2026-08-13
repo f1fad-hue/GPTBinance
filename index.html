@@ -40,10 +40,10 @@
 
     <section class="page" data-page="monitor">
       <section class="card"><h2>Relevance monitor</h2><p class="caption">Current status, stop-use triggers, and review cadence.</p><div class="table-wrap"><table><thead><tr><th>Fund</th><th>Status</th><th>Score</th><th>Not relevant if...</th><th>Review</th></tr></thead><tbody id="monitoring"></tbody></table></div></section>
-      <section class="card sources"><h2>Sources & method</h2><div id="sources"></div><details><summary>Math and limits</summary><p>Net return = gross CAGR input minus stated fund fee. Composite drawdown = 60% observed total-return maximum drawdown + 40% simulated 10-year P90 maximum drawdown. P90 DD is the 90th percentile of peak-to-trough losses across 10,000 deterministic monthly Monte Carlo paths using each holding's fee-adjusted CAGR and volatility assumptions. Historical drawdown uses daily data for the trailing 10 years where available and all available current-fund/ticker history otherwise, with cash distributions reinvested. An exact 5%-grid search maximizes modeled net CAGR while keeping every holding at 5% or more. The model applies a 20% cap at rate 3.00-3.99, 25% at 4.00-4.99, and 30% at 5.00.</p><p>P90 results are hypothetical estimates, not guarantees. BINC and BMNR have shorter observed histories than the 10-year investment horizon.</p></details></section>
+      <section class="card sources"><h2>Sources & method</h2><div id="sources"></div><details><summary>Math and limits</summary><p>Net return = gross CAGR input minus stated fund fee. Composite drawdown = 60% observed total-return maximum drawdown + 40% simulated 10-year P90 maximum drawdown. P90 DD is the 90th percentile of peak-to-trough losses across 10,000 deterministic monthly Monte Carlo paths using each holding's fee-adjusted CAGR and volatility assumptions. Historical drawdown uses daily data for the trailing 10 years where available and all available current-fund/ticker history otherwise, with cash distributions reinvested. An exact 5%-grid search maximizes modeled net CAGR while keeping every holding at 5% or more. The model applies a 20% cap at rate 3.00-3.99, 25% at 4.00-4.99, and 30% at 5.00.</p><p>P90 results are hypothetical estimates, not guarantees. SGOV and BMNR have shorter observed histories than the 10-year investment horizon.</p></details></section>
     </section>
   </main>
   <footer>Last validation: <span id="validated-at">-</span></footer>
-  <script src="app.js?v=20260813-5"></script>
+  <script src="app.js?v=20260813-6"></script>
 </body>
 </html>

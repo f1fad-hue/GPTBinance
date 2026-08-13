@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T12:12:41Z",
+  "checkedAt": "2026-08-13T12:33:19Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -16,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1651168,
+      "bytes": 1651029,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -25,15 +25,15 @@
       "usedFeePercent": 0.09
     },
     {
-      "source": "BINC official fund page & prospectus",
+      "source": "SGOV official fund page & prospectus",
       "status": "pass",
-      "bytes": 1703624,
+      "bytes": 1651820,
       "identityMarkers": [
-        "BINC",
-        "iShares Flexible Income Active ETF"
+        "SGOV",
+        "iShares 0-3 Month Treasury Bond ETF"
       ],
-      "previousFeePercent": 0.52,
-      "usedFeePercent": 0.52
+      "previousFeePercent": 0.09,
+      "usedFeePercent": 0.09
     },
     {
       "source": "QQQ Nasdaq historical quotes",
@@ -54,13 +54,13 @@
       "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
-      "source": "BINC official historical NAV",
+      "source": "SGOV official historical NAV",
       "status": "pass",
-      "ticker": "BINC",
-      "usedHistoricalDrawdownPercent": 2.4,
-      "observations": 812,
-      "period": "2023-05-19 to 2026-08-12",
-      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
+      "ticker": "SGOV",
+      "usedHistoricalDrawdownPercent": 0.02,
+      "observations": 1564,
+      "period": "2020-05-26 to 2026-08-12",
+      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual"
     },
     {
       "source": "BMNR Nasdaq historical quotes",
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58542,
+      "bytes": 58554,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -123,18 +123,18 @@
       "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
-      "ticker": "BINC",
+      "ticker": "SGOV",
       "status": "pass",
-      "previousPercent": 2.4,
-      "usedPercent": 2.4,
-      "value": 2.4026,
-      "start": "2023-05-19",
+      "previousPercent": 0.02,
+      "usedPercent": 0.02,
+      "value": 0.0184,
+      "start": "2020-05-26",
       "end": "2026-08-12",
-      "peak": "2026-02-27",
-      "trough": "2026-03-27",
-      "observations": 812,
+      "peak": "2020-07-01",
+      "trough": "2020-07-02",
+      "observations": 1564,
       "method": "Observed daily issuer NAV total return; cash distributions reinvested",
-      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
+      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual"
     },
     {
       "ticker": "BMNR",
@@ -165,10 +165,10 @@
       "usedP90Percent": 62.07
     },
     {
-      "ticker": "BINC",
+      "ticker": "SGOV",
       "status": "pass",
       "previousMedianPercent": null,
-      "usedP90Percent": 26.77
+      "usedP90Percent": 0.13
     },
     {
       "ticker": "BMNR",
@@ -191,10 +191,10 @@
       "statement": "IEMG uses the current official gross expense ratio from the iShares fund page."
     },
     {
-      "claim": "binc-fee",
+      "claim": "sgov-fee",
       "status": "pass",
-      "source": "BINC official fund page & prospectus",
-      "statement": "BINC uses the current official gross expense ratio from the iShares fund page."
+      "source": "SGOV official fund page & prospectus",
+      "statement": "SGOV uses the current official gross expense ratio from the iShares fund page."
     },
     {
       "claim": "qqq-historical-dd",
@@ -209,10 +209,10 @@
       "statement": "IEMG historical drawdown is calculated from 10 years of official iShares daily NAV and ex-dividend data."
     },
     {
-      "claim": "binc-historical-dd",
+      "claim": "sgov-historical-dd",
       "status": "pass",
-      "source": "BINC official historical NAV",
-      "statement": "BINC historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception."
+      "source": "SGOV official historical NAV",
+      "statement": "SGOV historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception."
     },
     {
       "claim": "bmnr-historical-dd",
@@ -284,20 +284,20 @@
         "3": {
           "QQQ": 5,
           "IEMG": 5,
-          "BINC": 85,
-          "BMNR": 5
+          "SGOV": 75,
+          "BMNR": 15
         },
         "4": {
-          "QQQ": 20,
+          "QQQ": 5,
           "IEMG": 5,
-          "BINC": 70,
-          "BMNR": 5
+          "SGOV": 70,
+          "BMNR": 20
         },
         "5": {
-          "QQQ": 10,
+          "QQQ": 5,
           "IEMG": 5,
-          "BINC": 70,
-          "BMNR": 15
+          "SGOV": 65,
+          "BMNR": 25
         }
       }
     },
@@ -306,10 +306,10 @@
       "status": "pass",
       "paths": 10000,
       "years": 10,
-      "p10Terminal": 1.077,
-      "p50Terminal": 1.956,
-      "p90Terminal": 3.488,
-      "p50Annualized": 6.938
+      "p10Terminal": 1.088,
+      "p50Terminal": 1.925,
+      "p90Terminal": 3.35,
+      "p50Annualized": 6.771
     },
     {
       "name": "BMNR digital-asset overlay bounds",
@@ -321,7 +321,7 @@
       "status": "pass",
       "rate": 3.9,
       "cap": 20,
-      "computed_drawdown": 19.686
+      "computed_drawdown": 18.777
     }
   ],
   "failures": [],
