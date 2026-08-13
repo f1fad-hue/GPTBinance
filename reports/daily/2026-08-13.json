@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-13T11:26:31Z",
+  "checkedAt": "2026-08-13T12:08:19Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -16,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1651168,
+      "bytes": 1651029,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -27,7 +27,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1703624,
+      "bytes": 1703485,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58038,
+      "bytes": 58042,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -87,7 +87,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867829,
+      "bytes": 1867828,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
@@ -149,6 +149,32 @@
       "observations": 311,
       "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
       "source": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
+    }
+  ],
+  "forwardP90DrawdownEvidence": [
+    {
+      "ticker": "QQQ",
+      "status": "pass",
+      "previousMedianPercent": 27,
+      "usedP90Percent": 61.44
+    },
+    {
+      "ticker": "IEMG",
+      "status": "pass",
+      "previousMedianPercent": 30,
+      "usedP90Percent": 62.07
+    },
+    {
+      "ticker": "BINC",
+      "status": "pass",
+      "previousMedianPercent": 10,
+      "usedP90Percent": 26.77
+    },
+    {
+      "ticker": "BMNR",
+      "status": "pass",
+      "previousMedianPercent": 55,
+      "usedP90Percent": 99.02
     }
   ],
   "claimEvidence": [
@@ -213,6 +239,12 @@
       "note": "Transparent model input/output; not an externally verified fact."
     },
     {
+      "claim": "forward-p90-dd",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
       "claim": "portfolio-output",
       "status": "model-assumption",
       "source": "Model methodology",
@@ -232,7 +264,14 @@
       "name": "drawdown composite weights",
       "status": "pass",
       "historicalWeight": 0.6,
-      "forwardMedianWeight": 0.4
+      "forwardP90Weight": 0.4
+    },
+    {
+      "name": "forward P90 maximum-drawdown simulation",
+      "status": "pass",
+      "paths": 10000,
+      "years": 10,
+      "stepsPerYear": 12
     },
     {
       "name": "ten distinct portfolio-related macro drivers",
@@ -243,22 +282,22 @@
       "status": "pass",
       "allocations": {
         "3": {
-          "QQQ": 35,
+          "QQQ": 5,
           "IEMG": 5,
-          "BINC": 55,
+          "BINC": 85,
           "BMNR": 5
         },
         "4": {
-          "QQQ": 55,
+          "QQQ": 20,
           "IEMG": 5,
-          "BINC": 35,
+          "BINC": 70,
           "BMNR": 5
         },
         "5": {
-          "QQQ": 20,
+          "QQQ": 10,
           "IEMG": 5,
-          "BINC": 50,
-          "BMNR": 25
+          "BINC": 70,
+          "BMNR": 15
         }
       }
     },
@@ -267,10 +306,10 @@
       "status": "pass",
       "paths": 10000,
       "years": 10,
-      "p10Terminal": 1.012,
-      "p50Terminal": 2.206,
-      "p90Terminal": 4.699,
-      "p50Annualized": 8.234
+      "p10Terminal": 1.077,
+      "p50Terminal": 1.956,
+      "p90Terminal": 3.488,
+      "p50Annualized": 6.938
     },
     {
       "name": "BMNR digital-asset overlay bounds",
@@ -282,11 +321,12 @@
       "status": "pass",
       "rate": 3.9,
       "cap": 20,
-      "computed_drawdown": 19.703
+      "computed_drawdown": 19.686
     }
   ],
   "failures": [],
   "limitations": [
+    "Monte Carlo P90 drawdown is a hypothetical model output based on stated return and volatility assumptions, not an authoritative fact or guarantee.",
     "No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.",
     "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.",
     "Historical drawdown uses trailing 10 years where available and otherwise the complete authoritative history available for the current ticker/fund.",

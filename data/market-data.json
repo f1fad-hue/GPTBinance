@@ -2,7 +2,7 @@
   "asOf": "2026-08-13",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-13T11:26:31Z"
+    "checkedAt": "2026-08-13T12:08:19Z"
   },
   "macro": [
     {
@@ -93,7 +93,6 @@
       "grossCagr": 13.1,
       "vol": 25,
       "historicalDD": 35.12,
-      "forwardMedianDD": 27,
       "relevance": 94,
       "monitorStatus": "Relevant",
       "monitorNote": "Review on trigger",
@@ -107,7 +106,8 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2021-12-27",
       "historicalDDTrough": "2022-11-03",
-      "historicalDDSource": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
+      "historicalDDSource": "https://www.nasdaq.com/market-activity/etf/qqq/historical",
+      "forwardP90DD": 61.44
     },
     {
       "ticker": "IEMG",
@@ -117,7 +117,6 @@
       "grossCagr": 9.1,
       "vol": 23,
       "historicalDD": 38.39,
-      "forwardMedianDD": 30,
       "relevance": 71,
       "monitorStatus": "Relevant",
       "monitorNote": "Review on trigger",
@@ -131,7 +130,8 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2018-01-26",
       "historicalDDTrough": "2020-03-23",
-      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual",
+      "forwardP90DD": 62.07
     },
     {
       "ticker": "BINC",
@@ -141,7 +141,6 @@
       "grossCagr": 6.9,
       "vol": 10,
       "historicalDD": 2.4,
-      "forwardMedianDD": 10,
       "relevance": 86,
       "monitorStatus": "Relevant",
       "monitorNote": "Review on trigger",
@@ -155,7 +154,8 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2026-02-27",
       "historicalDDTrough": "2026-03-27",
-      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual",
+      "forwardP90DD": 26.77
     },
     {
       "ticker": "BMNR",
@@ -165,7 +165,6 @@
       "grossCagr": 25,
       "vol": 75,
       "historicalDD": 90.14,
-      "forwardMedianDD": 55,
       "relevance": 42,
       "monitorStatus": "Watch",
       "monitorNote": "Caution gate active",
@@ -179,7 +178,8 @@
       "historicalDDEnd": "2026-08-12",
       "historicalDDPeak": "2025-07-03",
       "historicalDDTrough": "2026-06-30",
-      "historicalDDSource": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
+      "historicalDDSource": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical",
+      "forwardP90DD": 99.02
     }
   ],
   "sources": [
@@ -258,5 +258,13 @@
         "Daily Treasury Par Yield Curve Rates"
       ]
     }
-  ]
+  ],
+  "forwardDDModel": {
+    "metric": "10-year Monte Carlo P90 maximum drawdown",
+    "paths": 10000,
+    "stepsPerYear": 12,
+    "process": "Geometric Brownian motion using fee-adjusted CAGR and annual volatility",
+    "percentile": 90,
+    "seedPolicy": "Fixed per holding for reproducibility"
+  }
 }

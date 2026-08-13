@@ -37,9 +37,9 @@ def main() -> None:
     sources={source["name"]:source for source in data["sources"]}
 
     assert set(assets)=={"QQQ","IEMG","BINC","BMNR"}
-    assert all("historicalDD" in asset and "forwardMedianDD" in asset for asset in assets.values())
+    assert all("historicalDD" in asset and "forwardP90DD" in asset for asset in assets.values())
     assert all(asset.get("historicalDDSource","").startswith("https://") for asset in assets.values())
-    assert all("forwardDD" not in asset for asset in assets.values())
+    assert all("forwardMedianDD" not in asset and "forwardDD" not in asset for asset in assets.values())
     assert all("weight" not in asset for asset in assets.values()), "stale stored allocations must not override the optimizer"
     assert all(asset.get("monitorStatus") and asset.get("monitorNote") for asset in assets.values())
     assert len(sources)==len(data["sources"])
@@ -71,9 +71,18 @@ def main() -> None:
         item=drawdown_evidence[ticker]
         assert item["status"]=="pass" and item["usedPercent"]==asset["historicalDD"]
         assert item["observations"]>=250 and item["start"]==asset["historicalDDStart"] and item["end"]==asset["historicalDDEnd"]
+    forward_evidence={item["ticker"]:item for item in evidence["forwardP90DrawdownEvidence"]}
+    assert set(forward_evidence)==set(assets)
+    for ticker,asset in assets.items():
+        assert forward_evidence[ticker]["status"]=="pass"
+        assert forward_evidence[ticker]["usedP90Percent"]==asset["forwardP90DD"]
+        assert update_data.forward_p90_drawdown(asset)==asset["forwardP90DD"]
     math_evidence={item["name"]:item for item in evidence["mathChecks"]}
     assert math_evidence["drawdown composite weights"]["historicalWeight"]==0.60
-    assert math_evidence["drawdown composite weights"]["forwardMedianWeight"]==0.40
+    assert math_evidence["drawdown composite weights"]["forwardP90Weight"]==0.40
+    assert math_evidence["forward P90 maximum-drawdown simulation"]["paths"]==10_000
+    assert math_evidence["forward P90 maximum-drawdown simulation"]["years"]==10
+    assert math_evidence["forward P90 maximum-drawdown simulation"]["stepsPerYear"]==12
     assert math_evidence["10-year Monte Carlo simulation"]["paths"]==10_000
     assert math_evidence["10-year Monte Carlo simulation"]["years"]==10
     assert set(math_evidence["exact max-CAGR scenario allocations"]["allocations"])=={"3","4","5"}

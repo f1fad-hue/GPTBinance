@@ -53,7 +53,7 @@ async function main() {
   $('#mc-note').textContent = `10,000 paths · $1 grows to P50 $${sims.p50.toFixed(2)}`;
   $('#fan-chart').innerHTML = sims.points.map(x => `<i class="fan" style="height:${x.p90 / sims.max * 100}%;--p50:${x.p50 / x.p90 * 100}%" title="Year ${x.y}: P10 $${x.p10.toFixed(2)}, P50 $${x.p50.toFixed(2)}, P90 $${x.p90.toFixed(2)}"></i>`).join('');
 
-  $('#slides').innerHTML = allocation.map(x => `<article class="slide"><span class="ticker">${x.ticker}</span><h3>${x.name}</h3><div class="metrics"><div><span>Observed max DD (60%)</span><b>${pct(x.historicalDD)}</b></div><div><span>Forward median DD (40%)</span><b>${pct(x.forwardMedianDD)}</b></div><div><span>Composite DD</span><b>${pct(compositeDD(x))}</b></div><div><span>Net CAGR input</span><b>${pct(x.grossCagr - x.fee)}</b></div><div><span>Fee</span><b>${pct(x.fee)}</b></div><div><span>Portfolio weight</span><b>${x.weight.toFixed(0)}%</b></div></div><p class="risk"><strong>Observed period:</strong> ${x.historicalDDStart} to ${x.historicalDDEnd}<br><strong>Peak → trough:</strong> ${x.historicalDDPeak} → ${x.historicalDDTrough}</p><p class="risk">${x.history}</p><p class="risk"><strong>Role:</strong> ${x.reason}</p></article>`).join('');
+  $('#slides').innerHTML = allocation.map(x => `<article class="slide"><span class="ticker">${x.ticker}</span><h3>${x.name}</h3><div class="metrics"><div><span>Observed max DD (60%)</span><b>${pct(x.historicalDD)}</b></div><div><span>10-year MC P90 DD (40%)</span><b>${pct(x.forwardP90DD)}</b></div><div><span>Composite DD</span><b>${pct(compositeDD(x))}</b></div><div><span>Net CAGR input</span><b>${pct(x.grossCagr - x.fee)}</b></div><div><span>Fee</span><b>${pct(x.fee)}</b></div><div><span>Portfolio weight</span><b>${x.weight.toFixed(0)}%</b></div></div><p class="risk"><strong>Observed period:</strong> ${x.historicalDDStart} to ${x.historicalDDEnd}<br><strong>Peak → trough:</strong> ${x.historicalDDPeak} → ${x.historicalDDTrough}</p><p class="risk">${x.history}</p><p class="risk"><strong>Role:</strong> ${x.reason}</p></article>`).join('');
 
   const weightOf = ticker => allocation.find(x => x.ticker === ticker).weight.toFixed(0);
   $('#rationale').textContent = `The constrained max-growth model places ${weightOf('QQQ')}% in Nasdaq-100 growth, ${weightOf('IEMG')}% in emerging markets, ${weightOf('BINC')}% in flexible income, and ${weightOf('BMNR')}% in the digital-asset equity satellite. It maximizes stated net-CAGR assumptions subject to the ${rate.toFixed(1)}/5 macro signal and its ${cap}% composite-drawdown cap. It is a transparent hypothetical allocation, not a recommendation or assurance of growth.`;
@@ -74,7 +74,7 @@ function capFromRate(rate) {
 }
 
 function compositeDD(asset) {
-  return .60 * asset.historicalDD + .40 * asset.forwardMedianDD;
+  return .60 * asset.historicalDD + .40 * asset.forwardP90DD;
 }
 
 function optimize(assets, cap) {
