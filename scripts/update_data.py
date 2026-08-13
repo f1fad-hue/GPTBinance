@@ -50,7 +50,8 @@ def get(url: str) -> str:
                     curl = shutil.which("curl")
                     if not curl: raise RuntimeError("curl is required for Nasdaq's streaming API")
                     response = subprocess.run(
-                        [curl, "--fail", "--silent", "--show-error", "--max-time", "90",
+                        [curl, "--http1.1", "--retry", "3", "--retry-all-errors", "--retry-delay", "2",
+                         "--fail", "--silent", "--show-error", "--max-time", "90",
                          "--user-agent", NASDAQ_HEADERS["User-Agent"], "--header", "Accept: application/json",
                          "--header", "Origin: https://www.nasdaq.com", "--header", "Referer: https://www.nasdaq.com/", url],
                         capture_output=True, check=False, timeout=100,
