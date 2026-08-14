@@ -75,7 +75,7 @@ def main() -> None:
     math_evidence={item["name"]:item for item in evidence["mathChecks"]}
     assert math_evidence["historical maximum-drawdown-only rule"]["historicalWeight"]==1
     assert math_evidence["historical maximum-drawdown-only rule"]["forwardWeight"]==0
-    assert math_evidence["twelve distinct portfolio-related macro drivers"]["status"]=="pass"
+    assert math_evidence["sixteen distinct portfolio-related macro drivers"]["status"]=="pass"
     assert math_evidence["10-year Monte Carlo return simulation"]["paths"]==10_000
     assert math_evidence["10-year Monte Carlo return simulation"]["years"]==10
     scenario_evidence=math_evidence["exact max-CAGR scenario allocations"]

@@ -29,6 +29,10 @@ FRED = {
     "USD / EM FX trend":"DTWEXBGS",
     "Industrial production":"INDPRO",
     "Bank lending standards":"DRTSCILM",
+    "Nominal Treasury yields":"DGS10",
+    "Inflation expectations":"T5YIE",
+    "Payroll momentum":"PAYEMS",
+    "Real consumer demand":"RRSFS",
 }
 MIN_WEIGHT = 5
 WEIGHT_STEP = 5
@@ -93,7 +97,7 @@ def fred_values(series: str) -> list[tuple[date,float]]:
     return values
 
 def score(series: str, values: list[tuple[date,float]]) -> tuple[float,float,float]:
-    inverse=series in {"CPIAUCSL","EFFR","DFII10","BAMLH0A0HYM2","UNRATE","NFCI","VIXCLS","DTWEXBGS","DRTSCILM"}
+    inverse=series in {"CPIAUCSL","EFFR","DFII10","DGS10","T5YIE","BAMLH0A0HYM2","UNRATE","NFCI","VIXCLS","DTWEXBGS","DRTSCILM"}
     latest_date,latest_value=values[-1]
     recent=[value for observed,value in values if observed>=latest_date-timedelta(days=5*365)]
     scale=max(statistics.pstdev(recent),.05)
@@ -151,7 +155,7 @@ def math_checks(payload: dict) -> list[dict]:
     assert "forwardDDModel" not in payload and all(not any(key.startswith("forward") and key.endswith("DD") for key in x) for x in assets)
     assert all(x["historicalDD"]>0 and x["historicalDDMethod"].startswith("Observed daily") and x["historicalDDStart"]<=x["historicalDDPeak"]<=x["historicalDDTrough"]<=x["historicalDDEnd"] for x in assets)
     assert all(x["monitorStatus"] in {"Relevant","Watch","Not relevant"} and x["monitorNote"] and x["notRelevant"] and x["cadence"] for x in assets)
-    assert len(macro)==len(FRED)==12 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
+    assert len(macro)==len(FRED)==16 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
     assert all(x["why"] and ("all four holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
     overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
     macro_avg=sum((x["m3"]+x["m6"]+x["m12"])/3 for x in macro)/len(macro)
@@ -163,7 +167,7 @@ def math_checks(payload: dict) -> list[dict]:
     scenario_check={str(scenario):dict(zip([a["ticker"] for a in assets],[round(w) for w in scenario_weights])) for scenario,scenario_weights in scenarios.items()}
     scenario_dd={str(scenario):{"cap":cap_from_rate(scenario),"computedHistoricalDrawdown":round(sum(w*a["historicalDD"] for w,a in zip(scenario_weights,assets))/100,3)} for scenario,scenario_weights in scenarios.items()}
     assert all(item["computedHistoricalDrawdown"]<=item["cap"] for item in scenario_dd.values())
-    return [{"name":"required holdings","status":"pass"},{"name":"input and relevance bounds","status":"pass"},{"name":"historical maximum-drawdown-only rule","status":"pass","historicalWeight":1,"forwardWeight":0},{"name":"twelve distinct portfolio-related macro drivers","status":"pass"},{"name":"exact max-CAGR scenario allocations","status":"pass","allocations":scenario_check,"drawdownChecks":scenario_dd},{"name":"10-year Monte Carlo return simulation","status":"pass",**simulation},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth historical drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
+    return [{"name":"required holdings","status":"pass"},{"name":"input and relevance bounds","status":"pass"},{"name":"historical maximum-drawdown-only rule","status":"pass","historicalWeight":1,"forwardWeight":0},{"name":"sixteen distinct portfolio-related macro drivers","status":"pass"},{"name":"exact max-CAGR scenario allocations","status":"pass","allocations":scenario_check,"drawdownChecks":scenario_dd},{"name":"10-year Monte Carlo return simulation","status":"pass",**simulation},{"name":"BMNR digital-asset overlay bounds","status":"pass","score":overlay["score"]},{"name":"max-growth historical drawdown constraint","status":"pass","rate":rate,"cap":cap,"computed_drawdown":round(weighted_dd,3)}]
 
 def audit_sources(payload: dict, claims: list[dict], drawdown_evidence: list[dict]) -> tuple[list[dict],list[dict],list[str]]:
     evidence=[]; claim_evidence=[]; hard_failures=[]; source_status={}
