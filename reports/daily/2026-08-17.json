@@ -1,0 +1,316 @@
+{
+  "checkedAt": "2026-08-17T04:27:56Z",
+  "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
+  "sourceEvidence": [
+    {
+      "source": "QQQ official fund page",
+      "status": "pass",
+      "bytes": 262535,
+      "identityMarkers": [
+        "QQQ",
+        "Invesco QQQ"
+      ],
+      "previousFeePercent": 0.18,
+      "usedFeePercent": 0.18
+    },
+    {
+      "source": "IEMG official fund page",
+      "status": "pass",
+      "bytes": 1651398,
+      "identityMarkers": [
+        "IEMG",
+        "iShares Core MSCI Emerging Markets ETF"
+      ],
+      "previousFeePercent": 0.09,
+      "usedFeePercent": 0.09
+    },
+    {
+      "source": "BINC official fund page & prospectus",
+      "status": "pass",
+      "bytes": 1703845,
+      "identityMarkers": [
+        "BINC",
+        "iShares Flexible Income Active ETF"
+      ],
+      "previousFeePercent": 0.52,
+      "usedFeePercent": 0.52
+    },
+    {
+      "source": "QQQ Nasdaq historical quotes",
+      "status": "pass",
+      "ticker": "QQQ",
+      "usedHistoricalDrawdownPercent": 35.12,
+      "observations": 2512,
+      "period": "2016-08-17 to 2026-08-14",
+      "dataUrl": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
+    },
+    {
+      "source": "IEMG official historical NAV",
+      "status": "pass",
+      "ticker": "IEMG",
+      "usedHistoricalDrawdownPercent": 38.39,
+      "observations": 2513,
+      "period": "2016-08-17 to 2026-08-14",
+      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "source": "BINC official historical NAV",
+      "status": "pass",
+      "ticker": "BINC",
+      "usedHistoricalDrawdownPercent": 2.4,
+      "observations": 814,
+      "period": "2023-05-19 to 2026-08-14",
+      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "source": "BMNR Nasdaq historical quotes",
+      "status": "pass",
+      "ticker": "BMNR",
+      "usedHistoricalDrawdownPercent": 90.14,
+      "observations": 313,
+      "period": "2025-05-16 to 2026-08-14",
+      "dataUrl": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
+    },
+    {
+      "source": "BMNR SEC EDGAR company page",
+      "status": "manual-review",
+      "reason": "The authoritative endpoint restricts automated GitHub Actions access."
+    },
+    {
+      "source": "Federal Reserve economic data (FRED)",
+      "status": "pass",
+      "bytes": 58600,
+      "identityMarkers": [
+        "Federal Reserve Economic Data"
+      ]
+    },
+    {
+      "source": "U.S. Treasury yield-curve data",
+      "status": "pass",
+      "bytes": 1867849,
+      "identityMarkers": [
+        "Daily Treasury Par Yield Curve Rates"
+      ]
+    }
+  ],
+  "historicalDrawdownEvidence": [
+    {
+      "ticker": "QQQ",
+      "status": "pass",
+      "previousPercent": 35.12,
+      "usedPercent": 35.12,
+      "value": 35.1225,
+      "start": "2016-08-17",
+      "end": "2026-08-14",
+      "peak": "2021-12-27",
+      "trough": "2022-11-03",
+      "observations": 2512,
+      "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
+      "source": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
+    },
+    {
+      "ticker": "IEMG",
+      "status": "pass",
+      "previousPercent": 38.39,
+      "usedPercent": 38.39,
+      "value": 38.386,
+      "start": "2016-08-17",
+      "end": "2026-08-14",
+      "peak": "2018-01-26",
+      "trough": "2020-03-23",
+      "observations": 2513,
+      "method": "Observed daily issuer NAV total return; cash distributions reinvested",
+      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "ticker": "BINC",
+      "status": "pass",
+      "previousPercent": 2.4,
+      "usedPercent": 2.4,
+      "value": 2.4026,
+      "start": "2023-05-19",
+      "end": "2026-08-14",
+      "peak": "2026-02-27",
+      "trough": "2026-03-27",
+      "observations": 814,
+      "method": "Observed daily issuer NAV total return; cash distributions reinvested",
+      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "ticker": "BMNR",
+      "status": "pass",
+      "previousPercent": 90.14,
+      "usedPercent": 90.14,
+      "value": 90.1407,
+      "start": "2025-05-16",
+      "end": "2026-08-14",
+      "peak": "2025-07-03",
+      "trough": "2026-06-30",
+      "observations": 313,
+      "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
+      "source": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
+    }
+  ],
+  "claimEvidence": [
+    {
+      "claim": "qqq-fee",
+      "status": "pass",
+      "source": "QQQ official fund page",
+      "statement": "QQQ uses the current official total expense ratio from the Invesco fund page."
+    },
+    {
+      "claim": "iemg-fee",
+      "status": "pass",
+      "source": "IEMG official fund page",
+      "statement": "IEMG uses the current official gross expense ratio from the iShares fund page."
+    },
+    {
+      "claim": "binc-fee",
+      "status": "pass",
+      "source": "BINC official fund page & prospectus",
+      "statement": "BINC uses the current official gross expense ratio from the iShares fund page."
+    },
+    {
+      "claim": "qqq-historical-dd",
+      "status": "pass",
+      "source": "QQQ Nasdaq historical quotes",
+      "statement": "QQQ historical drawdown is calculated from 10 years of Nasdaq daily closes with cash distributions reinvested."
+    },
+    {
+      "claim": "iemg-historical-dd",
+      "status": "pass",
+      "source": "IEMG official historical NAV",
+      "statement": "IEMG historical drawdown is calculated from 10 years of official iShares daily NAV and ex-dividend data."
+    },
+    {
+      "claim": "binc-historical-dd",
+      "status": "pass",
+      "source": "BINC official historical NAV",
+      "statement": "BINC historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception."
+    },
+    {
+      "claim": "bmnr-historical-dd",
+      "status": "pass",
+      "source": "BMNR Nasdaq historical quotes",
+      "statement": "BMNR historical drawdown is calculated from all Nasdaq daily closing-price data available for the current ticker."
+    },
+    {
+      "claim": "bmnr-identity",
+      "status": "manual-review",
+      "source": "BMNR SEC EDGAR company page",
+      "statement": "BMNR identity and filing record are sourced from SEC EDGAR."
+    },
+    {
+      "claim": "macro-series",
+      "status": "pass",
+      "source": "Federal Reserve economic data (FRED)",
+      "statement": "Macro score inputs use listed FRED series and Treasury data."
+    },
+    {
+      "claim": "cagr-forecast",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
+      "claim": "historical-dd-rule",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
+      "claim": "portfolio-output",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    }
+  ],
+  "mathChecks": [
+    {
+      "name": "required holdings",
+      "status": "pass"
+    },
+    {
+      "name": "input and relevance bounds",
+      "status": "pass"
+    },
+    {
+      "name": "historical maximum-drawdown-only rule",
+      "status": "pass",
+      "historicalWeight": 1,
+      "forwardWeight": 0
+    },
+    {
+      "name": "twelve distinct portfolio-related macro drivers",
+      "status": "pass"
+    },
+    {
+      "name": "exact max-CAGR scenario allocations",
+      "status": "pass",
+      "allocations": {
+        "3": {
+          "QQQ": 20,
+          "IEMG": 5,
+          "BINC": 65,
+          "BMNR": 10
+        },
+        "4": {
+          "QQQ": 50,
+          "IEMG": 5,
+          "BINC": 40,
+          "BMNR": 5
+        },
+        "5": {
+          "QQQ": 25,
+          "IEMG": 5,
+          "BINC": 50,
+          "BMNR": 20
+        }
+      },
+      "drawdownChecks": {
+        "3": {
+          "cap": 20,
+          "computedHistoricalDrawdown": 19.517
+        },
+        "4": {
+          "cap": 25,
+          "computedHistoricalDrawdown": 24.946
+        },
+        "5": {
+          "cap": 30,
+          "computedHistoricalDrawdown": 29.927
+        }
+      }
+    },
+    {
+      "name": "10-year Monte Carlo return simulation",
+      "status": "pass",
+      "paths": 10000,
+      "years": 10,
+      "p10Terminal": 0.948,
+      "p50Terminal": 2.153,
+      "p90Terminal": 4.77,
+      "p50Annualized": 7.968
+    },
+    {
+      "name": "BMNR digital-asset overlay bounds",
+      "status": "pass",
+      "score": 2.5
+    },
+    {
+      "name": "max-growth historical drawdown constraint",
+      "status": "pass",
+      "rate": 3.9,
+      "cap": 20,
+      "computed_drawdown": 19.517
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "Historical maximum drawdown is the sole optimizer and cap input; it is not a forecast and may understate future losses.",
+    "No automated system can prove a forecast or perform unrestricted deep research without a separately configured research provider.",
+    "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC blocks this automated runner.",
+    "Historical drawdown uses trailing 10 years where available and otherwise the complete authoritative history available for the current ticker/fund.",
+    "Deterministic checks can refresh data and reject invalid output, but arbitrary code defects require review rather than unsafe automated rewriting."
+  ]
+}

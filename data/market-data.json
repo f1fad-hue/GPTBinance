@@ -1,8 +1,8 @@
 {
-  "asOf": "2026-08-16",
+  "asOf": "2026-08-17",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-16T04:22:04Z"
+    "checkedAt": "2026-08-17T04:27:56Z"
   },
   "macro": [
     {
@@ -116,7 +116,7 @@
       "source": "https://www.invesco.com/qqq-etf/en/home.html",
       "history": "Long live history; fee deducted from model gross CAGR.",
       "historicalDDMethod": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
-      "historicalDDStart": "2016-08-16",
+      "historicalDDStart": "2016-08-17",
       "historicalDDEnd": "2026-08-14",
       "historicalDDPeak": "2021-12-27",
       "historicalDDTrough": "2022-11-03",
@@ -139,7 +139,7 @@
       "source": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf",
       "history": "Long live history; fee deducted from model gross CAGR.",
       "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
-      "historicalDDStart": "2016-08-16",
+      "historicalDDStart": "2016-08-17",
       "historicalDDEnd": "2026-08-14",
       "historicalDDPeak": "2018-01-26",
       "historicalDDTrough": "2020-03-23",
