@@ -1,41 +1,41 @@
 {
-  "asOf": "2026-08-14",
+  "asOf": "2026-08-20",
   "validation": {
-    "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-14T00:31:29Z"
+    "status": "REVIEW REQUIRED \u2014 historical drawdown IEMG: source fetch failed after 3 attempts for https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual: HTTP Error 403: Forbidden | historical drawdown SGOV: source fetch failed after 3 attempts for https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual: HTTP Error 403: Forbidden | synchronized robust portfolio model: source fetch failed after 3 attempts for https://api.nasdaq.com/api/quote/QQQ/historical?assetclass=etf&fromdate=2025-05-09&todate=2025-08-08&limit=100&offset=0: Remote end closed connection without response | IEMG official fund page: source fetch failed after 3 attempts for https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf: HTTP Error 403: Forbidden | SGOV official fund page & prospectus: source fetch failed after 3 attempts for https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf: HTTP Error 403: Forbidden | IEMG official historical NAV: historical series validation missing | SGOV official historical NAV: historical series validation missing | math: 'model'",
+    "checkedAt": "2026-08-20T18:22:37Z"
   },
   "macro": [
     {
       "driver": "Inflation trend",
-      "why": "QQQ valuation multiples, BINC real income and IEMG purchasing power",
+      "why": "QQQ valuation multiples, SGOV real cash return and IEMG purchasing power",
       "m3": 3.5,
       "m6": 3.3,
       "m12": 3.2
     },
     {
       "driver": "Policy rates",
-      "why": "QQQ discount rate, BINC duration and economy-wide financing cost",
+      "why": "QQQ discount rate, SGOV Treasury-bill yield and economy-wide financing cost",
       "m3": 3.5,
       "m6": 3.5,
       "m12": 3.7
     },
     {
       "driver": "Real yields",
-      "why": "Distinct valuation hurdle for QQQ and duration signal for BINC",
-      "m3": 3.3,
+      "why": "Distinct valuation hurdle for QQQ and real-income signal for SGOV",
+      "m3": 3.4,
       "m6": 3.2,
       "m12": 3.3
     },
     {
       "driver": "Yield curve",
-      "why": "Growth-cycle and credit transmission for QQQ, IEMG and BINC",
-      "m3": 3.5,
+      "why": "Growth-cycle signal for QQQ/IEMG and rollover-yield context for SGOV",
+      "m3": 3.4,
       "m6": 3.4,
       "m12": 3.4
     },
     {
       "driver": "Credit spreads",
-      "why": "BINC credit compensation and equity-stress signal for QQQ/IEMG",
+      "why": "Risk-off demand for SGOV and equity-stress signal for QQQ/IEMG",
       "m3": 3.6,
       "m6": 3.7,
       "m12": 3.7
@@ -50,8 +50,8 @@
     {
       "driver": "Financial conditions",
       "why": "Broad leverage and funding conditions affecting all four holdings",
-      "m3": 3.6,
-      "m6": 3.4,
+      "m3": 3.7,
+      "m6": 3.5,
       "m12": 3.6
     },
     {
@@ -64,58 +64,58 @@
     {
       "driver": "Market volatility",
       "why": "High-beta and correlation shock risk for QQQ, IEMG and BMNR",
-      "m3": 3.8,
-      "m6": 3.8,
-      "m12": 3.5
+      "m3": 3.7,
+      "m6": 4.0,
+      "m12": 3.6
     },
     {
       "driver": "USD / EM FX trend",
       "why": "USD strength can tighten EM financial conditions and weigh on IEMG",
-      "m3": 3.4,
-      "m6": 3.4,
+      "m3": 3.5,
+      "m6": 3.3,
       "m12": 3.7
     },
     {
       "driver": "Industrial production",
-      "why": "Demand and earnings-cycle signal for QQQ, IEMG and BINC credit quality",
-      "m3": 4.1,
-      "m6": 4.5,
-      "m12": 4.2
+      "why": "Demand and earnings-cycle signal for QQQ and IEMG; risk-off context for SGOV",
+      "m3": 3.8,
+      "m6": 4.3,
+      "m12": 4.1
     },
     {
       "driver": "Bank lending standards",
-      "why": "Credit availability and refinancing conditions for BINC and all three risk holdings",
+      "why": "Credit availability for risk assets and flight-to-quality demand for SGOV",
       "m3": 3.7,
       "m6": 3.7,
       "m12": 3.7
     },
     {
       "driver": "Nominal Treasury yields",
-      "why": "QQQ valuation discount rate and BINC duration/yield opportunity",
-      "m3": 3.4,
+      "why": "QQQ valuation discount rate and SGOV rollover-yield opportunity",
+      "m3": 3.5,
       "m6": 3.2,
       "m12": 3.3
     },
     {
       "driver": "Inflation expectations",
-      "why": "Forward pricing pressure affecting QQQ multiples, BINC real returns and IEMG currencies",
-      "m3": 4.2,
-      "m6": 3.9,
-      "m12": 3.8
+      "why": "Forward pricing pressure affecting QQQ multiples, SGOV real returns and IEMG currencies",
+      "m3": 4.0,
+      "m6": 3.7,
+      "m12": 3.7
     },
     {
       "driver": "Payroll momentum",
-      "why": "Earnings and default-cycle demand signal for QQQ, IEMG and BINC",
+      "why": "Earnings demand for QQQ/IEMG and policy-path context for SGOV",
       "m3": 3.5,
       "m6": 3.6,
       "m12": 3.5
     },
     {
       "driver": "Real consumer demand",
-      "why": "Inflation-adjusted demand supporting QQQ earnings and BINC credit quality",
-      "m3": 4.0,
-      "m6": 4.4,
-      "m12": 4.7
+      "why": "Inflation-adjusted demand supporting QQQ earnings and shaping SGOV policy expectations",
+      "m3": 3.7,
+      "m6": 4.2,
+      "m12": 4.1
     }
   ],
   "bmnrOverlay": {
@@ -133,6 +133,7 @@
       "class": "Nasdaq-100 growth",
       "fee": 0.18,
       "grossCagr": 13.1,
+      "forecastUncertainty": 3.0,
       "vol": 25,
       "historicalDD": 35.12,
       "relevance": 94,
@@ -156,6 +157,7 @@
       "class": "Emerging-market equity",
       "fee": 0.09,
       "grossCagr": 9.1,
+      "forecastUncertainty": 3.5,
       "vol": 23,
       "historicalDD": 38.39,
       "relevance": 71,
@@ -167,34 +169,35 @@
       "source": "https://www.ishares.com/us/products/244050/ishares-core-msci-emerging-markets-etf",
       "history": "Long live history; fee deducted from model gross CAGR.",
       "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
-      "historicalDDStart": "2016-08-15",
-      "historicalDDEnd": "2026-08-13",
+      "historicalDDStart": "2016-08-22",
+      "historicalDDEnd": "2026-08-19",
       "historicalDDPeak": "2018-01-26",
       "historicalDDTrough": "2020-03-23",
       "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
-      "ticker": "BINC",
-      "name": "iShares Flexible Income Active ETF",
-      "class": "Flexible income",
-      "fee": 0.52,
-      "grossCagr": 6.9,
-      "vol": 10,
-      "historicalDD": 2.4,
-      "relevance": 86,
+      "ticker": "SGOV",
+      "name": "iShares 0-3 Month Treasury Bond ETF",
+      "class": "Treasury-bill reserve",
+      "fee": 0.09,
+      "grossCagr": 3.66,
+      "forecastUncertainty": 1.0,
+      "vol": 0.5,
+      "historicalDD": 0.02,
+      "relevance": 92,
       "monitorStatus": "Relevant",
       "monitorNote": "Review on trigger",
-      "reason": "Income ballast and flexible duration/credit implementation",
-      "notRelevant": "Credit spreads widen without compensated yield, duration positioning is persistently adverse, or fee waiver/strategy changes.",
-      "cadence": "Daily NAV/spreads; monthly holdings; prospectus on change",
-      "source": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
-      "history": "Inception 2023; no 10-year live fund history.",
+      "reason": "Capital-preservation and liquidity reserve with minimal interest-rate risk",
+      "notRelevant": "The fund no longer tracks 0-3 month U.S. Treasury bills, liquidity or tracking materially deteriorates, or its net yield becomes persistently unattractive versus equivalent government cash vehicles.",
+      "cadence": "Daily NAV/yield/liquidity; monthly holdings; prospectus on change",
+      "source": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+      "history": "Inception May 2020; no 10-year live fund history. CAGR and volatility are disclosed forecast assumptions.",
       "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
-      "historicalDDStart": "2023-05-19",
-      "historicalDDEnd": "2026-08-13",
-      "historicalDDPeak": "2026-02-27",
-      "historicalDDTrough": "2026-03-27",
-      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
+      "historicalDDStart": "2020-05-26",
+      "historicalDDEnd": "2026-08-19",
+      "historicalDDPeak": "2020-07-01",
+      "historicalDDTrough": "2020-07-02",
+      "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual"
     },
     {
       "ticker": "BMNR",
@@ -202,6 +205,7 @@
       "class": "Digital-asset equity",
       "fee": 0,
       "grossCagr": 25,
+      "forecastUncertainty": 15.0,
       "vol": 75,
       "historicalDD": 90.14,
       "relevance": 42,
@@ -242,13 +246,13 @@
       "fee_field": "gross_expense_ratio"
     },
     {
-      "name": "BINC official fund page & prospectus",
-      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
+      "name": "SGOV official fund page & prospectus",
+      "url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
       "required_text": [
-        "BINC",
-        "iShares Flexible Income Active ETF"
+        "SGOV",
+        "iShares 0-3 Month Treasury Bond ETF"
       ],
-      "asset_ticker": "BINC",
+      "asset_ticker": "SGOV",
       "fee_field": "gross_expense_ratio"
     },
     {
@@ -264,9 +268,9 @@
       "automation": "historical-drawdown"
     },
     {
-      "name": "BINC official historical NAV",
-      "url": "https://www.ishares.com/us/products/331752/ishares-flexible-income-active-etf",
-      "asset_ticker": "BINC",
+      "name": "SGOV official historical NAV",
+      "url": "https://www.ishares.com/us/products/314116/ishares-0-3-month-treasury-bond-etf",
+      "asset_ticker": "SGOV",
       "automation": "historical-drawdown"
     },
     {

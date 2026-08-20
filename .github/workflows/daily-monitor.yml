@@ -25,8 +25,9 @@ jobs:
         id: static_audit
         continue-on-error: true
         run: |
-          python -m py_compile scripts/drawdown_data.py scripts/update_data.py scripts/verify_repository.py
+          python -m py_compile scripts/drawdown_data.py scripts/portfolio_model.py scripts/update_data.py scripts/verify_repository.py
           node --check app.js
+          node scripts/verify_app.js
           python -c "from html.parser import HTMLParser; HTMLParser().feed(open('index.html', encoding='utf-8').read())"
       - name: Recheck schema, claims, math and dashboard wiring
         id: repository_audit
@@ -46,8 +47,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/market-data.json reports/daily
           git diff --cached --quiet || git commit -m 'chore: refresh validated macro data'
-          git pull --rebase origin main
-          git push origin HEAD:main
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
       - name: Create or update validation-review issue
         if: steps.source_audit.outcome == 'failure' || steps.static_audit.outcome == 'failure' || steps.repository_audit.outcome == 'failure'
         uses: actions/github-script@v7

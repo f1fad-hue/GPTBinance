@@ -2,15 +2,17 @@
   "claims": [
     {"id":"qqq-fee","kind":"issuer fact","statement":"QQQ uses the current official total expense ratio from the Invesco fund page.","source":"QQQ official fund page"},
     {"id":"iemg-fee","kind":"issuer fact","statement":"IEMG uses the current official gross expense ratio from the iShares fund page.","source":"IEMG official fund page"},
-    {"id":"binc-fee","kind":"issuer fact","statement":"BINC uses the current official gross expense ratio from the iShares fund page.","source":"BINC official fund page & prospectus"},
+    {"id":"sgov-fee","kind":"issuer fact","statement":"SGOV uses the current official gross expense ratio from the iShares fund page.","source":"SGOV official fund page & prospectus"},
     {"id":"qqq-historical-dd","kind":"authoritative data calculation","statement":"QQQ historical drawdown is calculated from 10 years of Nasdaq daily closes with cash distributions reinvested.","source":"QQQ Nasdaq historical quotes"},
     {"id":"iemg-historical-dd","kind":"authoritative data calculation","statement":"IEMG historical drawdown is calculated from 10 years of official iShares daily NAV and ex-dividend data.","source":"IEMG official historical NAV"},
-    {"id":"binc-historical-dd","kind":"authoritative data calculation","statement":"BINC historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception.","source":"BINC official historical NAV"},
+    {"id":"sgov-historical-dd","kind":"authoritative data calculation","statement":"SGOV historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception.","source":"SGOV official historical NAV"},
     {"id":"bmnr-historical-dd","kind":"authoritative data calculation","statement":"BMNR historical drawdown is calculated from all Nasdaq daily closing-price data available for the current ticker.","source":"BMNR Nasdaq historical quotes"},
     {"id":"bmnr-identity","kind":"issuer fact","statement":"BMNR identity and filing record are sourced from SEC EDGAR.","source":"BMNR SEC EDGAR company page"},
-    {"id":"macro-series","kind":"government data","statement":"Macro score inputs use listed FRED series and Treasury data.","source":"Federal Reserve economic data (FRED)"},
-    {"id":"cagr-forecast","kind":"model input","statement":"Gross CAGR, volatility and relevance values are forecast assumptions, not externally verifiable facts.","source":"Model methodology"},
-    {"id":"historical-dd-rule","kind":"model output","statement":"Verified historical maximum drawdown is the sole drawdown input used by the optimizer and rate-specific caps.","source":"Model methodology"},
-    {"id":"portfolio-output","kind":"model output","statement":"Allocation, rate and Monte Carlo result are recomputed daily from the transparent model.","source":"Model methodology"}
+    {"id":"macro-series","kind":"government data","statement":"Broad macro score inputs use the 16 listed FRED series and Treasury data.","source":"Federal Reserve economic data (FRED)"},
+    {"id":"correlated-macro","kind":"model output","statement":"Correlated macro sentiment reweights the same 16 verified driver scores by transparent holding transmission coefficients and the optimized allocation.","source":"Model methodology"},
+    {"id":"regional-ranking","kind":"model output","statement":"US, Europe and Asia rankings are transparent portfolio-transmission scores, not stand-alone regional economic forecasts.","source":"Model methodology"},
+    {"id":"cagr-forecast","kind":"model input","statement":"Gross CAGR, volatility, forecast uncertainty and relevance values are transparent assumptions, not externally verifiable facts.","source":"Model methodology"},
+    {"id":"historical-dd-rule","kind":"model output","statement":"The optimizer constrains the synchronized monthly-rebalanced portfolio path, named simultaneous stresses and correlated 10-year cap-breach probability.","source":"Model methodology"},
+    {"id":"portfolio-output","kind":"model output","statement":"Allocation, rate, observed portfolio drawdown, stress loss and correlated simulation are recomputed by the transparent model.","source":"Model methodology"}
   ]
 }
