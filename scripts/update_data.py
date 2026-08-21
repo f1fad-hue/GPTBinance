@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Daily, evidence-first audit for Portfolio Signal Lab.
+"""Weekend, evidence-first audit for Portfolio Signal Lab.
 
 The audit distinguishes primary-source facts from transparent model inputs. It
 never upgrades an unavailable source or a forecast into a verified fact.

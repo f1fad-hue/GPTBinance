@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic daily schema, claims, math, and static-dashboard audit."""
+"""Deterministic weekend schema, claims, math, and static-dashboard audit."""
 from __future__ import annotations
 
 import json

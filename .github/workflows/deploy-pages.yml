@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_run:
     workflows:
-      - Daily authoritative-data monitoring, validation and update
+      - Weekend authoritative-data monitoring, validation and update
     types: [completed]
   workflow_dispatch:
 permissions:
