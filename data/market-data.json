@@ -1,8 +1,8 @@
 {
-  "asOf": "2026-08-20",
+  "asOf": "2026-08-21",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-20T04:22:56Z"
+    "checkedAt": "2026-08-21T04:24:53Z"
   },
   "macro": [
     {
@@ -29,16 +29,16 @@
     {
       "driver": "Yield curve",
       "why": "Growth-cycle and credit transmission for QQQ, IEMG and BINC",
-      "m3": 3.4,
+      "m3": 3.5,
       "m6": 3.4,
-      "m12": 3.4
+      "m12": 3.5
     },
     {
       "driver": "Credit spreads",
       "why": "BINC credit compensation and equity-stress signal for QQQ/IEMG",
       "m3": 3.6,
       "m6": 3.7,
-      "m12": 3.6
+      "m12": 3.7
     },
     {
       "driver": "Labor & activity",
@@ -66,7 +66,7 @@
       "why": "High-beta and correlation shock risk for QQQ, IEMG and BMNR",
       "m3": 3.7,
       "m6": 4.0,
-      "m12": 3.4
+      "m12": 3.6
     },
     {
       "driver": "USD / EM FX trend",
@@ -117,7 +117,7 @@
       "history": "Long live history; fee deducted from model gross CAGR.",
       "historicalDDMethod": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
       "historicalDDStart": "2016-08-22",
-      "historicalDDEnd": "2026-08-19",
+      "historicalDDEnd": "2026-08-20",
       "historicalDDPeak": "2021-12-27",
       "historicalDDTrough": "2022-11-03",
       "historicalDDSource": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
@@ -140,7 +140,7 @@
       "history": "Long live history; fee deducted from model gross CAGR.",
       "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
       "historicalDDStart": "2016-08-22",
-      "historicalDDEnd": "2026-08-19",
+      "historicalDDEnd": "2026-08-20",
       "historicalDDPeak": "2018-01-26",
       "historicalDDTrough": "2020-03-23",
       "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
@@ -163,7 +163,7 @@
       "history": "Inception 2023; no 10-year live fund history.",
       "historicalDDMethod": "Observed daily issuer NAV total return; cash distributions reinvested",
       "historicalDDStart": "2023-05-19",
-      "historicalDDEnd": "2026-08-19",
+      "historicalDDEnd": "2026-08-20",
       "historicalDDPeak": "2026-02-27",
       "historicalDDTrough": "2026-03-27",
       "historicalDDSource": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
@@ -186,7 +186,7 @@
       "history": "Observed current-ticker history begins May 2025; it is shorter than the 10-year horizon.",
       "historicalDDMethod": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
       "historicalDDStart": "2025-05-16",
-      "historicalDDEnd": "2026-08-19",
+      "historicalDDEnd": "2026-08-20",
       "historicalDDPeak": "2025-07-03",
       "historicalDDTrough": "2026-06-30",
       "historicalDDSource": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
