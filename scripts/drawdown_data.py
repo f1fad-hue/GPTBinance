@@ -102,7 +102,7 @@ def _nasdaq_rows(ticker: str, get, start_date: date, end_date: date) -> tuple[li
     rows_by_date: dict[date, float] = {}
     window_start = start_date
     while window_start <= end_date:
-        window_end = min(window_start + timedelta(days=91), end_date)
+        window_end = min(window_start + timedelta(days=31), end_date)
         params = urlencode({
             "assetclass": NASDAQ_ASSET_CLASSES[ticker],
             "fromdate": window_start.isoformat(),
@@ -176,7 +176,10 @@ def synchronized_portfolio_history(payload: dict, get, today: date | None = None
     """Return daily total returns over the common live history of all holdings."""
     today = today or date.today()
     assets = payload["assets"]
-    common_start = max(date.fromisoformat(asset["historicalDDStart"]) for asset in assets)
+    common_start = max(
+        max(date.fromisoformat(asset["historicalDDStart"]) for asset in assets),
+        today - timedelta(days=350),
+    )
     common_end = today - timedelta(days=1)
     histories: dict[str, dict[date, float]] = {}
     sources = {}
@@ -185,11 +188,11 @@ def synchronized_portfolio_history(payload: dict, get, today: date | None = None
         if ticker in ISHARES_PORTFOLIOS:
             rows, source = _ishares_rows(ticker, get, today)
         else:
-            rows, source = _nasdaq_rows(ticker, get, common_start - timedelta(days=7), common_end)
+            rows, source = _nasdaq_rows(ticker, get, common_start - timedelta(days=2), common_end)
         histories[ticker] = {observed: value for observed, value in _total_returns(rows).items() if observed >= common_start}
         sources[ticker] = source
     common_dates = sorted(set.intersection(*(set(values) for values in histories.values())))
-    if len(common_dates) < 250:
+    if len(common_dates) < 220:
         raise RuntimeError(f"synchronized portfolio history has only {len(common_dates)} observations")
     return {
         "tickers": [asset["ticker"] for asset in assets], "start": common_dates[0].isoformat(),

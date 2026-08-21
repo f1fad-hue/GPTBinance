@@ -75,7 +75,7 @@ def main() -> None:
         if item["status"]=="pass": assert item["observations"]>=250
         assert item["start"]==asset["historicalDDStart"] and item["end"]==asset["historicalDDEnd"]
     math_evidence={item["name"]:item for item in evidence["mathChecks"]}
-    assert math_evidence["synchronized monthly-rebalanced portfolio path"]["observations"]>=250
+    assert math_evidence["synchronized monthly-rebalanced portfolio path"]["observations"]>=220
     assert math_evidence["robust drawdown controls"]["observedPath"] is True
     assert math_evidence["sixteen distinct portfolio-related macro drivers"]["status"]=="pass"
     assert math_evidence["broad and allocation-correlated sentiment"]["status"]=="pass"

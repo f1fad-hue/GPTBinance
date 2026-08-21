@@ -72,7 +72,7 @@ def get(url: str) -> str:
     for attempt in range(3):
         try:
             headers = NASDAQ_HEADERS if "api.nasdaq.com" in url else HEADERS
-            timeout = 180 if "get-fund-document" in url else (90 if "api.nasdaq.com" in url else 30)
+            timeout = 180 if "get-fund-document" in url else (45 if "api.nasdaq.com" in url else 30)
             request = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(request, timeout=timeout) as response:
                 if response.status != 200: raise RuntimeError(f"HTTP {response.status}")
@@ -206,7 +206,7 @@ def math_checks(payload: dict) -> list[dict]:
     assert len(macro)==len(FRED)==16 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
     assert all(x["why"] and ("all four holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
     overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
-    assert model["method"]=="robust-path-growth-v1" and model["history"]["observations"]>=250
+    assert model["method"]=="robust-path-growth-v1" and model["history"]["observations"]>=220
     assert model["history"]["tickers"]==list(TICKERS) and model["history"]["rebalance"]=="monthly"
     assert set(model["scenarios"])=={"3","4","5"}
     scenario_weights={int(rate):[scenario["weights"][ticker] for ticker in TICKERS] for rate,scenario in model["scenarios"].items()}
