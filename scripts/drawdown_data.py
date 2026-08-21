@@ -100,14 +100,21 @@ def _ishares_rows(ticker: str, get, today: date) -> tuple[list[tuple[date, float
 def _nasdaq_rows(ticker: str, get, start_date: date, end_date: date) -> tuple[list[tuple[date, float, float]], str]:
     """Download bounded official windows; long Nasdaq queries are unreliable."""
     rows_by_date: dict[date, float] = {}
-    window_start = start_date
-    while window_start <= end_date:
-        window_end = min(window_start + timedelta(days=31), end_date)
+    if (end_date - start_date).days <= 366:
+        windows = [(start_date, end_date, 5000)]
+    else:
+        windows = []
+        window_start = start_date
+        while window_start <= end_date:
+            window_end = min(window_start + timedelta(days=31), end_date)
+            windows.append((window_start, window_end, 100))
+            window_start = window_end + timedelta(days=1)
+    for window_start, window_end, limit in windows:
         params = urlencode({
             "assetclass": NASDAQ_ASSET_CLASSES[ticker],
             "fromdate": window_start.isoformat(),
             "todate": window_end.isoformat(),
-            "limit": 100,
+            "limit": limit,
             "offset": 0,
         })
         api_url = f"https://api.nasdaq.com/api/quote/{ticker}/historical?{params}"
@@ -120,7 +127,6 @@ def _nasdaq_rows(ticker: str, get, start_date: date, end_date: date) -> tuple[li
                 rows_by_date[observed] = _number(item["close"])
             except (KeyError, ValueError):
                 continue
-        window_start = window_end + timedelta(days=1)
     if len(rows_by_date) < 2:
         raise RuntimeError(f"{ticker} official Nasdaq history returned insufficient rows")
     distributions: dict[date, float] = {}
