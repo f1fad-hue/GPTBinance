@@ -2,7 +2,7 @@
   "asOf": "2026-08-22",
   "validation": {
     "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
-    "checkedAt": "2026-08-22T07:50:10Z"
+    "checkedAt": "2026-08-22T08:37:33Z"
   },
   "macro": [
     {
@@ -302,12 +302,25 @@
     }
   ],
   "model": {
-    "method": "robust-path-growth-v1",
+    "method": "robust-path-growth-v2-proportional-cushion",
     "objective": "net CAGR forecast minus 35% of forecast uncertainty",
     "constraints": {
       "minimumWeight": 5,
       "weightStep": 5,
       "bmnrMaximumWeight": 10,
+      "sgovCushionRange": [
+        60,
+        80
+      ],
+      "macroHorizonWeights": {
+        "m3": 0.2,
+        "m6": 0.3,
+        "m12": 0.5
+      },
+      "macroBlend": {
+        "broad": 0.4,
+        "allocationCorrelated": 0.6
+      },
       "maximumDrawdownBreachProbability": 0.1,
       "observedPortfolioPath": true,
       "monthlyRebalance": true
@@ -2088,6 +2101,7 @@
       "3": {
         "rate": 3,
         "cap": 20,
+        "minimumSgovWeight": 80,
         "weights": {
           "QQQ": 10,
           "IEMG": 5,
@@ -2129,17 +2143,18 @@
         "simulation": {
           "paths": 10000,
           "years": 10,
-          "p10Terminal": 1.256,
-          "p50Terminal": 1.72,
-          "p90Terminal": 2.389,
-          "medianMaxDrawdown": 12.311,
-          "p90MaxDrawdown": 19.353,
-          "breachProbability": 0.0857
+          "p10Terminal": 1.25,
+          "p50Terminal": 1.715,
+          "p90Terminal": 2.371,
+          "medianMaxDrawdown": 12.346,
+          "p90MaxDrawdown": 19.467,
+          "breachProbability": 0.0887
         }
       },
       "4": {
         "rate": 4,
         "cap": 25,
+        "minimumSgovWeight": 70,
         "weights": {
           "QQQ": 20,
           "IEMG": 5,
@@ -2181,17 +2196,18 @@
         "simulation": {
           "paths": 10000,
           "years": 10,
-          "p10Terminal": 1.284,
-          "p50Terminal": 1.862,
-          "p90Terminal": 2.72,
-          "medianMaxDrawdown": 14.629,
-          "p90MaxDrawdown": 22.893,
-          "breachProbability": 0.0611
+          "p10Terminal": 1.282,
+          "p50Terminal": 1.854,
+          "p90Terminal": 2.714,
+          "medianMaxDrawdown": 14.76,
+          "p90MaxDrawdown": 23.0,
+          "breachProbability": 0.0643
         }
       },
       "5": {
         "rate": 5,
         "cap": 30,
+        "minimumSgovWeight": 60,
         "weights": {
           "QQQ": 30,
           "IEMG": 5,
@@ -2233,14 +2249,114 @@
         "simulation": {
           "paths": 10000,
           "years": 10,
-          "p10Terminal": 1.308,
-          "p50Terminal": 2.007,
-          "p90Terminal": 3.078,
-          "medianMaxDrawdown": 16.828,
-          "p90MaxDrawdown": 26.321,
-          "breachProbability": 0.0472
+          "p10Terminal": 1.306,
+          "p50Terminal": 1.978,
+          "p90Terminal": 3.067,
+          "medianMaxDrawdown": 16.809,
+          "p90MaxDrawdown": 26.197,
+          "breachProbability": 0.0469
         }
       }
+    },
+    "active": {
+      "rate": 3.61,
+      "cap": 20,
+      "minimumSgovWeight": 75,
+      "weights": {
+        "QQQ": 10,
+        "IEMG": 5,
+        "SGOV": 80,
+        "BMNR": 5
+      },
+      "netCagrForecast": 5.849,
+      "forecastUncertainty": 1.15,
+      "robustGrowthScore": 5.446,
+      "modeledVolatility": 6.572,
+      "observedPortfolio": {
+        "maxDrawdown": 4.802,
+        "cdar95": 4.046,
+        "peak": "2025-10-06",
+        "trough": "2026-03-30"
+      },
+      "stress": {
+        "worstLoss": 6.75,
+        "worstScenario": "broad liquidity shock",
+        "scenarios": [
+          {
+            "name": "growth and rate shock",
+            "loss": 6.65
+          },
+          {
+            "name": "emerging-market and USD shock",
+            "loss": 4.45
+          },
+          {
+            "name": "digital-asset equity shock",
+            "loss": 5.85
+          },
+          {
+            "name": "broad liquidity shock",
+            "loss": 6.75
+          }
+        ]
+      },
+      "simulation": {
+        "paths": 10000,
+        "years": 10,
+        "p10Terminal": 1.248,
+        "p50Terminal": 1.725,
+        "p90Terminal": 2.389,
+        "medianMaxDrawdown": 12.356,
+        "p90MaxDrawdown": 19.394,
+        "breachProbability": 0.0869
+      },
+      "macroRate": 3.61,
+      "cushionFormula": "round5(clamp(60% + 10% \u00d7 (5 - macro rate), 60%, 80%))",
+      "horizonWeights": {
+        "m3": 0.2,
+        "m6": 0.3,
+        "m12": 0.5
+      },
+      "macroBlend": {
+        "broad": 0.4,
+        "allocationCorrelated": 0.6
+      },
+      "broadSentiment": {
+        "m3": 3.61,
+        "m6": 3.64,
+        "m12": 3.67
+      },
+      "correlatedSentiment": {
+        "m3": 3.59,
+        "m6": 3.54,
+        "m12": 3.6
+      },
+      "regionalRanking": [
+        {
+          "region": "Asia",
+          "m3": 3.63,
+          "m6": 3.68,
+          "m12": 3.72,
+          "average": 3.68,
+          "rank": 1
+        },
+        {
+          "region": "Europe",
+          "m3": 3.63,
+          "m6": 3.66,
+          "m12": 3.71,
+          "average": 3.67,
+          "rank": 2
+        },
+        {
+          "region": "US",
+          "m3": 3.6,
+          "m6": 3.6,
+          "m12": 3.64,
+          "average": 3.61,
+          "rank": 3
+        }
+      ]
     }
   }
 }

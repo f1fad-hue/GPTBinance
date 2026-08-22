@@ -13,6 +13,6 @@
     {"id":"regional-ranking","kind":"model output","statement":"US, Europe and Asia rankings are transparent portfolio-transmission scores, not stand-alone regional economic forecasts.","source":"Model methodology"},
     {"id":"cagr-forecast","kind":"model input","statement":"Gross CAGR, volatility, forecast uncertainty and relevance values are transparent assumptions, not externally verifiable facts.","source":"Model methodology"},
     {"id":"historical-dd-rule","kind":"model output","statement":"The optimizer constrains the synchronized monthly-rebalanced portfolio path, named simultaneous stresses and correlated 10-year cap-breach probability.","source":"Model methodology"},
-    {"id":"portfolio-output","kind":"model output","statement":"Allocation, rate, observed portfolio drawdown, stress loss and correlated simulation are recomputed by the transparent model.","source":"Model methodology"}
+    {"id":"portfolio-output","kind":"model output","statement":"The two-decimal macro rate sets a proportional 60%-80% SGOV cushion; allocation, observed portfolio drawdown, stress loss and correlated simulation are then recomputed by the transparent max-growth model.","source":"Model methodology"}
   ]
 }
