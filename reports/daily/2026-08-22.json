@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-22T07:50:10Z",
+  "checkedAt": "2026-08-22T08:37:33Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -87,7 +87,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867848,
+      "bytes": 1867849,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
@@ -279,7 +279,18 @@
         "m6": 3.54,
         "m12": 3.6
       },
-      "rate": 3.6
+      "rate": 3.61
+    },
+    {
+      "name": "proportional macro-driven SGOV cushion",
+      "status": "pass",
+      "rate": 3.61,
+      "minimumSgovWeight": 75,
+      "horizonWeights": {
+        "m3": 0.2,
+        "m6": 0.3,
+        "m12": 0.5
+      }
     },
     {
       "name": "US Europe Asia transmission ranking",
@@ -318,6 +329,7 @@
         "3": {
           "rate": 3,
           "cap": 20,
+          "minimumSgovWeight": 80,
           "weights": {
             "QQQ": 10,
             "IEMG": 5,
@@ -359,17 +371,18 @@
           "simulation": {
             "paths": 10000,
             "years": 10,
-            "p10Terminal": 1.256,
-            "p50Terminal": 1.72,
-            "p90Terminal": 2.389,
-            "medianMaxDrawdown": 12.311,
-            "p90MaxDrawdown": 19.353,
-            "breachProbability": 0.0857
+            "p10Terminal": 1.25,
+            "p50Terminal": 1.715,
+            "p90Terminal": 2.371,
+            "medianMaxDrawdown": 12.346,
+            "p90MaxDrawdown": 19.467,
+            "breachProbability": 0.0887
           }
         },
         "4": {
           "rate": 4,
           "cap": 25,
+          "minimumSgovWeight": 70,
           "weights": {
             "QQQ": 20,
             "IEMG": 5,
@@ -411,17 +424,18 @@
           "simulation": {
             "paths": 10000,
             "years": 10,
-            "p10Terminal": 1.284,
-            "p50Terminal": 1.862,
-            "p90Terminal": 2.72,
-            "medianMaxDrawdown": 14.629,
-            "p90MaxDrawdown": 22.893,
-            "breachProbability": 0.0611
+            "p10Terminal": 1.282,
+            "p50Terminal": 1.854,
+            "p90Terminal": 2.714,
+            "medianMaxDrawdown": 14.76,
+            "p90MaxDrawdown": 23.0,
+            "breachProbability": 0.0643
           }
         },
         "5": {
           "rate": 5,
           "cap": 30,
+          "minimumSgovWeight": 60,
           "weights": {
             "QQQ": 30,
             "IEMG": 5,
@@ -463,12 +477,12 @@
           "simulation": {
             "paths": 10000,
             "years": 10,
-            "p10Terminal": 1.308,
-            "p50Terminal": 2.007,
-            "p90Terminal": 3.078,
-            "medianMaxDrawdown": 16.828,
-            "p90MaxDrawdown": 26.321,
-            "breachProbability": 0.0472
+            "p10Terminal": 1.306,
+            "p50Terminal": 1.978,
+            "p90Terminal": 3.067,
+            "medianMaxDrawdown": 16.809,
+            "p90MaxDrawdown": 26.197,
+            "breachProbability": 0.0469
           }
         }
       }
@@ -478,12 +492,12 @@
       "status": "pass",
       "paths": 10000,
       "years": 10,
-      "p10Terminal": 1.256,
-      "p50Terminal": 1.72,
+      "p10Terminal": 1.248,
+      "p50Terminal": 1.725,
       "p90Terminal": 2.389,
-      "medianMaxDrawdown": 12.311,
-      "p90MaxDrawdown": 19.353,
-      "breachProbability": 0.0857
+      "medianMaxDrawdown": 12.356,
+      "p90MaxDrawdown": 19.394,
+      "breachProbability": 0.0869
     },
     {
       "name": "BMNR concentration and digital-asset gates",
