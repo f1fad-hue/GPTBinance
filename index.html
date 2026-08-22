@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#f5f7fb" />
   <meta name="description" content="A concise, research-led portfolio scenario dashboard." />
   <link rel="manifest" href="manifest.json?v=20260811-2" />
-  <link rel="stylesheet" href="styles.css?v=20260811-2" />
+  <link rel="stylesheet" href="styles.css?v=20260820-2" />
   <style>.allocation-grid{grid-template-columns:repeat(auto-fit,minmax(120px,1fr))}.donut-labels{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 7px}.donut-labels .slice-label{display:inline-flex;align-items:center;white-space:nowrap}.donut-labels i{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;flex:0 0 7px}.heatmap .driver b,.heatmap .driver small{display:block}.heatmap .driver b{color:var(--ink)}.heatmap .driver small{font-size:.58rem;line-height:1.25;margin-top:2px}.status.watch{color:var(--gold)}.status.not-relevant{color:var(--coral)}@media(max-width:600px){.donut-labels{justify-content:flex-start}.heatmap{grid-template-columns:minmax(145px,1.6fr) repeat(3,1fr)}.heatmap div{padding:6px 4px}}</style>
   <title>Portfolio Signal Lab</title>
 </head>
@@ -21,7 +21,7 @@
     <section class="page active" data-page="overview">
       <section class="hero grid">
         <article class="score-card"><p class="eyebrow">PORTFOLIO RATE</p><div class="score"><span id="portfolio-rate">-</span><small>/5</small></div><p id="rate-copy">Loading model...</p><div class="meter"><i id="rate-meter"></i></div><div class="chips"><span>10-year horizon</span><span id="asof-chip">-</span></div></article>
-        <article class="stats"><div><span>Net CAGR</span><b id="cagr">-</b></div><div><span>Historical DD</span><b id="drawdown">-</b></div><div><span>DD cap</span><b id="dd-cap">-</b></div><div><span>MC P50 return</span><b id="mc-p50">-</b></div></article>
+        <article class="stats"><div><span>Net CAGR</span><b id="cagr">-</b></div><div><span>Observed portfolio DD</span><b id="drawdown">-</b></div><div><span>Worst stress loss</span><b id="stress-dd">-</b></div><div><span>10Y cap-breach risk</span><b id="breach-risk">-</b></div><div><span>DD cap</span><b id="dd-cap">-</b></div><div><span>MC P50 CAGR</span><b id="mc-p50">-</b></div></article>
       </section>
       <section><div class="section-heading"><h2>Allocation by rate scenario</h2><span class="muted">5% increments</span></div><div id="donuts" class="donut-grid"></div></section>
       <section><div class="section-heading"><h2>Max-growth allocation</h2><span id="validation-status" class="pill">Validating...</span></div><div id="allocation" class="allocation-grid"></div></section>
@@ -29,21 +29,23 @@
     </section>
 
     <section class="page" data-page="macro">
-      <section class="card"><div class="section-heading"><h2>Macro sentiment</h2><span class="muted">12 distinct core drivers · 3 / 6 / 12 months</span></div><div id="heatmap" class="heatmap"></div><p class="caption">Maximum non-duplicative set related to these allocations; green supports risk assets, amber is mixed, red is restrictive.</p></section>
+      <section class="sentiment-grid"><article class="card"><div class="section-heading"><h2>Broad sentiment</h2><span class="muted">all 16 drivers</span></div><div id="broad-sentiment" class="horizon-scores"></div></article><article class="card"><div class="section-heading"><h2>Allocation-correlated</h2><span class="muted">40% broad · 60% transmission</span></div><div id="correlated-sentiment" class="horizon-scores"></div></article></section>
+      <section class="card"><div class="section-heading"><h2>Macro heatmap</h2><span class="muted">16 distinct drivers · 3 / 6 / 12 months</span></div><div id="heatmap" class="heatmap"></div><p class="caption">Non-duplicative FRED signals with a direct transmission path to QQQ, IEMG, SGOV or BMNR; green supports the portfolio, amber is mixed, red is restrictive.</p></section>
+      <section class="card"><div class="section-heading"><h2>Regional transmission ranking</h2><span class="muted">US · Europe · Asia</span></div><div id="regional-ranking" class="regional-grid"></div><p class="caption">Ranks how the verified broad drivers transmit to this portfolio. It is not a stand-alone regional economic forecast.</p></section>
       <section id="bmnr-overlay" class="card compact"></section>
     </section>
 
     <section class="page" data-page="analysis">
-      <section class="card"><div class="section-heading"><h2>10-year Monte Carlo</h2><span id="mc-note" class="muted">10,000 paths</span></div><div id="fan-chart" class="fan-chart" role="img" aria-label="Monte Carlo percentile fan chart"></div><div class="legend"><span><i></i>P10-P90 range</span><span><i class="p50"></i>P50</span></div><p class="caption">Hypothetical distribution, not a promise of returns.</p></section>
-      <section><div class="section-heading"><h2>Fund snapshots</h2><span class="muted">Historical maximum DD only</span></div><div id="slides" class="slide-grid"></div></section>
+      <section class="card"><div class="section-heading"><h2>10-year correlated simulation</h2><span id="mc-note" class="muted">10,000 paths</span></div><div id="fan-chart" class="fan-chart" role="img" aria-label="Simulated terminal wealth percentiles"></div><p id="risk-summary" class="caption"></p><p class="caption">Model scenarios are hypothetical and cannot guarantee returns or a drawdown limit.</p></section>
+      <section><div class="section-heading"><h2>Holding slides</h2><span class="muted">10-year net-CAGR forecast · observed max DD</span></div><div id="slides" class="slide-grid"></div></section>
     </section>
 
     <section class="page" data-page="monitor">
       <section class="card"><h2>Relevance monitor</h2><p class="caption">Current status, stop-use triggers, and review cadence.</p><div class="table-wrap"><table><thead><tr><th>Fund</th><th>Status</th><th>Score</th><th>Not relevant if...</th><th>Review</th></tr></thead><tbody id="monitoring"></tbody></table></div></section>
-      <section class="card sources"><h2>Sources & method</h2><div id="sources"></div><details><summary>Math and limits</summary><p>Net return = gross CAGR input minus stated fund fee. The drawdown constraint uses only verified historical maximum drawdown. Portfolio DD is the allocation-weighted sum of each holding's historical maximum drawdown. An exact 5%-grid search maximizes modeled net CAGR while keeping every holding at 5% or more. The model strictly applies a 20% cap at rate 3.00-3.99, 25% at 4.00-4.99, and 30% at 5.00; infeasible results fail validation.</p><p>Historical maximum drawdown is not a forecast and future losses can be larger. BINC and BMNR have shorter observed histories than the 10-year investment horizon.</p></details></section>
+      <section class="card sources"><h2>Sources & method</h2><div id="sources"></div><details><summary>Math and limits</summary><p>The optimizer searches every 5%-increment allocation, keeps each required holding at 5% or more, and limits BMNR to 10%. Objective = forecast net CAGR minus 35% of forecast uncertainty. Each candidate must keep its actual monthly-rebalanced common-period portfolio MDD and every named simultaneous stress loss within the applicable 20% / 25% / 30% cap. It must also limit the modeled probability of exceeding that cap over 10 years to 10%.</p><p>The combined historical path begins when all four holdings have authoritative live observations, so it is much shorter than ten years because BMNR has limited Nasdaq history. Correlations, stress shocks, forecast returns, uncertainty and simulations are transparent assumptions—not authoritative facts or guarantees. The displayed rate blends 40% broad and 60% allocation-correlated macro sentiment.</p></details></section>
     </section>
   </main>
   <footer>Last validation: <span id="validated-at">-</span></footer>
-  <script src="app.js?v=20260813-9"></script>
+  <script src="app.js?v=20260820-2"></script>
 </body>
 </html>

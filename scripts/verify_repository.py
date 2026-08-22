@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic daily schema, claims, math, and static-dashboard audit."""
+"""Deterministic weekend schema, claims, math, and static-dashboard audit."""
 from __future__ import annotations
 
 import json
@@ -18,7 +18,8 @@ ALLOWED_PRIMARY_DOMAINS = {
 }
 REQUIRED_DOM_IDS = {
     "portfolio-rate", "allocation", "heatmap", "donuts", "slides",
-    "monitoring", "sources", "validation-status",
+    "monitoring", "sources", "validation-status", "broad-sentiment",
+    "correlated-sentiment", "regional-ranking",
 }
 
 
@@ -36,7 +37,7 @@ def main() -> None:
     assets={asset["ticker"]:asset for asset in data["assets"]}
     sources={source["name"]:source for source in data["sources"]}
 
-    assert set(assets)=={"QQQ","IEMG","BINC","BMNR"}
+    assert set(assets)=={"QQQ","IEMG","SGOV","BMNR"}
     assert all("historicalDD" in asset for asset in assets.values())
     assert all(asset.get("historicalDDSource","").startswith("https://") for asset in assets.values())
     assert "forwardDDModel" not in data
@@ -56,7 +57,7 @@ def main() -> None:
             assert claim["source"]=="Model methodology"
         else:
             assert claim["source"] in sources, f"unregistered claim source: {claim['source']}"
-    for ticker in ("QQQ","IEMG","BINC"):
+    for ticker in ("QQQ","IEMG","SGOV"):
         source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
         assert source["fee_field"]=="gross_expense_ratio"
         assert source["url"]==assets[ticker]["source"]
@@ -70,20 +71,23 @@ def main() -> None:
     assert set(drawdown_evidence)==set(assets)
     for ticker,asset in assets.items():
         item=drawdown_evidence[ticker]
-        assert item["status"]=="pass" and item["usedPercent"]==asset["historicalDD"]
-        assert item["observations"]>=250 and item["start"]==asset["historicalDDStart"] and item["end"]==asset["historicalDDEnd"]
+        assert item["status"] in {"pass","retained"} and item["usedPercent"]==asset["historicalDD"]
+        if item["status"]=="pass": assert item["observations"]>=250
+        assert item["start"]==asset["historicalDDStart"] and item["end"]==asset["historicalDDEnd"]
     math_evidence={item["name"]:item for item in evidence["mathChecks"]}
-    assert math_evidence["historical maximum-drawdown-only rule"]["historicalWeight"]==1
-    assert math_evidence["historical maximum-drawdown-only rule"]["forwardWeight"]==0
-    assert math_evidence["twelve distinct portfolio-related macro drivers"]["status"]=="pass"
-    assert math_evidence["10-year Monte Carlo return simulation"]["paths"]==10_000
-    assert math_evidence["10-year Monte Carlo return simulation"]["years"]==10
-    scenario_evidence=math_evidence["exact max-CAGR scenario allocations"]
-    assert set(scenario_evidence["allocations"])==set(scenario_evidence["drawdownChecks"])=={"3","4","5"}
-    for scenario,item in scenario_evidence["drawdownChecks"].items():
-        assert item["cap"]==update_data.cap_from_rate(float(scenario)) and item["computedHistoricalDrawdown"]<=item["cap"]
+    assert math_evidence["synchronized monthly-rebalanced portfolio path"]["observations"]>=220
+    assert math_evidence["robust drawdown controls"]["observedPath"] is True
+    assert math_evidence["sixteen distinct portfolio-related macro drivers"]["status"]=="pass"
+    assert math_evidence["broad and allocation-correlated sentiment"]["status"]=="pass"
+    assert {item["region"] for item in math_evidence["US Europe Asia transmission ranking"]["ranking"]}=={"US","Europe","Asia"}
+    assert math_evidence["10-year correlated Monte Carlo return and drawdown simulation"]["paths"]==10_000
+    assert math_evidence["10-year correlated Monte Carlo return and drawdown simulation"]["years"]==10
+    assert set(data["model"]["scenarios"])=={"3","4","5"}
+    for scenario,item in data["model"]["scenarios"].items():
+        assert item["cap"]==update_data.cap_from_rate(float(scenario))
+        assert item["observedPortfolio"]["maxDrawdown"]<=item["cap"] and item["stress"]["worstLoss"]<=item["cap"]
     source_evidence={item["source"]:item for item in evidence["sourceEvidence"]}
-    for ticker in ("QQQ","IEMG","BINC"):
+    for ticker in ("QQQ","IEMG","SGOV"):
         source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
         assert source_evidence[source["name"]]["usedFeePercent"]==assets[ticker]["fee"]
 
@@ -91,7 +95,8 @@ def main() -> None:
     assert REQUIRED_DOM_IDS <= parser.ids, f"missing dashboard elements: {REQUIRED_DOM_IDS-parser.ids}"
     app=(ROOT/"app.js").read_text(encoding="utf-8")
     assert "fetch('data/market-data.json'" in app
-    assert "function optimize" in app and "No feasible allocation" in app
+    assert "data.model.scenarios" in app and "Robust drawdown controls failed" in app
+    assert "module.exports" in app and (ROOT/"scripts"/"verify_app.js").exists()
     assert not (ROOT/"sw.js").exists(), "obsolete service worker should remain removed"
     manifest=json.loads((ROOT/"manifest.json").read_text(encoding="utf-8"))
     assert manifest["display"]=="standalone" and manifest["start_url"]=="."

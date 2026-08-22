@@ -1,10 +1,10 @@
-name: Daily authoritative-data monitoring, validation and update
+name: Weekend authoritative-data monitoring, validation and update
 on:
   schedule:
-    - cron: '20 2 * * *'
+    - cron: '30 0 * * 6'
   workflow_dispatch:
 concurrency:
-  group: daily-source-validation
+  group: weekend-source-validation
   cancel-in-progress: false
 permissions:
   contents: write
@@ -25,37 +25,38 @@ jobs:
         id: static_audit
         continue-on-error: true
         run: |
-          python -m py_compile scripts/drawdown_data.py scripts/update_data.py scripts/verify_repository.py
+          python -m py_compile scripts/drawdown_data.py scripts/portfolio_model.py scripts/update_data.py scripts/verify_repository.py
           node --check app.js
+          node scripts/verify_app.js
           python -c "from html.parser import HTMLParser; HTMLParser().feed(open('index.html', encoding='utf-8').read())"
       - name: Recheck schema, claims, math and dashboard wiring
         id: repository_audit
         continue-on-error: true
         run: python scripts/verify_repository.py
-      - name: Preserve daily evidence report
+      - name: Preserve weekend evidence report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: daily-validation-${{ github.run_id }}
+          name: weekend-validation-${{ github.run_id }}
           path: reports/daily/*.json
           retention-days: 30
-      - name: Commit daily data refresh
+      - name: Commit weekend data refresh
         if: steps.source_audit.outcome == 'success' && steps.static_audit.outcome == 'success' && steps.repository_audit.outcome == 'success'
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add data/market-data.json reports/daily
           git diff --cached --quiet || git commit -m 'chore: refresh validated macro data'
-          git pull --rebase origin main
-          git push origin HEAD:main
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin "HEAD:${{ github.ref_name }}"
       - name: Create or update validation-review issue
         if: steps.source_audit.outcome == 'failure' || steps.static_audit.outcome == 'failure' || steps.repository_audit.outcome == 'failure'
         uses: actions/github-script@v7
         with:
           script: |
-            const title = 'Daily validation requires review';
+            const title = 'Weekend validation requires review';
             const body = [
-              'The daily fail-closed monitor detected a source, claim, data, math, or code-sanity failure.',
+              'The weekend fail-closed monitor detected a source, claim, data, math, or code-sanity failure.',
               '',
               `Run: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
               `UTC: ${new Date().toISOString()}`,
@@ -71,7 +72,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const title = 'Daily validation requires review';
+            const title = 'Weekend validation requires review';
             const result = await github.rest.issues.listForRepo({...context.repo, state: 'open', per_page: 100});
             const issue = result.data.find(item => item.title === title && !item.pull_request);
             if (issue) await github.rest.issues.update({...context.repo, issue_number: issue.number, state: 'closed'});
