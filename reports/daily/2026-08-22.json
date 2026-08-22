@@ -1,0 +1,503 @@
+{
+  "checkedAt": "2026-08-22T07:50:10Z",
+  "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
+  "sourceEvidence": [
+    {
+      "source": "QQQ official fund page",
+      "status": "pass",
+      "bytes": 262419,
+      "identityMarkers": [
+        "QQQ",
+        "Invesco QQQ"
+      ],
+      "previousFeePercent": 0.18,
+      "usedFeePercent": 0.18
+    },
+    {
+      "source": "IEMG official fund page",
+      "status": "pass",
+      "bytes": 1651759,
+      "identityMarkers": [
+        "IEMG",
+        "iShares Core MSCI Emerging Markets ETF"
+      ],
+      "previousFeePercent": 0.09,
+      "usedFeePercent": 0.09
+    },
+    {
+      "source": "SGOV official fund page & prospectus",
+      "status": "pass",
+      "bytes": 1652541,
+      "identityMarkers": [
+        "SGOV",
+        "iShares 0-3 Month Treasury Bond ETF"
+      ],
+      "previousFeePercent": 0.09,
+      "usedFeePercent": 0.09
+    },
+    {
+      "source": "QQQ Nasdaq historical quotes",
+      "status": "pass-retained",
+      "ticker": "QQQ",
+      "usedHistoricalDrawdownPercent": 35.12,
+      "observations": null,
+      "period": "2016-08-15 to 2026-08-12",
+      "dataUrl": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
+    },
+    {
+      "source": "IEMG official historical NAV",
+      "status": "pass",
+      "ticker": "IEMG",
+      "usedHistoricalDrawdownPercent": 38.39,
+      "observations": 2515,
+      "period": "2016-08-22 to 2026-08-21",
+      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "source": "SGOV official historical NAV",
+      "status": "pass",
+      "ticker": "SGOV",
+      "usedHistoricalDrawdownPercent": 0.02,
+      "observations": 1571,
+      "period": "2020-05-26 to 2026-08-21",
+      "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "source": "BMNR Nasdaq historical quotes",
+      "status": "pass-retained",
+      "ticker": "BMNR",
+      "usedHistoricalDrawdownPercent": 90.14,
+      "observations": null,
+      "period": "2025-05-16 to 2026-08-12",
+      "dataUrl": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
+    },
+    {
+      "source": "BMNR SEC EDGAR company page",
+      "status": "manual-review",
+      "reason": "The authoritative endpoint restricts automated GitHub Actions access."
+    },
+    {
+      "source": "Federal Reserve economic data (FRED)",
+      "status": "pass",
+      "bytes": 58886,
+      "identityMarkers": [
+        "Federal Reserve Economic Data"
+      ]
+    },
+    {
+      "source": "U.S. Treasury yield-curve data",
+      "status": "pass",
+      "bytes": 1867848,
+      "identityMarkers": [
+        "Daily Treasury Par Yield Curve Rates"
+      ]
+    }
+  ],
+  "historicalDrawdownEvidence": [
+    {
+      "ticker": "QQQ",
+      "status": "retained",
+      "previousPercent": 35.12,
+      "usedPercent": 35.12,
+      "value": 35.12,
+      "start": "2016-08-15",
+      "end": "2026-08-12",
+      "peak": "2021-12-27",
+      "trough": "2022-11-03",
+      "observations": null,
+      "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
+      "source": "https://www.nasdaq.com/market-activity/etf/qqq/historical",
+      "reason": "Retained last verified full-history result; the current official Nasdaq endpoint is revalidated over the synchronized live portfolio period."
+    },
+    {
+      "ticker": "IEMG",
+      "status": "pass",
+      "previousPercent": 38.39,
+      "usedPercent": 38.39,
+      "value": 38.386,
+      "start": "2016-08-22",
+      "end": "2026-08-21",
+      "peak": "2018-01-26",
+      "trough": "2020-03-23",
+      "observations": 2515,
+      "method": "Observed daily issuer NAV total return; cash distributions reinvested",
+      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "ticker": "SGOV",
+      "status": "pass",
+      "previousPercent": 0.02,
+      "usedPercent": 0.02,
+      "value": 0.0184,
+      "start": "2020-05-26",
+      "end": "2026-08-21",
+      "peak": "2020-07-01",
+      "trough": "2020-07-02",
+      "observations": 1571,
+      "method": "Observed daily issuer NAV total return; cash distributions reinvested",
+      "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=314116&targetSite=us-ishares&userType=individual"
+    },
+    {
+      "ticker": "BMNR",
+      "status": "retained",
+      "previousPercent": 90.14,
+      "usedPercent": 90.14,
+      "value": 90.14,
+      "start": "2025-05-16",
+      "end": "2026-08-12",
+      "peak": "2025-07-03",
+      "trough": "2026-06-30",
+      "observations": null,
+      "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
+      "source": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical",
+      "reason": "Retained last verified full-history result; the current official Nasdaq endpoint is revalidated over the synchronized live portfolio period."
+    }
+  ],
+  "claimEvidence": [
+    {
+      "claim": "qqq-fee",
+      "status": "pass",
+      "source": "QQQ official fund page",
+      "statement": "QQQ uses the current official total expense ratio from the Invesco fund page."
+    },
+    {
+      "claim": "iemg-fee",
+      "status": "pass",
+      "source": "IEMG official fund page",
+      "statement": "IEMG uses the current official gross expense ratio from the iShares fund page."
+    },
+    {
+      "claim": "sgov-fee",
+      "status": "pass",
+      "source": "SGOV official fund page & prospectus",
+      "statement": "SGOV uses the current official gross expense ratio from the iShares fund page."
+    },
+    {
+      "claim": "qqq-historical-dd",
+      "status": "pass-retained",
+      "source": "QQQ Nasdaq historical quotes",
+      "statement": "QQQ historical drawdown is calculated from 10 years of Nasdaq daily closes with cash distributions reinvested."
+    },
+    {
+      "claim": "iemg-historical-dd",
+      "status": "pass",
+      "source": "IEMG official historical NAV",
+      "statement": "IEMG historical drawdown is calculated from 10 years of official iShares daily NAV and ex-dividend data."
+    },
+    {
+      "claim": "sgov-historical-dd",
+      "status": "pass",
+      "source": "SGOV official historical NAV",
+      "statement": "SGOV historical drawdown is calculated from all official iShares daily NAV and ex-dividend data available since inception."
+    },
+    {
+      "claim": "bmnr-historical-dd",
+      "status": "pass-retained",
+      "source": "BMNR Nasdaq historical quotes",
+      "statement": "BMNR historical drawdown is calculated from all Nasdaq daily closing-price data available for the current ticker."
+    },
+    {
+      "claim": "bmnr-identity",
+      "status": "manual-review",
+      "source": "BMNR SEC EDGAR company page",
+      "statement": "BMNR identity and filing record are sourced from SEC EDGAR."
+    },
+    {
+      "claim": "macro-series",
+      "status": "pass",
+      "source": "Federal Reserve economic data (FRED)",
+      "statement": "Broad macro score inputs use the 16 listed FRED series and Treasury data."
+    },
+    {
+      "claim": "correlated-macro",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
+      "claim": "regional-ranking",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
+      "claim": "cagr-forecast",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
+      "claim": "historical-dd-rule",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    },
+    {
+      "claim": "portfolio-output",
+      "status": "model-assumption",
+      "source": "Model methodology",
+      "note": "Transparent model input/output; not an externally verified fact."
+    }
+  ],
+  "mathChecks": [
+    {
+      "name": "required holdings and allocation grid",
+      "status": "pass"
+    },
+    {
+      "name": "input, uncertainty and relevance bounds",
+      "status": "pass"
+    },
+    {
+      "name": "synchronized monthly-rebalanced portfolio path",
+      "status": "pass",
+      "start": "2025-09-08",
+      "end": "2026-08-21",
+      "observations": 241
+    },
+    {
+      "name": "robust drawdown controls",
+      "status": "pass",
+      "observedPath": true,
+      "stressScenarios": 4,
+      "maximumBreachProbability": 0.1
+    },
+    {
+      "name": "sixteen distinct portfolio-related macro drivers",
+      "status": "pass"
+    },
+    {
+      "name": "broad and allocation-correlated sentiment",
+      "status": "pass",
+      "broad": {
+        "m3": 3.61,
+        "m6": 3.64,
+        "m12": 3.67
+      },
+      "correlated": {
+        "m3": 3.59,
+        "m6": 3.54,
+        "m12": 3.6
+      },
+      "rate": 3.6
+    },
+    {
+      "name": "US Europe Asia transmission ranking",
+      "status": "pass",
+      "ranking": [
+        {
+          "region": "Asia",
+          "m3": 3.63,
+          "m6": 3.68,
+          "m12": 3.72,
+          "average": 3.68,
+          "rank": 1
+        },
+        {
+          "region": "Europe",
+          "m3": 3.63,
+          "m6": 3.66,
+          "m12": 3.71,
+          "average": 3.67,
+          "rank": 2
+        },
+        {
+          "region": "US",
+          "m3": 3.6,
+          "m6": 3.6,
+          "m12": 3.64,
+          "average": 3.61,
+          "rank": 3
+        }
+      ]
+    },
+    {
+      "name": "robust growth scenario allocations",
+      "status": "pass",
+      "scenarios": {
+        "3": {
+          "rate": 3,
+          "cap": 20,
+          "weights": {
+            "QQQ": 10,
+            "IEMG": 5,
+            "SGOV": 80,
+            "BMNR": 5
+          },
+          "netCagrForecast": 5.849,
+          "forecastUncertainty": 1.15,
+          "robustGrowthScore": 5.446,
+          "modeledVolatility": 6.572,
+          "observedPortfolio": {
+            "maxDrawdown": 4.802,
+            "cdar95": 4.046,
+            "peak": "2025-10-06",
+            "trough": "2026-03-30"
+          },
+          "stress": {
+            "worstLoss": 6.75,
+            "worstScenario": "broad liquidity shock",
+            "scenarios": [
+              {
+                "name": "growth and rate shock",
+                "loss": 6.65
+              },
+              {
+                "name": "emerging-market and USD shock",
+                "loss": 4.45
+              },
+              {
+                "name": "digital-asset equity shock",
+                "loss": 5.85
+              },
+              {
+                "name": "broad liquidity shock",
+                "loss": 6.75
+              }
+            ]
+          },
+          "simulation": {
+            "paths": 10000,
+            "years": 10,
+            "p10Terminal": 1.256,
+            "p50Terminal": 1.72,
+            "p90Terminal": 2.389,
+            "medianMaxDrawdown": 12.311,
+            "p90MaxDrawdown": 19.353,
+            "breachProbability": 0.0857
+          }
+        },
+        "4": {
+          "rate": 4,
+          "cap": 25,
+          "weights": {
+            "QQQ": 20,
+            "IEMG": 5,
+            "SGOV": 70,
+            "BMNR": 5
+          },
+          "netCagrForecast": 6.784,
+          "forecastUncertainty": 1.201,
+          "robustGrowthScore": 6.363,
+          "modeledVolatility": 8.858,
+          "observedPortfolio": {
+            "maxDrawdown": 5.804,
+            "cdar95": 4.634,
+            "peak": "2025-10-28",
+            "trough": "2026-03-30"
+          },
+          "stress": {
+            "worstLoss": 9.65,
+            "worstScenario": "growth and rate shock",
+            "scenarios": [
+              {
+                "name": "growth and rate shock",
+                "loss": 9.65
+              },
+              {
+                "name": "emerging-market and USD shock",
+                "loss": 5.65
+              },
+              {
+                "name": "digital-asset equity shock",
+                "loss": 7.35
+              },
+              {
+                "name": "broad liquidity shock",
+                "loss": 9.25
+              }
+            ]
+          },
+          "simulation": {
+            "paths": 10000,
+            "years": 10,
+            "p10Terminal": 1.284,
+            "p50Terminal": 1.862,
+            "p90Terminal": 2.72,
+            "medianMaxDrawdown": 14.629,
+            "p90MaxDrawdown": 22.893,
+            "breachProbability": 0.0611
+          }
+        },
+        "5": {
+          "rate": 5,
+          "cap": 30,
+          "weights": {
+            "QQQ": 30,
+            "IEMG": 5,
+            "SGOV": 60,
+            "BMNR": 5
+          },
+          "netCagrForecast": 7.718,
+          "forecastUncertainty": 1.328,
+          "robustGrowthScore": 7.254,
+          "modeledVolatility": 11.235,
+          "observedPortfolio": {
+            "maxDrawdown": 7.089,
+            "cdar95": 5.531,
+            "peak": "2025-10-28",
+            "trough": "2026-03-30"
+          },
+          "stress": {
+            "worstLoss": 12.65,
+            "worstScenario": "growth and rate shock",
+            "scenarios": [
+              {
+                "name": "growth and rate shock",
+                "loss": 12.65
+              },
+              {
+                "name": "emerging-market and USD shock",
+                "loss": 6.85
+              },
+              {
+                "name": "digital-asset equity shock",
+                "loss": 8.85
+              },
+              {
+                "name": "broad liquidity shock",
+                "loss": 11.75
+              }
+            ]
+          },
+          "simulation": {
+            "paths": 10000,
+            "years": 10,
+            "p10Terminal": 1.308,
+            "p50Terminal": 2.007,
+            "p90Terminal": 3.078,
+            "medianMaxDrawdown": 16.828,
+            "p90MaxDrawdown": 26.321,
+            "breachProbability": 0.0472
+          }
+        }
+      }
+    },
+    {
+      "name": "10-year correlated Monte Carlo return and drawdown simulation",
+      "status": "pass",
+      "paths": 10000,
+      "years": 10,
+      "p10Terminal": 1.256,
+      "p50Terminal": 1.72,
+      "p90Terminal": 2.389,
+      "medianMaxDrawdown": 12.311,
+      "p90MaxDrawdown": 19.353,
+      "breachProbability": 0.0857
+    },
+    {
+      "name": "BMNR concentration and digital-asset gates",
+      "status": "pass",
+      "score": 2.5,
+      "maximumWeight": 10
+    }
+  ],
+  "failures": [],
+  "limitations": [
+    "Observed portfolio maximum drawdown uses only the synchronized live period shared by all four holdings; BMNR makes that period materially shorter than ten years.",
+    "The 10-year correlated simulation, stress shocks, forecast uncertainty and correlation matrix are transparent model assumptions, not verified future facts.",
+    "The official Nasdaq endpoint does not reliably expose a complete ten-year archive on every run; last verified full-history QQQ and BMNR drawdowns are retained while the common live period is revalidated.",
+    "No historical or simulated constraint can guarantee a future drawdown cap.",
+    "BMNR SEC EDGAR is retained as the authoritative source but marked manual-review because the SEC restricts this automated runner."
+  ]
+}
