@@ -5,7 +5,7 @@ The audit distinguishes primary-source facts from transparent model inputs. It
 never upgrades an unavailable source or a forecast into a verified fact.
 """
 from __future__ import annotations
-import csv, html, io, itertools, json, math, pathlib, re, statistics, sys, time, urllib.request
+import csv, html, io, itertools, json, math, pathlib, re, shutil, statistics, subprocess, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
 
 from drawdown_data import refresh_historical_drawdowns, synchronized_portfolio_history
@@ -68,6 +68,23 @@ RESPONSE_CACHE: dict[str, str] = {}
 def get(url: str) -> str:
     if url in RESPONSE_CACHE:
         return RESPONSE_CACHE[url]
+    if "api.nasdaq.com" in url:
+        curl = shutil.which("curl.exe") or shutil.which("curl")
+        if not curl:
+            raise RuntimeError("curl is required for reliable official Nasdaq retrieval")
+        command = [curl, "--silent", "--show-error", "--fail-with-body", "--connect-timeout", "10", "--max-time", "45",
+                   "--retry", "2", "--retry-delay", "2", "--retry-all-errors"]
+        command.extend(["--header", "User-Agent: Mozilla/5.0", "--header", "Accept: application/json"])
+        try:
+            result = subprocess.run(command + [url], check=True, capture_output=True, timeout=200)
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired) as exc:
+            detail = getattr(exc, "stderr", b"")
+            if isinstance(detail, bytes):
+                detail = detail.decode("utf-8", errors="replace")
+            raise RuntimeError(f"official Nasdaq curl fetch failed for {url}: {detail or exc}") from exc
+        body = result.stdout.decode("utf-8", errors="replace")
+        RESPONSE_CACHE[url] = body
+        return body
     last_error: Exception | None = None
     for attempt in range(3):
         try:
