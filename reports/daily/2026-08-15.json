@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-08-14T06:59:37Z",
+  "checkedAt": "2026-08-15T04:07:19Z",
   "status": "PASS WITH MANUAL REVIEW \u2014 automated checks completed; restricted source remains queued for human review",
   "sourceEvidence": [
     {
@@ -16,7 +16,7 @@
     {
       "source": "IEMG official fund page",
       "status": "pass",
-      "bytes": 1651160,
+      "bytes": 1651389,
       "identityMarkers": [
         "IEMG",
         "iShares Core MSCI Emerging Markets ETF"
@@ -27,7 +27,7 @@
     {
       "source": "BINC official fund page & prospectus",
       "status": "pass",
-      "bytes": 1703582,
+      "bytes": 1703836,
       "identityMarkers": [
         "BINC",
         "iShares Flexible Income Active ETF"
@@ -40,8 +40,8 @@
       "status": "pass",
       "ticker": "QQQ",
       "usedHistoricalDrawdownPercent": 35.12,
-      "observations": 2513,
-      "period": "2016-08-15 to 2026-08-13",
+      "observations": 2514,
+      "period": "2016-08-15 to 2026-08-14",
       "dataUrl": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
     },
     {
@@ -49,8 +49,8 @@
       "status": "pass",
       "ticker": "IEMG",
       "usedHistoricalDrawdownPercent": 38.39,
-      "observations": 2514,
-      "period": "2016-08-15 to 2026-08-13",
+      "observations": 2515,
+      "period": "2016-08-15 to 2026-08-14",
       "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
     {
@@ -58,8 +58,8 @@
       "status": "pass",
       "ticker": "BINC",
       "usedHistoricalDrawdownPercent": 2.4,
-      "observations": 813,
-      "period": "2023-05-19 to 2026-08-13",
+      "observations": 814,
+      "period": "2023-05-19 to 2026-08-14",
       "dataUrl": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
     },
     {
@@ -67,8 +67,8 @@
       "status": "pass",
       "ticker": "BMNR",
       "usedHistoricalDrawdownPercent": 90.14,
-      "observations": 312,
-      "period": "2025-05-16 to 2026-08-13",
+      "observations": 313,
+      "period": "2025-05-16 to 2026-08-14",
       "dataUrl": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
     },
     {
@@ -79,7 +79,7 @@
     {
       "source": "Federal Reserve economic data (FRED)",
       "status": "pass",
-      "bytes": 58503,
+      "bytes": 59069,
       "identityMarkers": [
         "Federal Reserve Economic Data"
       ]
@@ -87,7 +87,7 @@
     {
       "source": "U.S. Treasury yield-curve data",
       "status": "pass",
-      "bytes": 1867868,
+      "bytes": 1867850,
       "identityMarkers": [
         "Daily Treasury Par Yield Curve Rates"
       ]
@@ -101,10 +101,10 @@
       "usedPercent": 35.12,
       "value": 35.1225,
       "start": "2016-08-15",
-      "end": "2026-08-13",
+      "end": "2026-08-14",
       "peak": "2021-12-27",
       "trough": "2022-11-03",
-      "observations": 2513,
+      "observations": 2514,
       "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
       "source": "https://www.nasdaq.com/market-activity/etf/qqq/historical"
     },
@@ -115,10 +115,10 @@
       "usedPercent": 38.39,
       "value": 38.386,
       "start": "2016-08-15",
-      "end": "2026-08-13",
+      "end": "2026-08-14",
       "peak": "2018-01-26",
       "trough": "2020-03-23",
-      "observations": 2514,
+      "observations": 2515,
       "method": "Observed daily issuer NAV total return; cash distributions reinvested",
       "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=244050&targetSite=us-ishares&userType=individual"
     },
@@ -129,10 +129,10 @@
       "usedPercent": 2.4,
       "value": 2.4026,
       "start": "2023-05-19",
-      "end": "2026-08-13",
+      "end": "2026-08-14",
       "peak": "2026-02-27",
       "trough": "2026-03-27",
-      "observations": 813,
+      "observations": 814,
       "method": "Observed daily issuer NAV total return; cash distributions reinvested",
       "source": "https://www.blackrock.com/varnish-api/blk-one01-product-data/product-data/api/v1/get-fund-document?appSubType=ISHARES&appType=PRODUCT_PAGE&component=fundDownload&locale=en_US&portfolioId=331752&targetSite=us-ishares&userType=individual"
     },
@@ -143,10 +143,10 @@
       "usedPercent": 90.14,
       "value": 90.1407,
       "start": "2025-05-16",
-      "end": "2026-08-13",
+      "end": "2026-08-14",
       "peak": "2025-07-03",
       "trough": "2026-06-30",
-      "observations": 312,
+      "observations": 313,
       "method": "Observed daily Nasdaq closing-price total return; cash distributions reinvested",
       "source": "https://www.nasdaq.com/market-activity/stocks/bmnr/historical"
     }
