@@ -9,7 +9,7 @@ import csv, html, io, itertools, json, math, pathlib, re, shutil, statistics, su
 from datetime import date, datetime, timedelta, timezone
 
 from drawdown_data import refresh_historical_drawdowns, synchronized_portfolio_history
-from portfolio_model import build_model, cap_from_rate as robust_cap_from_rate
+from portfolio_model import build_model, cap_from_rate as robust_cap_from_rate, optimize_scenario, proportional_cushion
 
 ROOT = pathlib.Path(__file__).parents[1]
 DATA = ROOT / "data" / "market-data.json"
@@ -40,6 +40,7 @@ WEIGHT_STEP = 5
 MONTE_CARLO_PATHS = 10_000
 MONTE_CARLO_YEARS = 10
 TICKERS = ("QQQ", "IEMG", "SGOV", "BMNR")
+HORIZON_WEIGHTS = {"m3": .20, "m6": .30, "m12": .50}
 DRIVER_EXPOSURE = {
     "Inflation trend": (.85, .70, .95, .65),
     "Policy rates": (.95, .60, 1.00, .80),
@@ -158,23 +159,38 @@ def sentiment_outputs(macro: list[dict], assets: list[dict], weights: list[float
     for rank,item in enumerate(regional,1): item["rank"]=rank
     return broad,correlated,regional
 
-def select_rate(assets: list[dict], macro: list[dict], scenarios: dict[int,list[float]]) -> tuple[float,list[float],dict,dict,list[dict]]:
-    band=4
-    seen=[]
-    while band not in seen:
-        seen.append(band)
-        weights=scenarios[band]
-        broad,correlated,regional=sentiment_outputs(macro,assets,weights)
-        rate=round(max(1,min(5,.40*sum(broad.values())/3+.60*sum(correlated.values())/3)),2)
-        new_band=5 if rate>=5 else 4 if rate>=4 else 3
-        if new_band==band: return rate,weights,broad,correlated,regional
-        band=new_band
-    band=min(seen[-1],band)
-    weights=scenarios[band]
+def select_rate(assets: list[dict], macro: list[dict], weights: list[float]) -> tuple[float,list[float],dict,dict,list[dict]]:
     broad,correlated,regional=sentiment_outputs(macro,assets,weights)
-    rate=round(max(1,min(5,.40*sum(broad.values())/3+.60*sum(correlated.values())/3)),2)
-    rate=min(rate,3.99) if band==3 else min(max(rate,4),4.99) if band==4 else 5.0
+    broad_score=sum(broad[key]*weight for key,weight in HORIZON_WEIGHTS.items())
+    correlated_score=sum(correlated[key]*weight for key,weight in HORIZON_WEIGHTS.items())
+    rate=round(max(1,min(5,.40*broad_score+.60*correlated_score)),2)
     return rate,weights,broad,correlated,regional
+
+
+def build_active_allocation(assets: list[dict], macro: list[dict], history: dict, scenarios: dict[str,dict]) -> dict:
+    """Solve the macro/allocation feedback loop and fail closed if it cannot converge."""
+    weights=[scenarios["4"]["weights"][ticker] for ticker in TICKERS]
+    seen=set()
+    for _ in range(8):
+        rate,_,_,_,_=select_rate(assets,macro,weights)
+        cushion=proportional_cushion(rate)
+        state=(robust_cap_from_rate(rate),cushion)
+        if state in seen:
+            raise RuntimeError(f"proportional macro cushion did not converge: {state}")
+        seen.add(state)
+        active=optimize_scenario(assets,history,rate,cushion)
+        next_weights=[active["weights"][ticker] for ticker in TICKERS]
+        final_rate,_,broad,correlated,regional=select_rate(assets,macro,next_weights)
+        if proportional_cushion(final_rate)==cushion and robust_cap_from_rate(final_rate)==active["cap"]:
+            active.update(
+                rate=final_rate, macroRate=final_rate, minimumSgovWeight=cushion,
+                cushionFormula="round5(clamp(60% + 10% × (5 - macro rate), 60%, 80%))",
+                horizonWeights=HORIZON_WEIGHTS, macroBlend={"broad":.40,"allocationCorrelated":.60},
+                broadSentiment=broad, correlatedSentiment=correlated, regionalRanking=regional,
+            )
+            return active
+        weights=next_weights
+    raise RuntimeError("proportional macro cushion exceeded the convergence limit")
 
 def optimize(assets: list[dict], cap: float) -> list[float]:
     """Exhaustively maximize net CAGR on the 5% allocation grid."""
@@ -223,25 +239,35 @@ def math_checks(payload: dict) -> list[dict]:
     assert len(macro)==len(FRED)==16 and {x["driver"] for x in macro}==set(FRED) and all(1<=x[k]<=5 for x in macro for k in ("m3","m6","m12"))
     assert all(x["why"] and ("all four holdings" in x["why"] or any(ticker in x["why"] for ticker in required)) for x in macro)
     overlay=payload["bmnrOverlay"]; assert 1<=overlay["score"]<=5 and overlay["source"].startswith("https://www.sec.gov/")
-    assert model["method"]=="robust-path-growth-v1" and model["history"]["observations"]>=220
+    assert model["method"]=="robust-path-growth-v2-proportional-cushion" and model["history"]["observations"]>=220
     assert model["history"]["tickers"]==list(TICKERS) and model["history"]["rebalance"]=="monthly"
+    assert model["constraints"]["sgovCushionRange"]==[60,80] and model["constraints"]["macroHorizonWeights"]==HORIZON_WEIGHTS
+    assert model["constraints"]["macroBlend"]=={"broad":.40,"allocationCorrelated":.60}
     assert set(model["scenarios"])=={"3","4","5"}
     scenario_weights={int(rate):[scenario["weights"][ticker] for ticker in TICKERS] for rate,scenario in model["scenarios"].items()}
     for rate,weights in scenario_weights.items():
         scenario=model["scenarios"][str(rate)]; cap=robust_cap_from_rate(rate)
         assert scenario["cap"]==cap and sum(weights)==100
         assert all(weight>=MIN_WEIGHT and weight%WEIGHT_STEP==0 for weight in weights)
+        assert scenario["minimumSgovWeight"]==proportional_cushion(rate) and scenario["weights"]["SGOV"]>=scenario["minimumSgovWeight"]
         assert scenario["weights"]["BMNR"]<=model["constraints"]["bmnrMaximumWeight"]
         assert scenario["observedPortfolio"]["maxDrawdown"]<=cap and scenario["stress"]["worstLoss"]<=cap
         assert scenario["simulation"]["paths"]==10_000 and scenario["simulation"]["years"]==10
         assert scenario["simulation"]["breachProbability"]<=model["constraints"]["maximumDrawdownBreachProbability"]+.015
         assert 0<scenario["simulation"]["p10Terminal"]<scenario["simulation"]["p50Terminal"]<scenario["simulation"]["p90Terminal"]
-    rate,weights,broad,correlated,regional=select_rate(assets,macro,scenario_weights); band=5 if rate>=5 else 4 if rate>=4 else 3
-    assert weights==scenario_weights[band]
+    active=model["active"]; weights=[active["weights"][ticker] for ticker in TICKERS]
+    rate,_,broad,correlated,regional=select_rate(assets,macro,weights)
+    assert rate==active["macroRate"] and active["rate"]==rate and active["cap"]==robust_cap_from_rate(rate)
+    assert sum(weights)==100 and all(weight>=MIN_WEIGHT and weight%WEIGHT_STEP==0 for weight in weights)
+    assert active["minimumSgovWeight"]==proportional_cushion(rate) and active["weights"]["SGOV"]>=active["minimumSgovWeight"]
+    assert active["weights"]["BMNR"]<=model["constraints"]["bmnrMaximumWeight"]
+    assert active["observedPortfolio"]["maxDrawdown"]<=active["cap"] and active["stress"]["worstLoss"]<=active["cap"]
+    assert active["simulation"]["paths"]==10_000 and active["simulation"]["years"]==10
+    assert active["simulation"]["breachProbability"]<=model["constraints"]["maximumDrawdownBreachProbability"]+.015
     assert len(DRIVER_EXPOSURE)==16 and set(DRIVER_EXPOSURE)==set(FRED)
     assert {item["region"] for item in regional}=={"US","Europe","Asia"} and {item["rank"] for item in regional}=={1,2,3}
     assert all(1<=value<=5 for output in (broad,correlated) for value in output.values())
-    selected=model["scenarios"][str(band)]
+    selected=active
     return [
         {"name":"required holdings and allocation grid","status":"pass"},
         {"name":"input, uncertainty and relevance bounds","status":"pass"},
@@ -249,6 +275,7 @@ def math_checks(payload: dict) -> list[dict]:
         {"name":"robust drawdown controls","status":"pass","observedPath":True,"stressScenarios":len(model["stressScenarios"]),"maximumBreachProbability":model["constraints"]["maximumDrawdownBreachProbability"]},
         {"name":"sixteen distinct portfolio-related macro drivers","status":"pass"},
         {"name":"broad and allocation-correlated sentiment","status":"pass","broad":broad,"correlated":correlated,"rate":rate},
+        {"name":"proportional macro-driven SGOV cushion","status":"pass","rate":rate,"minimumSgovWeight":active["minimumSgovWeight"],"horizonWeights":HORIZON_WEIGHTS},
         {"name":"US Europe Asia transmission ranking","status":"pass","ranking":regional},
         {"name":"robust growth scenario allocations","status":"pass","scenarios":model["scenarios"]},
         {"name":"10-year correlated Monte Carlo return and drawdown simulation","status":"pass",**selected["simulation"]},
@@ -314,6 +341,7 @@ def main() -> int:
     try:
         history=synchronized_portfolio_history(payload,get)
         payload["model"]=build_model(payload,history)
+        payload["model"]["active"]=build_active_allocation(payload["assets"],payload["macro"],history,payload["model"]["scenarios"])
     except Exception as exc:
         failures.append(f"synchronized robust portfolio model: {exc}")
     evidence,claim_evidence,source_failures=audit_sources(payload,claims,drawdown_evidence); failures.extend(source_failures)

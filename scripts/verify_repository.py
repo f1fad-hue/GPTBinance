@@ -77,6 +77,7 @@ def main() -> None:
     math_evidence={item["name"]:item for item in evidence["mathChecks"]}
     assert math_evidence["synchronized monthly-rebalanced portfolio path"]["observations"]>=220
     assert math_evidence["robust drawdown controls"]["observedPath"] is True
+    assert math_evidence["proportional macro-driven SGOV cushion"]["minimumSgovWeight"] in {60,65,70,75,80}
     assert math_evidence["sixteen distinct portfolio-related macro drivers"]["status"]=="pass"
     assert math_evidence["broad and allocation-correlated sentiment"]["status"]=="pass"
     assert {item["region"] for item in math_evidence["US Europe Asia transmission ranking"]["ranking"]}=={"US","Europe","Asia"}
@@ -86,6 +87,10 @@ def main() -> None:
     for scenario,item in data["model"]["scenarios"].items():
         assert item["cap"]==update_data.cap_from_rate(float(scenario))
         assert item["observedPortfolio"]["maxDrawdown"]<=item["cap"] and item["stress"]["worstLoss"]<=item["cap"]
+    active=data["model"]["active"]
+    assert active["minimumSgovWeight"]==update_data.proportional_cushion(active["macroRate"])
+    assert active["weights"]["SGOV"]>=active["minimumSgovWeight"] and active["cap"]==update_data.cap_from_rate(active["macroRate"])
+    assert active["observedPortfolio"]["maxDrawdown"]<=active["cap"] and active["stress"]["worstLoss"]<=active["cap"]
     source_evidence={item["source"]:item for item in evidence["sourceEvidence"]}
     for ticker in ("QQQ","IEMG","SGOV"):
         source=next(item for item in sources.values() if item.get("asset_ticker")==ticker)
@@ -95,7 +100,7 @@ def main() -> None:
     assert REQUIRED_DOM_IDS <= parser.ids, f"missing dashboard elements: {REQUIRED_DOM_IDS-parser.ids}"
     app=(ROOT/"app.js").read_text(encoding="utf-8")
     assert "fetch('data/market-data.json'" in app
-    assert "data.model.scenarios" in app and "Robust drawdown controls failed" in app
+    assert "data.model.scenarios" in app and "data.model.active" in app and "Proportional macro cushion validation failed" in app
     assert "module.exports" in app and (ROOT/"scripts"/"verify_app.js").exists()
     assert not (ROOT/"sw.js").exists(), "obsolete service worker should remain removed"
     manifest=json.loads((ROOT/"manifest.json").read_text(encoding="utf-8"))

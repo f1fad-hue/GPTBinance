@@ -9,6 +9,8 @@ import random
 MIN_WEIGHT = 5
 WEIGHT_STEP = 5
 BMNR_MAX_WEIGHT = 10
+SGOV_CUSHION_MIN = 60
+SGOV_CUSHION_MAX = 80
 OPTIMIZATION_PATHS = 250
 REPORTING_PATHS = 10_000
 MONTHS = 120
@@ -30,6 +32,12 @@ STRESS_SCENARIOS = (
 
 def cap_from_rate(rate: float) -> float:
     return 30 if rate >= 5 else 25 if rate >= 4 else 20
+
+
+def proportional_cushion(rate: float) -> int:
+    """Map the continuous 1-5 macro rate to a 60%-80% SGOV floor."""
+    raw = max(SGOV_CUSHION_MIN, min(SGOV_CUSHION_MAX, 60 + 10 * (5 - rate)))
+    return int(math.floor(raw / WEIGHT_STEP + .5) * WEIGHT_STEP)
 
 
 def _percentile(values: list[float], probability: float) -> float:
@@ -160,7 +168,9 @@ def _simulation_stats(paths: list[list[list[float]]], weights: list[float], cap:
     }
 
 
-def _grid(asset_count: int):
+def _grid(assets: list[dict], minimum_sgov_weight: int):
+    asset_count = len(assets)
+    sgov_index = next(index for index, asset in enumerate(assets) if asset["ticker"] == "SGOV")
     units = (100 - MIN_WEIGHT * asset_count) // WEIGHT_STEP
     for prefix in itertools.product(range(units + 1), repeat=asset_count - 1):
         used = sum(prefix)
@@ -168,14 +178,17 @@ def _grid(asset_count: int):
             continue
         extras = (*prefix, units - used)
         weights = [MIN_WEIGHT + WEIGHT_STEP * value for value in extras]
-        if weights[-1] <= BMNR_MAX_WEIGHT:
+        if weights[-1] <= BMNR_MAX_WEIGHT and weights[sgov_index] >= minimum_sgov_weight:
             yield weights
 
 
-def optimize_scenario(assets: list[dict], history: dict, rate: int) -> dict:
+def optimize_scenario(assets: list[dict], history: dict, rate: float, minimum_sgov_weight: int | None = None) -> dict:
     cap = cap_from_rate(rate)
+    minimum_sgov_weight = proportional_cushion(rate) if minimum_sgov_weight is None else minimum_sgov_weight
+    if minimum_sgov_weight < SGOV_CUSHION_MIN or minimum_sgov_weight > SGOV_CUSHION_MAX or minimum_sgov_weight % WEIGHT_STEP:
+        raise ValueError("SGOV cushion must be a 5% increment from 60% through 80%")
     candidates = []
-    for weights in _grid(len(assets)):
+    for weights in _grid(assets, minimum_sgov_weight):
         observed = portfolio_path_stats(history, weights)
         stress = _stress_stats(weights)
         if observed["maxDrawdown"] > cap + 1e-9 or stress["worstLoss"] > cap + 1e-9:
@@ -186,8 +199,9 @@ def optimize_scenario(assets: list[dict], history: dict, rate: int) -> dict:
             continue
         candidates.append((robust, net, -stress["worstLoss"], weights, observed, stress, uncertainty, portfolio_volatility))
     candidates.sort(reverse=True, key=lambda item: item[:3])
-    volatility_scale = {3: 1.15, 4: 1.0, 5: .90}[rate]
-    optimization_paths = _shock_paths(assets, OPTIMIZATION_PATHS, 8100 + rate, volatility_scale)
+    volatility_scale = 1.15 if rate < 4 else 1.0 if rate < 5 else .90
+    seed_key = int(cap * 10 + minimum_sgov_weight)
+    optimization_paths = _shock_paths(assets, OPTIMIZATION_PATHS, 8100 + seed_key, volatility_scale)
     selected = None
     reporting_paths = None
     for robust, net, _risk_tie, weights, observed, stress, uncertainty, portfolio_volatility in candidates:
@@ -195,7 +209,7 @@ def optimize_scenario(assets: list[dict], history: dict, rate: int) -> dict:
         if simulation["breachProbability"] > MAX_BREACH_PROBABILITY - .02:
             continue
         if reporting_paths is None:
-            reporting_paths = _shock_paths(assets, REPORTING_PATHS, 9100 + rate, volatility_scale)
+            reporting_paths = _shock_paths(assets, REPORTING_PATHS, 9100 + seed_key, volatility_scale)
         reporting = _simulation_stats(reporting_paths, weights, cap)
         if reporting["breachProbability"] <= MAX_BREACH_PROBABILITY + 1e-9:
             selected = (weights, observed, stress, net, uncertainty, robust, portfolio_volatility, reporting)
@@ -204,7 +218,8 @@ def optimize_scenario(assets: list[dict], history: dict, rate: int) -> dict:
         raise RuntimeError(f"no robust allocation satisfies the rate-{rate} drawdown controls")
     weights, observed, stress, net, uncertainty, robust, portfolio_volatility, simulation = selected
     return {
-        "rate": rate, "cap": cap, "weights": dict(zip([asset["ticker"] for asset in assets], weights)),
+        "rate": rate, "cap": cap, "minimumSgovWeight": minimum_sgov_weight,
+        "weights": dict(zip([asset["ticker"] for asset in assets], weights)),
         "netCagrForecast": round(net, 3), "forecastUncertainty": round(uncertainty, 3),
         "robustGrowthScore": round(robust, 3), "modeledVolatility": round(portfolio_volatility, 3), "observedPortfolio": observed,
         "stress": stress, "simulation": simulation,
@@ -214,9 +229,12 @@ def optimize_scenario(assets: list[dict], history: dict, rate: int) -> dict:
 def build_model(payload: dict, history: dict) -> dict:
     scenarios = {str(rate): optimize_scenario(payload["assets"], history, rate) for rate in (3, 4, 5)}
     return {
-        "method": "robust-path-growth-v1", "objective": "net CAGR forecast minus 35% of forecast uncertainty",
+        "method": "robust-path-growth-v2-proportional-cushion", "objective": "net CAGR forecast minus 35% of forecast uncertainty",
         "constraints": {
             "minimumWeight": MIN_WEIGHT, "weightStep": WEIGHT_STEP, "bmnrMaximumWeight": BMNR_MAX_WEIGHT,
+            "sgovCushionRange": [SGOV_CUSHION_MIN, SGOV_CUSHION_MAX],
+            "macroHorizonWeights": {"m3": .20, "m6": .30, "m12": .50},
+            "macroBlend": {"broad": .40, "allocationCorrelated": .60},
             "maximumDrawdownBreachProbability": MAX_BREACH_PROBABILITY,
             "observedPortfolioPath": True, "monthlyRebalance": True,
         },

@@ -21,22 +21,23 @@ async function main() {
   const assets = data.assets;
   const scenarioModel = data.model.scenarios;
   const scenarios = Object.fromEntries([3, 4, 5].map(rate => [rate, assets.map(asset => scenarioModel[rate].weights[asset.ticker])]));
-  const signal = selectRate(data.macro, assets, scenarios);
+  const activeModel = data.model.active;
+  const activeWeights = assets.map(asset => activeModel.weights[asset.ticker]);
+  const signal = selectRate(data.macro, assets, activeWeights);
   const { rate, weights, broad, correlated, regional } = signal;
   const cap = capFromRate(rate);
-  const band = rate >= 5 ? 5 : rate >= 4 ? 4 : 3;
-  const activeModel = scenarioModel[band];
   const allocation = assets.map((x, i) => ({ ...x, weight: weights[i] }));
   const cagr = activeModel.netCagrForecast;
   const dd = activeModel.observedPortfolio.maxDrawdown;
+  if (rate !== activeModel.macroRate || proportionalCushion(rate) !== activeModel.minimumSgovWeight || activeModel.weights.SGOV < activeModel.minimumSgovWeight) {
+    throw new Error('Proportional macro cushion validation failed');
+  }
   if (dd > cap + 1e-9 || activeModel.stress.worstLoss > cap + 1e-9 || activeModel.simulation.breachProbability > data.model.constraints.maximumDrawdownBreachProbability + .015) {
-    throw new Error(`Robust drawdown controls failed for rate ${band}`);
+    throw new Error(`Robust drawdown controls failed for rate ${rate.toFixed(2)}`);
   }
 
   $('#portfolio-rate').textContent = rate.toFixed(2);
-  $('#rate-copy').textContent = rate >= 4
-    ? 'Constructive macro signal; growth tilt remains bounded by the drawdown rule.'
-    : 'Mixed macro signal; the model requires a stricter drawdown cap.';
+  $('#rate-copy').textContent = `Macro sets a ${activeModel.minimumSgovWeight}% SGOV cushion; growth remains bounded by the drawdown rule.`;
   $('#rate-meter').style.width = `${rate * 20}%`;
   $('#cagr').textContent = pct(cagr);
   $('#drawdown').textContent = pct(dd);
@@ -81,7 +82,7 @@ async function main() {
   $('#slides').innerHTML = allocation.map(x => `<article class="slide"><span class="ticker">${x.ticker}</span><h3>${x.name}</h3><div class="metrics"><div><span>Observed max DD</span><b>${pct(x.historicalDD)}</b></div><div><span>Forecast net 10Y CAGR</span><b>${pct(x.grossCagr - x.fee)}</b></div><div><span>Fund fee</span><b>${pct(x.fee)}</b></div><div><span>Portfolio weight</span><b>${x.weight.toFixed(0)}%</b></div></div><p class="risk"><strong>Observed period:</strong> ${x.historicalDDStart} to ${x.historicalDDEnd}<br><strong>Peak → trough:</strong> ${x.historicalDDPeak} → ${x.historicalDDTrough}</p><p class="risk">Forecast return is a model assumption. Historical max DD is the sole cap input, not a forecast.</p><p class="risk">${x.history}</p><p class="risk"><strong>Role:</strong> ${x.reason}</p></article>`).join('');
 
   const weightOf = ticker => allocation.find(x => x.ticker === ticker).weight.toFixed(0);
-  $('#rationale').textContent = `The robust growth model places ${weightOf('QQQ')}% in Nasdaq-100 growth, ${weightOf('IEMG')}% in emerging markets, ${weightOf('SGOV')}% in Treasury bills, and ${weightOf('BMNR')}% in the single-stock satellite. It searches every valid 5% allocation and maximizes the 10-year net-CAGR forecast after an uncertainty penalty. The selected allocation must pass the observed combined-portfolio path, four simultaneous stress scenarios, and a correlated 10-year drawdown-breach test under the ${cap}% rate-band cap. BMNR is limited to 10%. This is a hypothetical model, not investment advice or a guarantee.`;
+  $('#rationale').textContent = `The ${rate.toFixed(2)} macro rate creates a proportional ${activeModel.minimumSgovWeight}% minimum SGOV cushion. The robust growth model then places ${weightOf('QQQ')}% in Nasdaq-100 growth, ${weightOf('IEMG')}% in emerging markets, ${weightOf('SGOV')}% in Treasury bills, and ${weightOf('BMNR')}% in the single-stock satellite. It searches every valid 5% allocation and maximizes the 10-year net-CAGR forecast after an uncertainty penalty. The selected allocation must pass the observed combined-portfolio path, four simultaneous stress scenarios, and a correlated 10-year drawdown-breach test under the ${cap}% cap. BMNR is limited to 10%. This is a hypothetical model, not investment advice or a guarantee.`;
 
   $('#monitoring').innerHTML = assets.map(x => `<tr><td><b>${x.ticker}</b></td><td><span class="status ${x.monitorStatus.toLowerCase().replace(' ', '-')}">${x.monitorStatus}</span><br><span class="muted">${x.monitorNote}</span></td><td>${x.relevance}/100</td><td>${x.notRelevant}</td><td>${x.cadence}</td></tr>`).join('');
   const uniqueSources = [...new Map(data.sources.map(source => [source.url, source])).values()];
@@ -113,26 +114,15 @@ function sentimentOutputs(macro, assets, weights) {
   return { broad, correlated, regional };
 }
 
-function selectRate(macro, assets, scenarios) {
-  let band = 4;
-  const seen = [];
-  while (!seen.includes(band)) {
-    seen.push(band);
-    const weights = scenarios[band];
-    const outputs = sentimentOutputs(macro, assets, weights);
-    const broadAvg = (outputs.broad.m3 + outputs.broad.m6 + outputs.broad.m12) / 3;
-    const correlatedAvg = (outputs.correlated.m3 + outputs.correlated.m6 + outputs.correlated.m12) / 3;
-    const rate = +clamp(.40 * broadAvg + .60 * correlatedAvg, 1, 5).toFixed(2);
-    const nextBand = rate >= 5 ? 5 : rate >= 4 ? 4 : 3;
-    if (nextBand === band) return { rate, weights, ...outputs };
-    band = nextBand;
-  }
-  band = Math.min(seen.at(-1), band);
-  const weights = scenarios[band];
+function selectRate(macro, assets, weights) {
   const outputs = sentimentOutputs(macro, assets, weights);
-  let rate = +clamp(.40 * (outputs.broad.m3 + outputs.broad.m6 + outputs.broad.m12) / 3 + .60 * (outputs.correlated.m3 + outputs.correlated.m6 + outputs.correlated.m12) / 3, 1, 5).toFixed(2);
-  rate = band === 3 ? Math.min(rate, 3.99) : band === 4 ? Math.min(Math.max(rate, 4), 4.99) : 5;
+  const horizonScore = scores => .20 * scores.m3 + .30 * scores.m6 + .50 * scores.m12;
+  const rate = +clamp(.40 * horizonScore(outputs.broad) + .60 * horizonScore(outputs.correlated), 1, 5).toFixed(2);
   return { rate, weights, ...outputs };
+}
+
+function proportionalCushion(rate) {
+  return Math.round(clamp(60 + 10 * (5 - rate), 60, 80) / 5) * 5;
 }
 
 function capFromRate(rate) {
@@ -144,4 +134,4 @@ if (typeof document !== 'undefined') {
     document.body.innerHTML = `<main><h1>Data load error</h1><p>${error.message}</p></main>`;
   });
 }
-if (typeof module !== 'undefined') module.exports = { capFromRate, horizonScores, sentimentOutputs, selectRate, TICKERS };
+if (typeof module !== 'undefined') module.exports = { capFromRate, proportionalCushion, horizonScores, sentimentOutputs, selectRate, TICKERS };
